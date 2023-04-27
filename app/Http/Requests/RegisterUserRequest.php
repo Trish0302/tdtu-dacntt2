@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Request;
 
 class RegisterUserRequest extends FormRequest
 {
@@ -25,8 +26,10 @@ class RegisterUserRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email|unique:users,email,' . (Request::instance()->id ?? ''),
             'password' => 'required|confirmed|min:8',
+            'phone' => 'required',
+            'avatar' => 'nullable',
         ];
     }
 

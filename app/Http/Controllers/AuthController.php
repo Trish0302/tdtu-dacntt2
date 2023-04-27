@@ -11,6 +11,29 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
+    public function register(RegisterUserRequest $request)
+    {
+        if (isset($request->validator) && $request->validator->fails()) {
+            return response()->json([
+                'message' => $request->validator->messages(),
+                'status' => 400,
+            ], 400);
+        }
+
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'avatar' => $request->avatar ?? 'default-avatar.png',
+            'password' => Hash::make($request->password),
+        ]);
+
+        return response()->json([
+            'message' => 'Create new user successfully!',
+            'status' => 200,
+        ], 200);
+    }
+
     public function login(Request $request)
     {
         $user = User::where('email', $request->email)->first();
@@ -34,27 +57,6 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'message' => 'Login successfully!',
-            'status' => 200,
-        ], 200);
-    }
-
-    public function register(RegisterUserRequest $request)
-    {
-        if (isset($request->validator) && $request->validator->fails()) {
-            return response()->json([
-                'message' => $request->validator->messages(),
-                'status' => 400,
-            ], 400);
-        }
-
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        return response()->json([
-            'message' => 'Create new user successfully!',
             'status' => 200,
         ], 200);
     }
