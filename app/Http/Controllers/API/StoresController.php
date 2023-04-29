@@ -80,13 +80,13 @@ class StoresController extends Controller
     {
         try {
             return response()->json([
-                'message' => 'Get user data successfully!',
+                'message' => 'Get store data successfully!',
                 'data' => Store::with('user')->find($id),
                 'status' => 200,
             ], 200);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Invalid user. Please try again!',
+                'message' => 'Invalid store. Please try again!',
                 'status' => 400,
             ], 400);
         }
