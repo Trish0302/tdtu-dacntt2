@@ -5,24 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Store extends Model
+class FoodGroup extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'name',
-        'address',
+        'slug',
         'description',
-        'user_id',
+        'store_id',
     ];
 
-    public function user()
+    public function store()
     {
-        return $this->belongsTo(User::class);
-    }
-
-    public function food_groups()
-    {
-        return $this->hasMany(FoodGroup::class);
+        return $this->belongsTo(Store::class);
     }
 }

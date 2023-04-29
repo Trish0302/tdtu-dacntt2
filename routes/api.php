@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\FoodGroupsController;
 use App\Http\Controllers\API\StoresController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\UsersController;
@@ -20,10 +21,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
     Route::get('/logout', [AuthController::class, 'logout']);
 
-    Route::apiResource('users', UsersController::class);
-    Route::apiResource('stores', StoresController::class);
+    Route::apiResources([
+        'users' => UsersController::class,
+        'stores' => StoresController::class,
+        'stores.food_groups' => FoodGroupsController::class,
+    ]);
 });
-
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
