@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Request;
 
-class RegisterUserRequest extends FormRequest
+class StoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,12 +25,11 @@ class RegisterUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'id' => Request::instance()->id ? 'exists:users,id' : '',
+            'id' => Request::instance()->id ? 'exists:stores,id' : '',
             'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . (Request::instance()->id ?? ''),
-            'password' => 'required|confirmed|min:8',
-            'phone' => 'required',
-            'avatar' => 'nullable',
+            'address' => 'required',
+            'description' => 'required',
+            'user_id' => 'required|exists:users,id',
         ];
     }
 
