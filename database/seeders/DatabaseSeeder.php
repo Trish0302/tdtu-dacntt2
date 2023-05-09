@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Food;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -16,6 +17,11 @@ class DatabaseSeeder extends Seeder
         // \App\Models\User::factory(10)->create();
         $this->call([
             UserSeeder::class,
+            FoodGroupSeeder::class,
+            StoreSeeder::class,
+            CustomerSeeder::class,
+            OrderSeeder::class,
+            FoodSeeder::class
         ]);
     }
 }
