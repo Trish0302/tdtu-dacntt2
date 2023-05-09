@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\API\PaymentController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', [PaymentController::class, 'atm']);
+Route::get('/test', function (Request $request) {
+    return $request;
 });
