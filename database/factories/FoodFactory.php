@@ -17,8 +17,8 @@ class FoodFactory extends Factory
             'name' => $this->faker->name(),
             'slug' => $this->faker->slug(2, false),
             'description' => $this->faker->text(),
-            'price' => $this->faker->randomNumber(6, true),
-            'food_group_id' => $this->faker->numberBetween(11, 44),
+            'price' => $this->faker->numberBetween(10000,1000000),
+            'food_group_id' => $this->faker->numberBetween(1, 8),
         ];
     }
 }

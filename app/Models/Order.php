@@ -5,20 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Food extends Model
+class Order extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'name',
-        'slug',
-        'description',
-        'price',
-        'food_group_id'
+        'total',
+        'address',
+        'phone',
+        'customer_id'
     ];
 
-    public function food_group()
+    public function customer()
     {
-        return $this->belongsTo(FoodGroup::class);
+        return $this->belongsTo(Customer::class);
     }
+
 }

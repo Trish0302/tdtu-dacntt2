@@ -5,20 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Food extends Model
+class Customer extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'name',
-        'slug',
-        'description',
-        'price',
-        'food_group_id'
+        'email',
+        'address',
+        'phone',
     ];
 
-    public function food_group()
-    {
-        return $this->belongsTo(FoodGroup::class);
-    }
+
 }
