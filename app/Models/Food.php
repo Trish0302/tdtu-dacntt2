@@ -21,6 +21,4 @@ class Food extends Model
     {
         return $this->belongsTo(FoodGroup::class);
     }
-
-
 }
