@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class FoodGroup extends Model
+class Food extends Model
 {
     use HasFactory;
 
@@ -13,16 +13,7 @@ class FoodGroup extends Model
         'name',
         'slug',
         'description',
-        'store_id',
+        'price',
+        'food_group_id',
     ];
-
-    public function store()
-    {
-        return $this->belongsTo(Store::class);
-    }
-
-    public function food()
-    {
-        return $this->hasMany(Food::class);
-    }
 }

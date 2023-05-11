@@ -25,4 +25,9 @@ class Store extends Model
     {
         return $this->hasMany(FoodGroup::class);
     }
+
+    public function food()
+    {
+        return $this->hasManyThrough(Food::class, FoodGroup::class);
+    }
 }
