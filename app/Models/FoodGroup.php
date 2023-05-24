@@ -20,4 +20,9 @@ class FoodGroup extends Model
     {
         return $this->belongsTo(Store::class);
     }
+
+    public function food()
+    {
+        return $this->hasMany(Food::class);
+    }
 }

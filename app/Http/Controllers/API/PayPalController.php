@@ -10,7 +10,7 @@ class PayPalController extends Controller
     /**
      * create transaction.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
      */
     public function createTransaction()
     {
@@ -20,7 +20,7 @@ class PayPalController extends Controller
     /**
      * process transaction.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function processTransaction(Request $request)
     {
@@ -38,7 +38,7 @@ class PayPalController extends Controller
                 0 => [
                     "amount" => [
                         "currency_code" => "USD",
-                        "value" => "5.00"
+                        "value" => "1.00"
                     ]
                 ]
             ]
@@ -67,7 +67,7 @@ class PayPalController extends Controller
     /**
      * success transaction.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function successTransaction(Request $request)
     {
@@ -77,9 +77,20 @@ class PayPalController extends Controller
         $response = $provider->capturePaymentOrder($request['token']);
 
         if (isset($response['status']) && $response['status'] == 'COMPLETED') {
-            return redirect()
-                ->route('createTransaction')
-                ->with('success', 'Thanh toán Paypal thành công');
+//            return redirect()
+//                ->route('createTransaction')
+//                ->with('success', 'Thanh toán bằng Paypal thành công');
+//            return redirect()->route('createTransaction',
+//                array('success' => 'Thanh toán bằng Paypal thành công',
+//                    'status' => '200', "amount"=> "5$",
+//                    "orderID" => "123456",
+//                    "orderInfo" => "test..."))->with('success', 'Thanh toán bằng Paypal thành công')->withInput();
+//            return response()->json([
+//                'name' => 'Abigail',
+//                'state' => 'CA',
+
+             echo json_encode(['message' => 'Thanh toán bằng Paypal thành công',  'status'=> '200']);
+//            ]);
         } else {
             return redirect()
                 ->route('createTransaction')
@@ -90,7 +101,7 @@ class PayPalController extends Controller
     /**
      * cancel transaction.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function cancelTransaction(Request $request)
     {

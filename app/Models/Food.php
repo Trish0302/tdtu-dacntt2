@@ -23,4 +23,5 @@ class Food extends Model
     }
 
 
+
 }
