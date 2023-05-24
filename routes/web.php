@@ -4,6 +4,7 @@ use App\Http\Controllers\API\PaymentController;
 use App\Http\Controllers\API\PayPalController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,7 +19,10 @@ use Illuminate\Http\Request;
 
 Route::get('/', [PaymentController::class, 'atm']);
 Route::get('/vnpay-payment', [\App\Http\Controllers\API\PaymentVNPAYController::class, 'payment']);
-Route::get('/test', function (Request $request) {
+Route::get('/send-mail', function (Request $request) {
+    Mail::send('emails.test', ['name' => 'test name for email'], function ($email) {
+        $email->to('letri03022001@gmail.com', 'xin chào việt nam')->subject('test mail');
+    });
     return $request;
 });
 
