@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\API;
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
@@ -56,7 +57,6 @@ class PayPalController extends Controller
             return redirect()
                 ->route('createTransaction')
                 ->with('error', 'Đã xảy ra lỗi');
-
         } else {
             return redirect()
                 ->route('createTransaction')
@@ -77,20 +77,20 @@ class PayPalController extends Controller
         $response = $provider->capturePaymentOrder($request['token']);
 
         if (isset($response['status']) && $response['status'] == 'COMPLETED') {
-//            return redirect()
-//                ->route('createTransaction')
-//                ->with('success', 'Thanh toán bằng Paypal thành công');
-//            return redirect()->route('createTransaction',
-//                array('success' => 'Thanh toán bằng Paypal thành công',
-//                    'status' => '200', "amount"=> "5$",
-//                    "orderID" => "123456",
-//                    "orderInfo" => "test..."))->with('success', 'Thanh toán bằng Paypal thành công')->withInput();
-//            return response()->json([
-//                'name' => 'Abigail',
-//                'state' => 'CA',
+            //            return redirect()
+            //                ->route('createTransaction')
+            //                ->with('success', 'Thanh toán bằng Paypal thành công');
+            //            return redirect()->route('createTransaction',
+            //                array('success' => 'Thanh toán bằng Paypal thành công',
+            //                    'status' => '200', "amount"=> "5$",
+            //                    "orderID" => "123456",
+            //                    "orderInfo" => "test..."))->with('success', 'Thanh toán bằng Paypal thành công')->withInput();
+            //            return response()->json([
+            //                'name' => 'Abigail',
+            //                'state' => 'CA',
 
-             echo json_encode(['message' => 'Thanh toán bằng Paypal thành công',  'status'=> '200']);
-//            ]);
+            echo json_encode(['message' => 'Thanh toán bằng Paypal thành công',  'status' => '200']);
+            //            ]);
         } else {
             return redirect()
                 ->route('createTransaction')
