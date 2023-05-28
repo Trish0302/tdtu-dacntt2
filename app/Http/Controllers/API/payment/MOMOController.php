@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\payment;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class PaymentController extends Controller
+class MOMOController extends Controller
 {
     function execPostRequest($url, $data)
     {
@@ -38,7 +38,7 @@ class PaymentController extends Controller
         $accessKey = 'klm05TvNBzhg7h7j';
         $secretKey = 'at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa';
         $orderInfo = "Thanh toán qua MoMo";
-        $amount = 1950302;
+        $amount = '1950302';
         $orderId = time() . "";
         $redirectUrl = "http://localhost:8000/test";
         $ipnUrl = "http://localhost:8000/test";
