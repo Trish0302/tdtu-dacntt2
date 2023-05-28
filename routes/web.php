@@ -17,16 +17,17 @@ use Illuminate\Http\Request;
 |
 */
 
-// Payment
+// VNPAY
 Route::get('/payment/vnpay', [VNPAYController::class, 'payment']);
 
+// PayPal
+Route::get('/payment/paypal/create-transaction', [PayPalController::class, 'createTransaction'])->name('createTransaction');
+Route::get('/payment/paypal/process-transaction', [PayPalController::class, 'processTransaction'])->name('processTransaction');
+Route::get('/payment/paypal/success-transaction', [PayPalController::class, 'successTransaction'])->name('successTransaction');
+Route::get('/payment/paypal/cancel-transaction', [PayPalController::class, 'cancelTransaction'])->name('cancelTransaction');
+
+// MOMO
 Route::get('/payment/momo', [MOMOController::class, 'atm']);
 Route::get('/test', function (Request $request) {
     return $request;
 });
-
-// Paypal
-Route::get('paypal-create-transaction', [PayPalController::class, 'createTransaction'])->name('createTransaction');
-Route::get('process-transaction', [PayPalController::class, 'processTransaction'])->name('processTransaction');
-Route::get('success-transaction', [PayPalController::class, 'successTransaction'])->name('successTransaction');
-Route::get('cancel-transaction', [PayPalController::class, 'cancelTransaction'])->name('cancelTransaction');
