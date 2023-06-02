@@ -4,9 +4,13 @@ const navConfig = [
     path: "/",
   },
   {
-    title: "customers",
-    path: "/customers",
+    title: "users",
+    path: "/users",
   },
+  // {
+  //   title: "customers",
+  //   path: "/customers",
+  // },
   {
     title: "stores",
     path: "/stores",

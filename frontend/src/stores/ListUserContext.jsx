@@ -1,0 +1,77 @@
+import React, { useReducer, useEffect } from "react";
+import PropTypes from "prop-types";
+import { call } from "../utils/api";
+
+const initialState = {
+  list: [],
+  pagging: {},
+};
+const removeUser = (sid, state) => {
+  const temp = [...state.list];
+  const index = temp.findIndex((item) => item.id === sid);
+  temp.splice(index, 1);
+  return { ...state, list: temp };
+};
+const addUser = (item, state) => {
+  const temp = [...state.list];
+  temp.unshift(item);
+  return { ...state, list: temp };
+};
+const updateUser = (item, state) => {
+  const temp = [...state.list];
+  const index = temp.findIndex((obj) => obj.id === item.id);
+  temp[index] = item;
+  return { ...state, list: temp };
+};
+const getUser = (item, state) => {
+  const temp = [...state.list];
+  const index = temp.findIndex((obj) => obj.id === item.id);
+  return index;
+};
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "setList":
+      return { ...state, list: action.payload.list };
+    case "setTotal":
+      return { ...state, pagging: action.payload.pagging };
+    case "getUser":
+      return getUser(action.item, state);
+    case "removeUser":
+      return removeUser(action.sid, state);
+    case "addUser":
+      return addUser(action.item, state);
+    case "updateUser":
+      return updateUser(action.item, state);
+    default:
+      return { ...state };
+  }
+};
+const ListUserContext = React.createContext(initialState);
+function ListUserProvider({ children }) {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  // const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    getListUser();
+  }, []);
+  async function getListUser() {
+    const result = await call("api/users", "GET", {});
+    console.log(
+      "🚀 ~ file: ListUserContext.jsx:59 ~ getListUser ~ result:",
+      result
+    );
+
+    dispatch({ type: "setList", payload: { list: result.data } });
+    dispatch({ type: "setTotal", payload: { pagging: result.pagging } });
+    // setIsLoading(false);
+  }
+  return (
+    <ListUserContext.Provider value={{ state, dispatch }}>
+      {children}
+    </ListUserContext.Provider>
+  );
+}
+ListUserProvider.propTypes = {
+  children: PropTypes.any,
+};
+export { ListUserContext, ListUserProvider };

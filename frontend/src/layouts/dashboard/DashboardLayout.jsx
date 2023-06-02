@@ -1,4 +1,4 @@
-import { styled } from "@mui/material";
+import { Divider, styled } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import Nav from "../../components/nav/Nav";
 import Header from "../../components/header/Header";
@@ -10,13 +10,15 @@ const DashboardLayout = () => {
   const StyledRoot = styled("div")({
     display: "flex",
     minHeight: "100%",
-    overflow: "hidden",
+    // overflow: "hidden",
+    height: "auto",
   });
 
   const Main = styled("div")(({ theme }) => ({
     flexGrow: 1,
-    overflow: "auto",
-    minHeight: "100%",
+    position: "relative",
+    // overflow: "scroll",
+    // minHeight: "100%",
     // paddingTop: APP_BAR_MOBILE,
     // paddingBottom: theme.spacing(10),
     [theme.breakpoints.up("lg")]: {

@@ -15,29 +15,20 @@ import {
 import React from "react";
 import AcUnitIcon from "@mui/icons-material/AcUnit";
 import navConfig from "./NavConfig";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
 const NAV_WIDTH = 250;
 
 const Nav = () => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  console.log("🚀 ~ file: Nav.jsx:25 ~ Nav ~ pathname:", pathname);
   const [state, setState] = React.useState({
     top: false,
     left: false,
     bottom: false,
     right: false,
   });
-
-  const toggleDrawer = (anchor, open) => (event) => {
-    if (
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
-    }
-
-    setState({ ...state, [anchor]: open });
-  };
 
   const list = () => (
     <Box sx={{ width: NAV_WIDTH }} role="presentation">
@@ -46,9 +37,9 @@ const Nav = () => {
           <ListItem key={index} disablePadding>
             <ListItemButton
               onClick={() => {
-                console.log(text.path);
                 navigate(`${text.path}`);
               }}
+              selected={pathname.includes(text.title) ? true : false}
             >
               <ListItemIcon>
                 <AcUnitIcon />
@@ -66,7 +57,7 @@ const Nav = () => {
   );
 
   return (
-    <div className={`w-[250px] shadow-xl`}>
+    <div className={`min-w-[250px] shadow-xl`}>
       <React.Fragment>
         <Drawer
           // anchor={anchor}
@@ -78,6 +69,7 @@ const Nav = () => {
               width: NAV_WIDTH,
               bgcolor: "background.default",
               borderRightStyle: "dashed",
+              overflowX: "hidden",
             },
           }}
         >

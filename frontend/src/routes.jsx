@@ -5,6 +5,13 @@ import Auth from "./utils/auth";
 import DashboardLayout from "./layouts/dashboard/DashboardLayout";
 import CustomerPage from "./pages/customers/CustomerPage";
 import StoresPage from "./pages/stores/StoresPage";
+import UsersPage from "./pages/users/UsersPage";
+import { ListUserProvider } from "./stores/ListUserContext";
+import AddUserPage from "./pages/users/AddUserPage";
+import EditUserPage from "./pages/users/EditUserPage";
+import DetailUserPage from "./pages/users/DetailUserPage";
+import AddStorePage from "./pages/stores/AddStorePage";
+import { ListStoreProvider } from "./stores/ListStoreContext";
 
 const Router = () => {
   const routes = useRoutes([
@@ -33,8 +40,52 @@ const Router = () => {
           element: <CustomerPage />,
         },
         {
+          path: "users",
+          element: (
+            <ListUserProvider>
+              <UsersPage />
+            </ListUserProvider>
+          ),
+        },
+        {
+          path: "add-user",
+          element: (
+            <ListUserProvider>
+              <AddUserPage />
+            </ListUserProvider>
+          ),
+        },
+        {
+          path: "edit-user/:id",
+          element: (
+            <ListUserProvider>
+              <EditUserPage />
+            </ListUserProvider>
+          ),
+        },
+        {
+          path: "detail-user/:id",
+          element: (
+            <ListUserProvider>
+              <DetailUserPage />
+            </ListUserProvider>
+          ),
+        },
+        {
           path: "stores",
-          element: <StoresPage />,
+          element: (
+            <ListStoreProvider>
+              <StoresPage />
+            </ListStoreProvider>
+          ),
+        },
+        {
+          path: "add-store",
+          element: (
+            <ListStoreProvider>
+              <AddStorePage />
+            </ListStoreProvider>
+          ),
         },
       ],
     },
