@@ -36,9 +36,17 @@ class FoodGroupsController extends Controller
     public function index($store_id, Request $request)
     {
         try {
+            $store = Store::find($store_id)->food_groups()->orderBy('created_at', 'desc')->paginate($request->page_size ?? 5);
+
             return response()->json([
                 'message' => 'Get food group successfully!',
-                'data' => Store::find($store_id)->food_groups()->orderBy('created_at', 'desc')->paginate($request->page_size ?? 10),
+                'data' => $store->items(),
+                'paging' => [
+                    'current_page' => $store->currentPage(),
+                    'per_page' => $store->perPage(),
+                    'total' => $store->total(),
+                    'last_page' => $store->lastPage(),
+                ],
                 'status' => 200,
             ], 200);
         } catch (Exception $e) {
