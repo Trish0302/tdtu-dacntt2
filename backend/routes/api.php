@@ -5,6 +5,7 @@ use App\Http\Controllers\API\FoodGroupsController;
 use App\Http\Controllers\API\StoresController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\UsersController;
+use App\Http\Controllers\API\VouchersController;
 use App\Http\Controllers\AuthController;
 
 /*
@@ -27,6 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
         'stores' => StoresController::class,
         'stores.food_groups' => FoodGroupsController::class,
         'stores.food_groups.food' => FoodController::class,
+        'vouchers' => VouchersController::class,
     ]);
 });
 
