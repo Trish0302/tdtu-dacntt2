@@ -2788,6 +2788,10 @@
                 "rest",
                 "web service"
             ],
+            "support": {
+                "issues": "https://github.com/srmklive/laravel-paypal/issues",
+                "source": "https://github.com/srmklive/laravel-paypal/tree/3.0.21"
+            },
             "time": "2023-04-26T16:27:35+00:00"
         },
         {
@@ -7383,5 +7387,5 @@
         "php": "^7.3|^8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "plugin-api-version": "2.3.0"
 }
