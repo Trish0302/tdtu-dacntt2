@@ -40,7 +40,13 @@ class FoodController extends Controller
 
             return response()->json([
                 'message' => 'Get food list successfully!',
-                'data' => $food,
+                'data' => $food->items(),
+                'paging' => [
+                    'current_page' => $food->currentPage(),
+                    'per_page' => $food->perPage(),
+                    'total' => $food->total(),
+                    'last_page' => $food->lastPage(),
+                ],
                 'status' => 200,
             ], 200);
         } catch (Exception $err) {
