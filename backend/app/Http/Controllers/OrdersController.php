@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\OrdersRequest;
+use App\Models\Order;
+use App\Models\OrderDetail;
 use Illuminate\Http\Request;
 
 class OrdersController extends Controller
@@ -32,8 +34,35 @@ class OrdersController extends Controller
             ], 400);
         }
 
+        $sub_total = 0;
+        foreach ($request->items as $food) {
+            $sub_total += $food['quantity'] * $food['price'];
+        }
+
+        $order = Order::create([
+            'name' => $request->name,
+            'address' => $request->address,
+            'phone' => $request->phone,
+            'total' => $sub_total, // missing
+            'store_id' => $request->store_id,
+            'voucher_id' => $request->voucher_id,
+            'customer_id' => 3, // missing
+            'payment_type' => 1, // missing
+        ]);
+
+        foreach ($request->items as $food) {
+            OrderDetail::create([
+                'order_id' => $order->id,
+                'food_id' => $food['id'],
+                'quantity' => $food['quantity'],
+                'total' => $food['price'] * $food['quantity'],
+            ]);
+        }
+
         return response()->json([
-            'data' => $request->all(),
+            'message' => 'Create new order successfully!',
+            'data' => $order,
+            'status' => 200,
         ], 200);
     }
 

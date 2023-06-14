@@ -27,7 +27,6 @@ class OrdersRequest extends FormRequest
             'name' => 'required',
             'address' => 'required',
             'phone' => 'required|numeric',
-            'total' => 'required|numeric',
             'store_id' => 'required|exists:stores,id',
             'voucher_id' => 'required|exists:vouchers,id',
             'items.*.id' => 'required|exists:food,id',

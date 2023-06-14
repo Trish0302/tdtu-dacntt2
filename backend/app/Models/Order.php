@@ -14,12 +14,14 @@ class Order extends Model
         'total',
         'address',
         'phone',
-        'customer_id'
+        'customer_id',
+        'store_id',
+        'voucher_id',
+        'payment_type',
     ];
 
     public function customer()
     {
         return $this->belongsTo(Customer::class);
     }
-
 }
