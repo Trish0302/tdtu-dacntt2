@@ -39,7 +39,18 @@ class StoresController extends Controller
             $query->select($this->user_fields);
         }])->orderBy('created_at', 'desc')->paginate($request->page_size ?? 10);
 
-        return $stores;
+        $result = response()->json([
+            'data' => $stores->items(),
+            'paging' => [
+                'current_page' => $stores->currentPage(),
+                'per_page' => $stores->perPage(),
+                'total' => $stores->total(),
+                'last_page' => $stores->lastPage(),
+            ],
+            'status' => 200,
+        ], 200);
+
+        return $result;
     }
 
     /**
