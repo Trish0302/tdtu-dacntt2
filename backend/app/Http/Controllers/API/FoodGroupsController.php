@@ -12,6 +12,15 @@ use Illuminate\Http\Request;
 class FoodGroupsController extends Controller
 {
     private $fields = [
+        'food_group' => [
+            'id',
+            'name',
+            'slug',
+            'description',
+            'store_id',
+            'created_at',
+            'updated_at',
+        ],
         'store' => [
             'id',
             'name',
@@ -19,13 +28,11 @@ class FoodGroupsController extends Controller
             'description',
             'user_id',
         ],
-        'food_group' => [
+        'user' => [
+            'id',
             'name',
-            'slug',
-            'description',
-            'store_id',
-            'created_at',
-            'updated_at',
+            'email',
+            'avatar',
         ],
     ];
     /**
@@ -178,5 +185,26 @@ class FoodGroupsController extends Controller
                 'status' => 400,
             ], 400);
         }
+    }
+
+    public function getAll(Request $request)
+    {
+        $food_groups = FoodGroup::select($this->fields['food_group'])->with(['store' => function ($query) {
+            $query->select($this->fields['store'])->with(['user' => function ($query) {
+                $query->select($this->fields['user']);
+            }]);
+        }])->orderBy('updated_at', 'desc')->paginate($request->page_size ?? 10);
+
+        return response()->json([
+            'message' => 'Get food group successfully!',
+            'data' => $food_groups->items(),
+            'paging' => [
+                'current_page' => $food_groups->currentPage(),
+                'per_page' => $food_groups->perPage(),
+                'total' => $food_groups->total(),
+                'last_page' => $food_groups->lastPage(),
+            ],
+            'status' => 200,
+        ], 200);
     }
 }
