@@ -32,6 +32,7 @@ class OrdersRequest extends FormRequest
             'items.*.id' => 'required|exists:food,id',
             'items.*.quantity' => 'required|numeric',
             'items.*.price' => 'required|numeric',
+            'payment_type' => 'required|numeric',
         ];
     }
 }

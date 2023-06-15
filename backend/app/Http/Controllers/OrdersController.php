@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\API\payment\MOMOController;
 use App\Http\Requests\OrdersRequest;
 use App\Models\Order;
 use App\Models\OrderDetail;
@@ -39,6 +40,8 @@ class OrdersController extends Controller
             $sub_total += $food['quantity'] * $food['price'];
         }
 
+        $payment_type = $request->payment_type;
+        $transaction_code = time() . '_dacntt2';
         $order = Order::create([
             'name' => $request->name,
             'address' => $request->address,
@@ -47,21 +50,26 @@ class OrdersController extends Controller
             'store_id' => $request->store_id,
             'voucher_id' => $request->voucher_id,
             'customer_id' => 3, // missing
-            'payment_type' => 1, // missing
+            'payment_type' => $payment_type, // missing
+            'transaction_code' => $transaction_code,
         ]);
 
+        $order_id = $order->id;
         foreach ($request->items as $food) {
             OrderDetail::create([
-                'order_id' => $order->id,
+                'order_id' => $order_id,
                 'food_id' => $food['id'],
                 'quantity' => $food['quantity'],
                 'total' => $food['price'] * $food['quantity'],
             ]);
         }
 
+        $momoPayment = new MOMOController;
+
         return response()->json([
             'message' => 'Create new order successfully!',
             'data' => $order,
+            'confirmation_url' => $momoPayment->handle($sub_total, $transaction_code),
             'status' => 200,
         ], 200);
     }

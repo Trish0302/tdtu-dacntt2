@@ -18,6 +18,7 @@ class Order extends Model
         'store_id',
         'voucher_id',
         'payment_type',
+        'transaction_code',
     ];
 
     public function customer()
