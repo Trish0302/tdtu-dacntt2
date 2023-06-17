@@ -24,8 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
     Route::get('/logout', [AuthController::class, 'logout']);
 
-    Route::get('/api/orders/payment_result', [OrdersController::class, 'receiveTransactionConfirmation']);
-
+    Route::get('/orders/history', [OrdersController::class, 'viewHistory']);
     Route::apiResources([
         'users' => UsersController::class,
         'stores' => StoresController::class,

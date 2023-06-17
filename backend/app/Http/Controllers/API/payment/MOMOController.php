@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\payment;
 
 use App\Http\Controllers\Controller;
+use App\Models\History;
 use App\Models\Order;
 use Illuminate\Http\Request;
 
@@ -75,14 +76,29 @@ class MOMOController extends Controller
     public function respond(Request $request)
     {
         $resultCode = $request->resultCode;
-        // if ($resultCode == 0) {
-        //     return response()->json([
-        //         'message' => 'Order is paid successfully!',
-        //         'data' => Order::where('transaction_code', $request->orderId)->get(),
-        //         'success_url' => '',
-        //         'status' => 200,
-        //     ], 200);
-        // }
+        $order = Order::where('transaction_code', $request->orderId)->firstOrFail();
+        switch ($resultCode) {
+            case 0:
+                History::create([
+                    'order_id' => $order->id,
+                    'status_id' => 0,
+                    'transaction_id' => 3,
+                    'delivery_id' => 0,
+                ]);
+                break;
+            case 1006:
+            case 1002:
+            case 1005:
+            default:
+                History::create([
+                    'order_id' => $order->id,
+                    'status_id' => 0,
+                    'transaction_id' => 2,
+                    'delivery_id' => 0,
+                ]);
+                break;
+        }
+
         return redirect()->to('http://localhost:8000/');
     }
 }
