@@ -7,6 +7,7 @@ use App\Http\Requests\OrdersRequest;
 use App\Models\History;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use Exception;
 use Illuminate\Http\Request;
 use stdClass;
 
@@ -79,7 +80,18 @@ class OrdersController extends Controller
         $orders = Order::orderBy('updated_at', 'desc')
             ->paginate($request->page_size ?? 10, $this->fields['order']);
 
-        return $orders;
+        $result = response()->json([
+            'data' => $orders->items(),
+            'paging' => [
+                'current_page' => $orders->currentPage(),
+                'per_page' => $orders->perPage(),
+                'total' => $orders->total(),
+                'last_page' => $orders->lastPage(),
+            ],
+            'status' => 200,
+        ], 200);
+
+        return $result;
     }
 
     /**
@@ -151,13 +163,23 @@ class OrdersController extends Controller
      */
     public function show($id)
     {
-        $order = Order::select($this->fields['order'])->with(['detail' => function ($query) {
-            $query->select($this->fields['order_detail']);
-        }])->find($id);
+        try {
+            $order = Order::select($this->fields['order'])->with(['detail' => function ($query) {
+                $query->select($this->fields['order_detail']);
+            }])->findOrFail($id)->setAttribute('history', $this->getOrderProgresses($id));
 
-        $order->setAttribute('history', $this->getOrderProgresses($id));
-
-        return $order;
+            return response()->json([
+                'message' => 'Get order detail successfully!',
+                'data' => $order,
+                'status' => 400,
+            ], 400);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Invalid order detail. Please try again!',
+                'data' => $id,
+                'status' => 400,
+            ], 400);
+        }
     }
 
     /**
@@ -188,11 +210,23 @@ class OrdersController extends Controller
         $customer_id = $request->customer_id;
         $order_ids = Order::where('customer_id', $customer_id)->pluck('id');
 
-        $histories = [];
-        foreach ($order_ids as $order_id) {
-            $histories[] = $this->getOrderProgresses($order_id);
+        if (count($order_ids) > 0) {
+            $histories = [];
+            foreach ($order_ids as $order_id) {
+                $histories[] = $this->getOrderProgresses($order_id);
+            }
+
+            return response()->json([
+                'message' => 'Get order histories successfully!',
+                'data' => $histories,
+                'status' => 200,
+            ], 200);
         }
 
-        return $histories;
+        return response()->json([
+            'message' => 'Invalid customer. Please try again!',
+            'data' => $customer_id,
+            'status' => 400,
+        ], 400);
     }
 }
