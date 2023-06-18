@@ -25,4 +25,14 @@ class Order extends Model
     {
         return $this->belongsTo(Customer::class);
     }
+
+    public function detail()
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
+
+    public function history()
+    {
+        return $this->hasMany(History::class);
+    }
 }

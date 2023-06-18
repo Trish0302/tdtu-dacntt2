@@ -12,13 +12,74 @@ use stdClass;
 
 class OrdersController extends Controller
 {
+    private $fields = [
+        'order' => [
+            'id',
+            'name',
+            'address',
+            'phone',
+            'total',
+        ],
+        'order_detail' => [
+            'id',
+            'quantity',
+            'total',
+            'food_id',
+            'order_id',
+        ],
+        'history' => [
+            'order_id',
+            'status_id',
+            'transaction_id',
+            'delivery_id',
+            'created_at'
+        ],
+    ];
+
+    public function getOrderProgresses($order_id)
+    {
+        $order_progresses = [
+            '000' => 'Order was placed successfully.',
+            '030' => 'Order was paid successfully.',
+            '020' => 'Order was paid unsuccessfully.',
+        ];
+
+        $customer_history = History::select($this->fields['history'])
+            ->where('order_id', $order_id)->get();
+
+        $progress_result = [];
+        foreach ($customer_history as $history_item) {
+            $order_progress = $history_item->status_id . $history_item->transaction_id . $history_item->delivery_id;
+
+            $progresses = (object) [
+                'order_progress' => $order_progresses[$order_progress],
+                'timestamp' => $history_item->created_at->toDateTimeString(),
+            ];
+
+            $progress_result[] = $progresses;
+        }
+
+        $order_info = new stdClass;
+        $order_info->order_id = $history_item->order_id;
+
+        $histories = new stdClass;
+        $histories->order_info = $order_info;
+        $histories->progresses = $progress_result;
+
+        return $histories;
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $orders = Order::orderBy('updated_at', 'desc')
+            ->paginate($request->page_size ?? 10, $this->fields['order']);
+
+        return $orders;
     }
 
     /**
@@ -47,7 +108,7 @@ class OrdersController extends Controller
             'name' => $request->name,
             'address' => $request->address,
             'phone' => $request->phone,
-            'total' => $sub_total, // missing
+            'total' => $sub_total,                  // missing
             'store_id' => $request->store_id,
             'voucher_id' => $request->voucher_id,
             'customer_id' => $request->customer_id, // missing
@@ -90,7 +151,13 @@ class OrdersController extends Controller
      */
     public function show($id)
     {
-        //
+        $order = Order::select($this->fields['order'])->with(['detail' => function ($query) {
+            $query->select($this->fields['order_detail']);
+        }])->find($id);
+
+        $order->setAttribute('history', $this->getOrderProgresses($id));
+
+        return $order;
     }
 
     /**
@@ -121,34 +188,9 @@ class OrdersController extends Controller
         $customer_id = $request->customer_id;
         $order_ids = Order::where('customer_id', $customer_id)->pluck('id');
 
-        $order_progresses = [
-            '000' => 'Order was placed successfully.',
-            '030' => 'Order was paid successfully.',
-            '020' => 'Order was paid unsuccessfully.',
-        ];
         $histories = [];
         foreach ($order_ids as $order_id) {
-            $customer_history = History::select('order_id', 'status_id', 'transaction_id', 'delivery_id', 'created_at')
-                ->where('order_id', $order_id)->get();
-
-            $history = new stdClass;
-            $order_info = new stdClass;
-            $progresses = [];
-            foreach ($customer_history as $history_item) {
-                $order_progress = $history_item->status_id . $history_item->transaction_id . $history_item->delivery_id;
-
-                $progress_object = (object) [
-                    'order_progress' => $order_progresses[$order_progress],
-                    'timestamp' => $history_item->created_at->toDateTimeString(),
-                ];
-                $progresses[] = $progress_object;
-
-                $order_info->order_id = $history_item->order_id;
-            }
-            $history->order_info = $order_info;
-            $history->progresses = $progresses;
-
-            $histories[] = $history;
+            $histories[] = $this->getOrderProgresses($order_id);
         }
 
         return $histories;
