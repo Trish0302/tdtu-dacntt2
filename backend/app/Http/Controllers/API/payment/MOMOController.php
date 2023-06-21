@@ -79,22 +79,16 @@ class MOMOController extends Controller
         $order = Order::where('transaction_code', $request->orderId)->firstOrFail();
         switch ($resultCode) {
             case 0:
-                History::create([
-                    'order_id' => $order->id,
-                    'status_id' => 0,
-                    'transaction_id' => 3,
-                    'delivery_id' => 0,
+                $order->histories()->create([
+                    'history_id' => 2,
                 ]);
                 break;
             case 1006:
             case 1002:
             case 1005:
             default:
-                History::create([
-                    'order_id' => $order->id,
-                    'status_id' => 0,
-                    'transaction_id' => 2,
-                    'delivery_id' => 0,
+                $order->histories()->create([
+                    'history_id' => 3,
                 ]);
                 break;
         }

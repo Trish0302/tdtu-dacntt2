@@ -7,6 +7,7 @@ use App\Http\Requests\OrdersRequest;
 use App\Models\History;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\OrderHistory;
 use Exception;
 use Illuminate\Http\Request;
 use stdClass;
@@ -30,30 +31,20 @@ class OrdersController extends Controller
         ],
         'history' => [
             'order_id',
-            'status_id',
-            'transaction_id',
-            'delivery_id',
-            'created_at'
+            'history_id',
+            'created_at',
         ],
     ];
 
     public function getOrderProgresses($order_id)
     {
-        $order_progresses = [
-            '000' => 'Order was placed successfully.',
-            '030' => 'Order was paid successfully.',
-            '020' => 'Order was paid unsuccessfully.',
-        ];
-
-        $customer_history = History::select($this->fields['history'])
+        $customer_history = OrderHistory::select($this->fields['history'])
             ->where('order_id', $order_id)->get();
 
         $progress_result = [];
         foreach ($customer_history as $history_item) {
-            $order_progress = $history_item->status_id . $history_item->transaction_id . $history_item->delivery_id;
-
             $progresses = (object) [
-                'order_progress' => $order_progresses[$order_progress],
+                'order_progress' => History::find($history_item->history_id)->message,
                 'timestamp' => $history_item->created_at->toDateTimeString(),
             ];
 
@@ -77,8 +68,13 @@ class OrdersController extends Controller
      */
     public function index(Request $request)
     {
-        $orders = Order::orderBy('updated_at', 'desc')
-            ->paginate($request->page_size ?? 10, $this->fields['order']);
+        $orders = Order::orderBy('updated_at', 'desc')->paginate($request->page_size ?? 10, $this->fields['order']);
+        $orders->map(function ($order) {
+            $order->lastest_order_progress = OrderHistory::where('order_id', $order->id)
+                ->orderBy('updated_at', 'desc')
+                ->first()->history()->first()->message;
+            return $order;
+        });
 
         $result = response()->json([
             'data' => $orders->items(),
@@ -140,11 +136,8 @@ class OrdersController extends Controller
 
         $momoPayment = new MOMOController;
 
-        History::create([
-            'order_id' => $order_id,
-            'status_id' => 0,
-            'transaction_id' => 0,
-            'delivery_id' => 0,
+        $order->histories()->create([
+            'history_id' => 1,
         ]);
 
         return response()->json([

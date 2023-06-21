@@ -31,8 +31,8 @@ class Order extends Model
         return $this->hasMany(OrderDetail::class);
     }
 
-    public function history()
+    public function histories()
     {
-        return $this->hasMany(History::class);
+        return $this->hasMany(OrderHistory::class);
     }
 }
