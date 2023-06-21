@@ -171,8 +171,8 @@ class OrdersController extends Controller
             return response()->json([
                 'message' => 'Get order detail successfully!',
                 'data' => $order,
-                'status' => 400,
-            ], 400);
+                'status' => 200,
+            ], 200);
         } catch (Exception $e) {
             return response()->json([
                 'message' => 'Invalid order detail. Please try again!',
@@ -189,9 +189,52 @@ class OrdersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(OrdersRequest $request, $id)
     {
-        //
+
+        try {
+            $order = Order::findOrFail($id);
+            $order_detail = $order->detail;
+            $sub_total = 0;
+
+            foreach ($order_detail as $index => $order_item) {
+                $food_item = $request->items[$index];
+                $item_total = $food_item['price'] * $food_item['quantity'];
+
+                $order_item->update([
+                    'food_id' => $food_item['id'],
+                    'quantity' => $food_item['quantity'],
+                    'total' => $item_total,
+                ]);
+
+                $sub_total += $item_total;
+            }
+
+            $order->update([
+                'name' => $request->name,
+                'address' => $request->address,
+                'phone' => $request->phone,
+                'total' => $sub_total,                      // missing
+                'store_id' => $request->store_id,
+                'voucher_id' => $request->voucher_id,
+                'customer_id' => $request->customer_id,     // missing
+                'payment_type' => $request->payment_type,   // missing
+            ]);
+
+            return response()->json([
+                'message' => 'Edit order successfully!',
+                'data' => true,
+                'status' => 200,
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Invalid order. Please try again!',
+                'data' => $id,
+                'status' => 400,
+            ], 400);
+        }
+
+        return $order;
     }
 
     /**
@@ -202,7 +245,24 @@ class OrdersController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $order = Order::findOrFail($id);
+            $order->detail()->delete();
+            $order->history()->delete();
+            $order->delete();
+
+            return response()->json([
+                'message' => 'Delete order successfully!',
+                'data' => true,
+                'status' => 200,
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Invalid order. Please try again!',
+                'data' => $id,
+                'status' => 400,
+            ], 400);
+        }
     }
 
     public function viewHistory(Request $request)
