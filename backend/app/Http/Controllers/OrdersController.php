@@ -68,7 +68,15 @@ class OrdersController extends Controller
      */
     public function index(Request $request)
     {
-        $orders = Order::orderBy('updated_at', 'desc')->paginate($request->page_size ?? 10, $this->fields['order']);
+        if ($request->exists('customer_id')) {
+            $orders = Order::where('customer_id', $request->customer_id);
+        } else if ($request->exists('store_id')) {
+            $orders = Order::where('store_id', $request->store_id);
+        } else {
+            $orders = Order::select($this->fields['order']);
+        }
+
+        $orders = $orders->orderBy('updated_at', 'desc')->paginate($request->page_size ?? 10, $this->fields['order']);
         $orders->map(function ($order) {
             $order->lastest_order_progress = OrderHistory::where('order_id', $order->id)
                 ->orderBy('updated_at', 'desc')
@@ -256,30 +264,5 @@ class OrdersController extends Controller
                 'status' => 400,
             ], 400);
         }
-    }
-
-    public function viewHistory(Request $request)
-    {
-        $customer_id = $request->customer_id;
-        $order_ids = Order::where('customer_id', $customer_id)->pluck('id');
-
-        if (count($order_ids) > 0) {
-            $histories = [];
-            foreach ($order_ids as $order_id) {
-                $histories[] = $this->getOrderProgresses($order_id);
-            }
-
-            return response()->json([
-                'message' => 'Get order histories successfully!',
-                'data' => $histories,
-                'status' => 200,
-            ], 200);
-        }
-
-        return response()->json([
-            'message' => 'Invalid customer. Please try again!',
-            'data' => $customer_id,
-            'status' => 400,
-        ], 400);
     }
 }
