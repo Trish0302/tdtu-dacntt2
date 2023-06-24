@@ -14,7 +14,11 @@ class Order extends Model
         'total',
         'address',
         'phone',
-        'customer_id'
+        'customer_id',
+        'store_id',
+        'voucher_id',
+        'payment_type',
+        'transaction_code',
     ];
 
     public function customer()
@@ -22,4 +26,13 @@ class Order extends Model
         return $this->belongsTo(Customer::class);
     }
 
+    public function detail()
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
+
+    public function histories()
+    {
+        return $this->hasMany(OrderHistory::class);
+    }
 }
