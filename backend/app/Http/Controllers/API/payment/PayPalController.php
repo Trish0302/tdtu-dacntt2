@@ -39,7 +39,7 @@ class PayPalController extends Controller
                 0 => [
                     "amount" => [
                         "currency_code" => "USD",
-                        "value" => "100000.00"
+                        "value" => "0.1"
                     ]
                 ]
             ]

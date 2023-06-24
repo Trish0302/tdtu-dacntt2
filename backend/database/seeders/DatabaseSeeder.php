@@ -21,7 +21,11 @@ class DatabaseSeeder extends Seeder
             StoreSeeder::class,
             CustomerSeeder::class,
             OrderSeeder::class,
-            FoodSeeder::class
+            FoodSeeder::class,
+            StatusSeeder::class,
+            VoucherSeeder::class,
+            TransactionSeeder::class,
+            DeliverySeeder::class
         ]);
     }
 }

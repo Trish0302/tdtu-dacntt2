@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\API\payment\MOMOController;
 use App\Http\Controllers\API\payment\VNPAYController;
-use App\Http\Controllers\API\PayPalController;
+use App\Http\Controllers\API\payment\PayPalController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 

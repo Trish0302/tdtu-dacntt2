@@ -20,6 +20,26 @@ class FoodController extends Controller
             'food.price',
             'food.food_group_id',
         ],
+        'food_group' => [
+            'id',
+            'name',
+            'slug',
+            'description',
+            'store_id',
+        ],
+        'store' => [
+            'id',
+            'name',
+            'address',
+            'description',
+            'user_id',
+        ],
+        'user' => [
+            'id',
+            'name',
+            'email',
+            'avatar',
+        ],
     ];
 
     /**
@@ -40,7 +60,13 @@ class FoodController extends Controller
 
             return response()->json([
                 'message' => 'Get food list successfully!',
-                'data' => $food,
+                'data' => $food->items(),
+                'paging' => [
+                    'current_page' => $food->currentPage(),
+                    'per_page' => $food->perPage(),
+                    'total' => $food->total(),
+                    'last_page' => $food->lastPage(),
+                ],
                 'status' => 200,
             ], 200);
         } catch (Exception $err) {
@@ -165,5 +191,26 @@ class FoodController extends Controller
                 'status' => 400,
             ], 400);
         }
+    }
+
+    public function getAll(Request $request)
+    {
+        $food_groups = Food::select($this->fields['food'])->with(['food_group' => function ($query) {
+            $query->select($this->fields['food_group'])->with(['store' => function ($query) {
+                $query->select($this->fields['store']);
+            }]);
+        }])->orderBy('updated_at', 'desc')->paginate($request->page_size ?? 10);
+
+        return response()->json([
+            'message' => 'Get food list successfully!',
+            'data' => $food_groups->items(),
+            'paging' => [
+                'current_page' => $food_groups->currentPage(),
+                'per_page' => $food_groups->perPage(),
+                'total' => $food_groups->total(),
+                'last_page' => $food_groups->lastPage(),
+            ],
+            'status' => 200,
+        ], 200);
     }
 }
