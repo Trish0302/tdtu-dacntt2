@@ -26,9 +26,6 @@ class PaymentController extends Controller
                     'history_id' => 2,
                 ]);
                 break;
-            case 1006:
-            case 1002:
-            case 1005:
             default:
                 $order->histories()->create([
                     'history_id' => 3,
