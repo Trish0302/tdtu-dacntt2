@@ -3,9 +3,6 @@
 namespace App\Http\Controllers\API\payment;
 
 use App\Http\Controllers\Controller;
-use App\Models\History;
-use App\Models\Order;
-use Illuminate\Http\Request;
 
 class MOMOController extends Controller
 {
@@ -41,8 +38,8 @@ class MOMOController extends Controller
         $secretKey = 'at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa';
         $orderInfo = "Thanh toán qua MoMo";
         // $orderId = time() . "";
-        $redirectUrl = "http://localhost:8000/api/payment/momo/respond";
-        $ipnUrl = "http://localhost:8000/api/payment/momo/respond";
+        $redirectUrl = "http://localhost:8000/api/payment/respond";
+        $ipnUrl = "http://localhost:8000/api/payment/respond";
         $extraData = "";
 
         $requestId = time() . "";
@@ -71,28 +68,5 @@ class MOMOController extends Controller
         // header('Location: ' . $jsonResult['payUrl']);
 
         return $jsonResult['payUrl'];
-    }
-
-    public function respond(Request $request)
-    {
-        $resultCode = $request->resultCode;
-        $order = Order::where('transaction_code', $request->orderId)->firstOrFail();
-        switch ($resultCode) {
-            case 0:
-                $order->histories()->create([
-                    'history_id' => 2,
-                ]);
-                break;
-            case 1006:
-            case 1002:
-            case 1005:
-            default:
-                $order->histories()->create([
-                    'history_id' => 3,
-                ]);
-                break;
-        }
-
-        return redirect()->to('http://localhost:8000/');
     }
 }

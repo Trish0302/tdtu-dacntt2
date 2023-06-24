@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\API\payment\MOMOController;
+use App\Http\Controllers\API\payment\VNPAYController;
 use App\Http\Requests\OrdersRequest;
 use App\Models\History;
 use App\Models\Order;
@@ -142,7 +143,13 @@ class OrdersController extends Controller
             ]);
         }
 
-        $momoPayment = new MOMOController;
+        if ($payment_type == 1) {
+            $momo_payment = new MOMOController;
+            $confirmation_url = $momo_payment->handle($sub_total, $transaction_code);
+        } else if ($payment_type == 2) {
+            $vnp_payment = new VNPAYController;
+            $confirmation_url = $vnp_payment->payment($sub_total * 100, $transaction_code)['data'];
+        }
 
         $order->histories()->create([
             'history_id' => 1,
@@ -151,7 +158,7 @@ class OrdersController extends Controller
         return response()->json([
             'message' => 'Create new order successfully!',
             'data' => $order,
-            'confirmation_url' => $momoPayment->handle($sub_total, $transaction_code),
+            'confirmation_url' => $confirmation_url,
             'status' => 200,
         ], 200);
     }

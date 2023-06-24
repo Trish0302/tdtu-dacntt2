@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\API\FoodController;
 use App\Http\Controllers\API\FoodGroupsController;
-use App\Http\Controllers\API\payment\MOMOController;
+use App\Http\Controllers\API\payment\PaymentController;
 use App\Http\Controllers\API\StoresController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\UsersController;
@@ -37,5 +37,5 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
-// MOMO PAYMENT
-Route::get('/payment/momo/respond', [MOMOController::class, 'respond']);
+// Payment response
+Route::get('/payment/respond', [PaymentController::class, 'respond']);

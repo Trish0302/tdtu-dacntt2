@@ -17,12 +17,9 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/', function () {
-    return 'welcome';
+Route::get('/', function (Request $request) {
+    return $request->all();
 });
-
-// VNPAY
-Route::get('/payment/vnpay', [VNPAYController::class, 'payment']);
 
 // PayPal
 Route::get('/payment/paypal/create-transaction', [PayPalController::class, 'createTransaction'])->name('createTransaction');
