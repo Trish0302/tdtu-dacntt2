@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\FoodController;
 use App\Http\Controllers\API\FoodGroupsController;
+use App\Http\Controllers\API\payment\MOMOController;
 use App\Http\Controllers\API\StoresController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\UsersController;
@@ -23,6 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
     Route::get('/logout', [AuthController::class, 'logout']);
 
+    Route::get('/orders/history', [OrdersController::class, 'viewHistory']);
     Route::apiResources([
         'users' => UsersController::class,
         'stores' => StoresController::class,
@@ -34,3 +36,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
+
+// MOMO PAYMENT
+Route::get('/payment/momo/respond', [MOMOController::class, 'respond']);

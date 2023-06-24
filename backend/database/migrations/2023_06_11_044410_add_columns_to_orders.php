@@ -15,6 +15,7 @@ class AddColumnsToOrders extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             $table->integer('payment_type');
+            $table->string('transaction_code');
             $table->integer('store_id');
             $table->integer('voucher_id');
         });
@@ -28,7 +29,7 @@ class AddColumnsToOrders extends Migration
     public function down()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn(['payment_type', 'store_id', 'voucher_id']);
+            $table->dropColumn(['payment_type', 'store_id', 'voucher_id', 'transaction_code']);
         });
     }
 }

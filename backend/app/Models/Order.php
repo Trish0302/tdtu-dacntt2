@@ -18,10 +18,21 @@ class Order extends Model
         'store_id',
         'voucher_id',
         'payment_type',
+        'transaction_code',
     ];
 
     public function customer()
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function detail()
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
+
+    public function histories()
+    {
+        return $this->hasMany(OrderHistory::class);
     }
 }
