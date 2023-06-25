@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
 use App\Http\Requests\RegisterUserRequest;
+use App\Models\Customer;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -36,7 +37,13 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $user = User::where('email', $request->email)->first();
+        if ($request->type == 'admin') {
+            $user = User::where('email', $request->email)->first();
+            $abilities = ['admin'];
+        } else if ($request->type == 'customer') {
+            $user = Customer::where('email', $request->email)->first();
+            $abilities = ['customer'];
+        }
 
         if (!$user) {
             return response()->json([
@@ -52,7 +59,7 @@ class AuthController extends Controller
             ], 401);
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken('auth_token', $abilities)->plainTextToken;
 
         return response()->json([
             'access_token' => $token,

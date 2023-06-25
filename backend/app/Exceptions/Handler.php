@@ -2,8 +2,10 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Auth\AuthenticationException;
+use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -38,9 +40,21 @@ class Handler extends ExceptionHandler
             if ($request->is('api/**')) {
                 return response()->json([
                     'status' => 404,
-                    'message'=> "Đăng nhập không hợp lệ",
+                    'message' => "Đăng nhập không hợp lệ",
                 ], 404);
             };
         });
+    }
+
+    public function render($request, Throwable $exception)
+    {
+        if ($exception instanceof AuthorizationException) {
+            return response()->json([
+                'message' => 'Unpermitted request!',
+                'status' => 400,
+            ], 400);
+        }
+
+        return parent::render($request, $exception);
     }
 }
