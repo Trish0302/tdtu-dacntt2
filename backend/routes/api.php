@@ -39,3 +39,4 @@ Route::post('/register', [AuthController::class, 'register']);
 
 // Payment response
 Route::get('/payment/respond', [PaymentController::class, 'respond']);
+

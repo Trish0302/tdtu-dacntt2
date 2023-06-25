@@ -33,6 +33,15 @@ class PaymentController extends Controller
                 break;
         }
 
-        return redirect()->to('http://localhost:8000/');
+        $current_history = $order->histories()->latest()->first()->history()->first();
+
+        return response()->json(
+            [
+                'message' => $current_history->message,
+                'data' => $current_history->id,
+                'status' => 200,
+            ],
+            200
+        );
     }
 }
