@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CustomerRequest;
 use App\Models\Customer;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -15,6 +16,8 @@ class CustomersController extends Controller
         'name',
         'email',
         'phone',
+        'avatar',
+        'address',
         'created_at',
         'updated_at',
     ];
@@ -53,13 +56,15 @@ class CustomersController extends Controller
         Customer::create([
             'name' => $request->name,
             'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'avatar' => $request->avatar,
             'phone' => $request->phone,
             'address' => $request->address,
             'password' => Hash::make($request->password),
         ]);
 
         return response()->json([
-            'message' => 'Create new user successfully!',
+            'message' => 'Create new customer successfully!',
             'status' => 200,
         ], 200);
     }
@@ -72,7 +77,18 @@ class CustomersController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            return response()->json([
+                'message' => 'Get customer information successfully!',
+                'data' => Customer::findOrFail($id, $this->fields),
+                'status' => 200,
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Invalid user. Please try again!',
+                'status' => 400,
+            ], 400);
+        }
     }
 
     /**
@@ -82,9 +98,32 @@ class CustomersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(CustomerRequest $request, $id)
     {
-        //
+        try {
+            $customer = Customer::findOrFail($id, $this->fields);
+
+            $customer->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'avatar' => $request->avatar ? $request->avatar : $customer->avatar,
+                'phone' => $request->phone,
+                'address' => $request->address,
+                'password' => Hash::make($request->password),
+            ]);
+
+            return response()->json([
+                'message' => 'Update customer successfully!',
+                'data' => $customer,
+                'status' => 200,
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Invalid customer. Please try again!',
+                'status' => 400,
+            ], 400);
+        }
     }
 
     /**
@@ -95,6 +134,17 @@ class CustomersController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            return response()->json([
+                'message' => 'Delete customer successfully!',
+                'data' => Customer::findOrFail($id)->delete(),
+                'status' => 200,
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Invalid customer. Please try again!',
+                'status' => 400,
+            ], 400);
+        }
     }
 }

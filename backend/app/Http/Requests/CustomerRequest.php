@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Request;
 
 class CustomerRequest extends FormRequest
 {
@@ -23,6 +24,13 @@ class CustomerRequest extends FormRequest
      */
     public function rules()
     {
-        return [];
+        return [
+            'name' => 'required',
+            'email' => 'required|email|unique:customers,email,' . (Request::instance()->id ?? ''),
+            'password' => 'required|confirmed|min:8',
+            'address' => 'required',
+            'phone' => 'required',
+            'avatar' => 'nullable',
+        ];
     }
 }
