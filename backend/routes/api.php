@@ -4,6 +4,7 @@ use App\Http\Controllers\API\FoodController;
 use App\Http\Controllers\API\FoodGroupsController;
 use App\Http\Controllers\API\payment\PaymentController;
 use App\Http\Controllers\API\StoresController;
+use App\Http\Controllers\API\VouchersController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\UsersController;
 use App\Http\Controllers\AuthController;
@@ -24,6 +25,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
     Route::get('/logout', [AuthController::class, 'logout']);
 
+    Route::get('/food-groups', [FoodGroupsController::class, 'getAll']);
+    Route::get('/food', [FoodController::class, 'getAll']);
+
+
     Route::get('/orders/history', [OrdersController::class, 'viewHistory']);
     Route::apiResources([
         'users' => UsersController::class,
@@ -31,6 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
         'stores.food_groups' => FoodGroupsController::class,
         'stores.food_groups.food' => FoodController::class,
         'orders' => OrdersController::class,
+        'vouchers' => VouchersController::class,
     ]);
 });
 
