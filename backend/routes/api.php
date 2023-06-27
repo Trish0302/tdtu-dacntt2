@@ -21,6 +21,8 @@ use App\Http\Controllers\OrdersController;
 |
 */
 
+Route::post('/login', [AuthController::class, 'login']);
+
 Route::middleware('auth:sanctum', 'ability:admin,customer')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
     Route::get('/logout', [AuthController::class, 'logout']);
@@ -44,8 +46,6 @@ Route::middleware('auth:sanctum', 'ability:customer')->group(function () {
         return 'hello';
     });
 });
-
-Route::post('/login', [AuthController::class, 'login']);
 
 // Payment response
 Route::get('/payment/respond', [PaymentController::class, 'respond']);
