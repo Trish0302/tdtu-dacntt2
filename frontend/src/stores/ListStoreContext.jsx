@@ -1,10 +1,9 @@
-import React, { useReducer, useEffect } from "react";
+import React, { useReducer, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { call } from "../utils/api";
 
 const initialState = {
   list: [],
-  pagging: {},
 };
 const removeStore = (sid, state) => {
   const temp = [...state.list];
@@ -32,8 +31,8 @@ const reducer = (state, action) => {
   switch (action.type) {
     case "setList":
       return { ...state, list: action.payload.list };
-    case "setTotal":
-      return { ...state, pagging: action.payload.pagging };
+    case "getTotal":
+      return { ...state, total: action.payload.total };
     case "getStore":
       return getStore(action.item, state);
     case "removeStore":
@@ -49,24 +48,24 @@ const reducer = (state, action) => {
 const ListStoreContext = React.createContext(initialState);
 function ListStoreProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
-  // const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getListStore();
   }, []);
   async function getListStore() {
-    const result = await call("api/stores", "GET", {});
+    const result = await call("api/stores?page=1&page_size=5", "GET", {});
     console.log(
       "🚀 ~ file: ListStoreContext.jsx:59 ~ getListStore ~ result:",
       result
     );
 
     dispatch({ type: "setList", payload: { list: result.data } });
-    dispatch({ type: "setTotal", payload: { pagging: result.pagging } });
-    // setIsLoading(false);
+    dispatch({ type: "getTotal", payload: { total: result.paging.total } });
+    setIsLoading(false);
   }
   return (
-    <ListStoreContext.Provider value={{ state, dispatch }}>
+    <ListStoreContext.Provider value={{ state, dispatch, isLoading }}>
       {children}
     </ListStoreContext.Provider>
   );

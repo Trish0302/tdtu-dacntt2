@@ -5,24 +5,24 @@ import { call } from "../utils/api";
 const initialState = {
   list: [],
 };
-const removeUser = (sid, state) => {
+const removeVoucher = (sid, state) => {
   const temp = [...state.list];
   const index = temp.findIndex((item) => item.id === sid);
   temp.splice(index, 1);
   return { ...state, list: temp };
 };
-const addUser = (item, state) => {
+const addVoucher = (item, state) => {
   const temp = [...state.list];
   temp.unshift(item);
   return { ...state, list: temp };
 };
-const updateUser = (item, state) => {
+const updateVoucher = (item, state) => {
   const temp = [...state.list];
   const index = temp.findIndex((obj) => obj.id === item.id);
   temp[index] = item;
   return { ...state, list: temp };
 };
-const getUser = (item, state) => {
+const getVoucher = (item, state) => {
   const temp = [...state.list];
   const index = temp.findIndex((obj) => obj.id === item.id);
   return index;
@@ -33,44 +33,44 @@ const reducer = (state, action) => {
       return { ...state, list: action.payload.list };
     case "getTotal":
       return { ...state, total: action.payload.total };
-    case "getUser":
-      return getUser(action.item, state);
-    case "removeUser":
-      return removeUser(action.sid, state);
-    case "addUser":
-      return addUser(action.item, state);
-    case "updateUser":
-      return updateUser(action.item, state);
+    case "getVoucher":
+      return getVoucher(action.item, state);
+    case "removeVoucher":
+      return removeVoucher(action.sid, state);
+    case "addVoucher":
+      return addVoucher(action.item, state);
+    case "updateVoucher":
+      return updateVoucher(action.item, state);
     default:
       return { ...state };
   }
 };
-const ListUserContext = React.createContext(initialState);
-function ListUserProvider({ children }) {
+const ListVoucherContext = React.createContext(initialState);
+function ListVoucherProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getListUser();
+    getListVoucher();
   }, []);
-  async function getListUser() {
-    const result = await call("api/users?page=1&page_size=5", "GET", {});
+  async function getListVoucher() {
+    const result = await call("api/vouchers?page=1&page_size=5", "GET", {});
     console.log(
-      "🚀 ~ file: ListUserContext.jsx:59 ~ getListUser ~ result:",
+      "🚀 ~ file: ListVoucherContext.jsx:59 ~ getListVoucher ~ result:",
       result
     );
 
     dispatch({ type: "setList", payload: { list: result.data } });
-    dispatch({ type: "getTotal", payload: { total: result.total } });
+    dispatch({ type: "getTotal", payload: { total: result.paging.total } });
     setIsLoading(false);
   }
   return (
-    <ListUserContext.Provider value={{ state, dispatch, isLoading }}>
+    <ListVoucherContext.Provider value={{ state, dispatch, isLoading }}>
       {children}
-    </ListUserContext.Provider>
+    </ListVoucherContext.Provider>
   );
 }
-ListUserProvider.propTypes = {
+ListVoucherProvider.propTypes = {
   children: PropTypes.any,
 };
-export { ListUserContext, ListUserProvider };
+export { ListVoucherContext, ListVoucherProvider };

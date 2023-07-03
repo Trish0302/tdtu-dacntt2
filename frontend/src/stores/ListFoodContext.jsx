@@ -1,28 +1,29 @@
 import React, { useReducer, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { call } from "../utils/api";
+import { useLocation } from "react-router-dom";
 
 const initialState = {
   list: [],
 };
-const removeUser = (sid, state) => {
+const removeFood = (sid, state) => {
   const temp = [...state.list];
   const index = temp.findIndex((item) => item.id === sid);
   temp.splice(index, 1);
   return { ...state, list: temp };
 };
-const addUser = (item, state) => {
+const addFood = (item, state) => {
   const temp = [...state.list];
   temp.unshift(item);
   return { ...state, list: temp };
 };
-const updateUser = (item, state) => {
+const updateFood = (item, state) => {
   const temp = [...state.list];
   const index = temp.findIndex((obj) => obj.id === item.id);
   temp[index] = item;
   return { ...state, list: temp };
 };
-const getUser = (item, state) => {
+const getFood = (item, state) => {
   const temp = [...state.list];
   const index = temp.findIndex((obj) => obj.id === item.id);
   return index;
@@ -33,44 +34,56 @@ const reducer = (state, action) => {
       return { ...state, list: action.payload.list };
     case "getTotal":
       return { ...state, total: action.payload.total };
-    case "getUser":
-      return getUser(action.item, state);
-    case "removeUser":
-      return removeUser(action.sid, state);
-    case "addUser":
-      return addUser(action.item, state);
-    case "updateUser":
-      return updateUser(action.item, state);
+    case "getFood":
+      return getFood(action.item, state);
+    case "removeFood":
+      return removeFood(action.sid, state);
+    case "addFood":
+      return addFood(action.item, state);
+    case "updateFood":
+      return updateFood(action.item, state);
     default:
       return { ...state };
   }
 };
-const ListUserContext = React.createContext(initialState);
-function ListUserProvider({ children }) {
+const ListFoodContext = React.createContext(initialState);
+function ListFoodProvider({ children }) {
+  const location = useLocation();
+
   const [state, dispatch] = useReducer(reducer, initialState);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getListUser();
+    getListFood();
   }, []);
-  async function getListUser() {
-    const result = await call("api/users?page=1&page_size=5", "GET", {});
+  async function getListFood() {
+    let result;
+
+    if (location.state) {
+      result = await call(
+        `api/stores/${location.state.storeId}/food_groups/${location.state.foodGroupId}/food?page=1&page_size=5`,
+        "GET",
+        {}
+      );
+    } else {
+      result = await call(`api/food?page=1&page_size=5`, "GET", {});
+    }
     console.log(
-      "🚀 ~ file: ListUserContext.jsx:59 ~ getListUser ~ result:",
+      "🚀 ~ file: ListFoodContext.jsx:71 ~ getListFood ~ result:",
       result
     );
 
     dispatch({ type: "setList", payload: { list: result.data } });
-    dispatch({ type: "getTotal", payload: { total: result.total } });
+    dispatch({ type: "getTotal", payload: { total: result.paging.total } });
     setIsLoading(false);
   }
   return (
-    <ListUserContext.Provider value={{ state, dispatch, isLoading }}>
+    <ListFoodContext.Provider value={{ state, dispatch, isLoading }}>
       {children}
-    </ListUserContext.Provider>
+    </ListFoodContext.Provider>
   );
 }
-ListUserProvider.propTypes = {
+ListFoodProvider.propTypes = {
   children: PropTypes.any,
 };
-export { ListUserContext, ListUserProvider };
+export { ListFoodContext, ListFoodProvider };

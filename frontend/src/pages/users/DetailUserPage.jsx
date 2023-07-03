@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
+  Box,
   Button,
   Card,
   CircularProgress,
@@ -9,7 +10,9 @@ import {
   IconButton,
   InputAdornment,
   InputLabel,
+  MenuItem,
   OutlinedInput,
+  Select,
   Stack,
   TextField,
 } from "@mui/material";
@@ -58,8 +61,8 @@ const DetailUserPage = () => {
   return (
     <>
       {!loading ? (
-        <div className="h-screen bg-violet-50 px-5 pt-24 flex flex-col">
-          <p>Thông tin User</p>
+        <div className="h-full bg-violet-50 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
+          <p className="font-semibold mb-2 text-lg">User Information</p>
           <Divider />
           <Stack
             direction="row"
@@ -68,20 +71,40 @@ const DetailUserPage = () => {
             px={4}
             sx={{ display: "flex" }}
           >
-            <Card>Upload hinh</Card>
-            <Card sx={{ py: 2, flex: 1 }}>
+            <Card
+              sx={{ p: 2, flex: 1, flexBasis: "30%" }}
+              className="basis-1/4"
+            >
+              <div className="w-full flex flex-col gap-4 justify-center items-center h-full">
+                <p className="font-semibold text-lg">Profile Image</p>
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Blackpink_Lisa_GMP_240622.png/800px-Blackpink_Lisa_GMP_240622.png"
+                  className="h-[300px] w-fit object-cover rounded-lg shadow-md block flex-1"
+                />
+              </div>
+            </Card>
+            <Card sx={{ py: 2, flexBasis: "60%" }}>
               <div className="px-4 flex justify-between items-center mb-2">
-                <p>Thông tin cá nhân</p>
-                {/* <small>Hãy xác nhận thông tin thật kỹ trước khi lưu</small> */}
+                <p className="font-semibold">Profile Information</p>
               </div>
               <Divider />
               <Stack direction="row" p={2} spacing={2}>
-                <Stack direction="column" spacing={2}>
+                <Stack direction="column" spacing={2} sx={{ width: "100%" }}>
                   <TextField
                     variant="outlined"
-                    placeholder="Mã định danh"
-                    label="Mã định danh"
-                    defaultValue={id}
+                    placeholder="Full Name"
+                    name="name"
+                    onChange={changeHandler}
+                    defaultValue={updateUser.name}
+                    label="Full Name"
+                  />
+                  <TextField
+                    variant="outlined"
+                    placeholder="Phone"
+                    name="phone"
+                    onChange={changeHandler}
+                    defaultValue={updateUser.phone}
+                    label="Phone"
                   />
                   <TextField
                     variant="outlined"
@@ -91,98 +114,56 @@ const DetailUserPage = () => {
                     defaultValue={updateUser.email}
                     label="Email"
                   />
-                  <TextField
-                    variant="outlined"
-                    placeholder="Địa chỉ"
-                    label="Địa chỉ"
-                  />
                 </Stack>
-                <Stack direction="column" spacing={2}>
-                  <TextField
-                    variant="outlined"
-                    placeholder="Họ tên"
-                    name="name"
-                    onChange={changeHandler}
-                    defaultValue={updateUser.name}
-                    label="Họ Tên"
-                  />
-                  <TextField
-                    variant="outlined"
-                    placeholder="Số điện thoại"
-                    name="phone"
-                    onChange={changeHandler}
-                    defaultValue={updateUser.phone}
-                    label="Số điện thoại"
-                  />
-                </Stack>
+                <Stack direction="column" spacing={2}></Stack>
               </Stack>
               <Divider />
               <div className="my-2 px-4">
-                <p>Thông tin chức vụ</p>
+                <p className="font-semibold pb-1">Position Information</p>
+                <div className="flex w-full justify-between pb-1">
+                  <Box sx={{ minWidth: 300 }}>
+                    <InputLabel className="mb-2">Role</InputLabel>
+                    <FormControl fullWidth>
+                      <InputLabel id="role">Role</InputLabel>
+                      <Select
+                        labelId="role"
+                        id="demo-simple-select"
+                        value={null}
+                        label="Role"
+                        disabled
+                      >
+                        <MenuItem value={10}>Ten</MenuItem>
+                        <MenuItem value={20}>Twenty</MenuItem>
+                        <MenuItem value={30}>Thirty</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Box>
+                  <Box sx={{ minWidth: 300 }}>
+                    <InputLabel className="mb-2">Belong to store</InputLabel>
+                    <FormControl fullWidth>
+                      <InputLabel id="role">Belong to store</InputLabel>
+                      <Select
+                        labelId="role"
+                        id="demo-simple-select"
+                        value={null}
+                        label="Belong to store"
+                        disabled
+                      >
+                        <MenuItem value={10}>Ten</MenuItem>
+                        <MenuItem value={20}>Twenty</MenuItem>
+                        <MenuItem value={30}>Thirty</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Box>
+                </div>
               </div>
-              <Divider />
-              {/* <div className="mt-2 px-4">
-              <p>Mật khẩu</p>
-              <Stack direction="column" spacing={2} width={500} mt={2}>
-                <FormControl variant="outlined">
-                  <InputLabel htmlFor="outlined-adornment-password">
-                    Mật khẩu
-                  </InputLabel>
-                  <OutlinedInput
-                    id="outlined-adornment-password"
-                    type={showPassword ? "text" : "password"}
-                    onChange={changeHandler}
-                    defaultValue={updateUser.password}
-                    name="password"
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
-                          edge="end"
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                    label="Password"
-                  />
-                </FormControl>
-                <FormControl variant="outlined">
-                  <InputLabel htmlFor="outlined-adornment-confirm-password">
-                    Xác nhận mật khẩu
-                  </InputLabel>
-                  <OutlinedInput
-                    id="outlined-adornment-confirm-password"
-                    defaultValue={updateUser.password_confirmation}
-                    type={showPasswordConfirm ? "text" : "password"}
-                    onChange={changeHandler}
-                    name="password_confirmation"
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowPasswordConfirm}
-                          edge="end"
-                        >
-                          {showPasswordConfirm ? (
-                            <VisibilityOff />
-                          ) : (
-                            <Visibility />
-                          )}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                    label="Password"
-                  />
-                </FormControl>
-              </Stack>
-            </div> */}
             </Card>
           </Stack>
         </div>
       ) : (
-        <CircularProgress />
+        <div className="w-full h-full flex items-center justify-center bg-violet-50">
+          <CircularProgress color="secondary" />
+        </div>
       )}
     </>
   );

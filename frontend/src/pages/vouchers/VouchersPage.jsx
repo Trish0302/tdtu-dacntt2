@@ -1,10 +1,8 @@
-import React from "react";
-import { useContext, useEffect, useState } from "react";
-import { authContext } from "../../utils/auth";
-import { call } from "../../utils/api";
-import { AsyncStorage } from "AsyncStorage";
+import { useConfirm } from "material-ui-confirm";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Search from "../../components/search/Search";
+import { ListVoucherContext } from "../../stores/ListVoucherContext";
+import { call } from "../../utils/api";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -13,7 +11,6 @@ import {
   Card,
   IconButton,
   LinearProgress,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -23,15 +20,14 @@ import {
   TableRow,
   Tooltip,
 } from "@mui/material";
-import { ListUserContext } from "../../stores/ListUserContext";
-import { useConfirm } from "material-ui-confirm";
 import { toast } from "react-toastify";
+import Search from "../../components/search/Search";
 
-const UsersPage = () => {
+const VouchersPage = () => {
   const confirm = useConfirm();
   const navigate = useNavigate();
 
-  const { state, dispatch, isLoading } = useContext(ListUserContext);
+  const { state, dispatch, isLoading } = useContext(ListVoucherContext);
   console.log("🚀 ~ file: UsersPage.jsx:29 ~ UsersPage ~ state:", state);
 
   // pagination
@@ -45,7 +41,7 @@ const UsersPage = () => {
     setPage(0);
     setRowsPerPage(parseInt(event.target.value, 10));
     const result = await call(
-      `api/users?page=${page + 1}&page_size=${parseInt(
+      `api/vouchers?page=${page + 1}&page_size=${parseInt(
         event.target.value,
         10
       )}`,
@@ -57,30 +53,30 @@ const UsersPage = () => {
   const handleChangePage = async (event, newPage) => {
     setPage(newPage);
     const result = await call(
-      `api/users?page=${newPage + 1}&page_size=${rowsPerPage}`,
+      `api/vouchers?page=${newPage + 1}&page_size=${rowsPerPage}`,
       "GET",
       null
     );
     dispatch({ type: "setList", payload: { list: result.data } });
   };
   const handleOpenEdit = (event) => {
-    const dataRow = JSON.parse(event.currentTarget.dataset.currentuser);
-    navigate(`/users/edit/${dataRow.id}`, { state: dataRow });
+    const dataRow = JSON.parse(event.currentTarget.dataset.currentvoucher);
+    navigate(`/vouchers/edit/${dataRow.id}`, { state: dataRow });
   };
   const handleOpenDetail = (event) => {
-    const dataRow = JSON.parse(event.currentTarget.dataset.currentuser);
-    navigate(`/users/detail/${dataRow.id}`, { state: dataRow });
+    const dataRow = JSON.parse(event.currentTarget.dataset.currentvoucher);
+    navigate(`/vouchers/detail/${dataRow.id}`, { state: dataRow });
   };
 
   const handleDelete = (event) => {
-    const dataRow = JSON.parse(event.currentTarget.dataset.currentuser);
+    const dataRow = JSON.parse(event.currentTarget.dataset.currentvoucher);
     confirm({
       confirmationButtonProps: { color: "error" },
-      description: `This will delete permanently ${dataRow.name}. You cannot undo this action`,
+      description: `This will delete permanently ${dataRow.code}. You cannot undo this action`,
     })
       .then(() => {
-        call(`api/users/${dataRow.id}`, "DELETE").then(() => {
-          dispatch({ type: "removeUser", sid: dataRow.id });
+        call(`api/vouchers/${dataRow.id}`, "DELETE").then(() => {
+          dispatch({ type: "removeVoucher", sid: dataRow.id });
           toast.success("Delete Successfully!!!", { autoClose: 1000 });
         });
       })
@@ -88,7 +84,6 @@ const UsersPage = () => {
         console.log("Deletion cancelled.");
       });
   };
-
   return (
     <div className="h-full bg-violet-50 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
       <div className="flex items-center">
@@ -98,7 +93,7 @@ const UsersPage = () => {
         </button>
         <button
           className="px-5 py-2 text-white bg-primary-500 rounded-lg font-semibold uppercase text-sm hover:opacity-75 duration-300"
-          onClick={() => navigate("/users/add")}
+          onClick={() => navigate("/vouchers/add")}
         >
           Add&nbsp;New
         </button>
@@ -115,10 +110,8 @@ const UsersPage = () => {
             <TableHead>
               <TableRow>
                 <TableCell align="left">ID</TableCell>
-                <TableCell align="left">Avatar</TableCell>
-                <TableCell align="left">Name</TableCell>
-                <TableCell align="left">Email</TableCell>
-                <TableCell align="left">Phone</TableCell>
+                <TableCell align="left">Code</TableCell>
+                <TableCell align="left">Discount</TableCell>
                 <TableCell align="right" />
               </TableRow>
             </TableHead>
@@ -128,15 +121,13 @@ const UsersPage = () => {
                 state.list.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell align="left">{user.id}</TableCell>
-                    <TableCell align="left">{user.avatar}</TableCell>
-                    <TableCell align="left">{user.name}</TableCell>
-                    <TableCell align="left">{user.email}</TableCell>
-                    <TableCell align="left">{user.phone}</TableCell>
+                    <TableCell align="left">{user.code}</TableCell>
+                    <TableCell align="left">{user.discount}</TableCell>
                     <TableCell align="right">
                       <Tooltip title="View Detail">
                         <IconButton aria-label="view">
                           <VisibilityIcon
-                            data-currentuser={JSON.stringify(user)}
+                            data-currentvoucher={JSON.stringify(user)}
                             onClick={handleOpenDetail}
                           />
                         </IconButton>
@@ -144,7 +135,7 @@ const UsersPage = () => {
                       <Tooltip title="Edit">
                         <IconButton
                           aria-label="edit"
-                          data-currentuser={JSON.stringify(user)}
+                          data-currentvoucher={JSON.stringify(user)}
                           onClick={handleOpenEdit}
                         >
                           <EditIcon />
@@ -153,7 +144,7 @@ const UsersPage = () => {
                       <Tooltip title="Delete">
                         <IconButton
                           aria-label="delete"
-                          data-currentuser={JSON.stringify(user)}
+                          data-currentvoucher={JSON.stringify(user)}
                           onClick={handleDelete}
                         >
                           <DeleteIcon />
@@ -180,4 +171,4 @@ const UsersPage = () => {
   );
 };
 
-export default UsersPage;
+export default VouchersPage;

@@ -14,12 +14,16 @@ import {
 } from "@mui/material";
 import React from "react";
 import AcUnitIcon from "@mui/icons-material/AcUnit";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 import navConfig from "./NavConfig";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useResponsive } from "ahooks";
 
-const NAV_WIDTH = 250;
+const NAV_WIDTH = "250px";
 
-const Nav = () => {
+// eslint-disable-next-line react/prop-types
+const Nav = ({ openSidebar, setOpenSidebar }) => {
+  console.log("🚀 ~ file: Nav.jsx:23 ~ Nav ~ openSidebar:", openSidebar);
   const navigate = useNavigate();
   const { pathname } = useLocation();
   console.log("🚀 ~ file: Nav.jsx:25 ~ Nav ~ pathname:", pathname);
@@ -29,41 +33,56 @@ const Nav = () => {
     bottom: false,
     right: false,
   });
+  const responsive = useResponsive();
+  // console.log("🚀 ~ file: Nav.jsx:36 ~ Nav ~ responsive:", responsive);
 
   const list = () => (
-    <Box sx={{ width: NAV_WIDTH }} role="presentation">
-      <List>
-        {navConfig.map((text, index) => (
-          <ListItem key={index} disablePadding>
-            <ListItemButton
-              onClick={() => {
-                navigate(`${text.path}`);
-              }}
-              selected={pathname.includes(text.title) ? true : false}
-            >
-              <ListItemIcon>
-                <AcUnitIcon />
-              </ListItemIcon>
-              <ListItemText
-                primary={
-                  text.title.charAt(0).toUpperCase() + text.title.slice(1)
+    <div className=" ">
+      <Box
+        sx={{ width: NAV_WIDTH }}
+        role="presentation"
+        onClick={() => setOpenSidebar(false)}
+      >
+        <List>
+          {navConfig.map((text, index) => (
+            <ListItem key={index} disablePadding>
+              <ListItemButton
+                onClick={() => {
+                  navigate(`${text.path}`);
+                }}
+                selected={
+                  pathname.split("/").includes(text.title.replace(" ", "-"))
+                    ? true
+                    : false
                 }
-              />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-    </Box>
+              >
+                <ListItemIcon>{text.icon}</ListItemIcon>
+                <ListItemText
+                  primary={
+                    text.title.charAt(0).toUpperCase() + text.title.slice(1)
+                  }
+                />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+    </div>
   );
 
   return (
-    <div className={`min-w-[250px] shadow-xl`}>
+    <div
+      className={`min-w-[250px] shadow-xl lg:block ${
+        openSidebar ? "block" : "hidden"
+      }`}
+    >
       <React.Fragment>
         <Drawer
-          // anchor={anchor}
-          open
-          // onClose={toggleDrawer(anchor, false)}
-          variant="permanent"
+          open={!responsive.lg && !responsive.xl ? openSidebar : true}
+          variant={`${
+            !responsive.lg && !responsive.xl ? "temporary" : "permanent"
+          }`}
+          onClose={() => setOpenSidebar(false)}
           PaperProps={{
             sx: {
               width: NAV_WIDTH,
@@ -72,6 +91,7 @@ const Nav = () => {
               overflowX: "hidden",
             },
           }}
+          className="shadow-xl"
         >
           <Logo />
           <ImageProfile />
@@ -86,9 +106,13 @@ const Nav = () => {
 export default Nav;
 
 const Logo = () => {
+  const navigate = useNavigate();
   return (
     <div className="w-full h-24 bg-primary-500 text-white text-center font-semibold uppercase">
-      <div className="h-full w-full flex items-center justify-center gap-2">
+      <div
+        className="h-full w-full flex items-center justify-center gap-2 cursor-pointer"
+        onClick={() => navigate("/")}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="icon icon-tabler icon-tabler-dashboard w-fit"
@@ -120,7 +144,7 @@ const ImageProfile = () => {
           sx={{ width: 80, height: 80 }}
           alt="avatar"
           className="shadow-lg"
-          src="https://images.unsplash.com/photo-1577912646606-9485d891c7ae?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=365&q=80"
+          src="https://media.vogue.mx/photos/629e751da37e812991371b08/16:9/pass/Lisa-aka-Lalisa%20Manoban-Bulgari.jpg"
         />
       </div>
       <div className="font-semibold">MrHieu</div>

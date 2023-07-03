@@ -1,0 +1,28 @@
+.hide-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* breadcrumbs */
+.breadcrumbs {
+  max-width: 1200px;
+}
+.breadcrumbs > * {
+  display: inline-block;
+  /* margin-right: 10px; */
+}
+.breadcrumbs .crumb:after {
+  /* content: url("assets/arrow-right.svg"); */
+  margin-left: 10px;
+  font-size: 10px;
+}
+/* .breadcrumbs .crumb:last-child:after {
+  display: none;
+} */
+.breadcrumbs .crumb a {
+  color: black;
+}
+
+.last-crumb {
+  font-weight: bold;
+  pointer-events: none;
+}
