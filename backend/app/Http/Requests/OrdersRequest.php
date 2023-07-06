@@ -29,6 +29,7 @@ class OrdersRequest extends FormRequest
             'phone' => 'required|numeric',
             'store_id' => 'required|exists:stores,id',
             'voucher_id' => 'required|exists:vouchers,id',
+            'customer_id' => 'required|exists:customers,id',
             'items.*.id' => 'required|exists:food,id',
             'items.*.quantity' => 'required|numeric',
             'items.*.price' => 'required|numeric',
