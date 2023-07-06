@@ -52,9 +52,9 @@ export const call = async (url, med, params) => {
     })
     .catch((err) => {
       console.log(`err = `, err.response);
-      if (err.response && err.response.data && err.response.data.message) {
-        return err.response.data.message;
-      }
-      return err;
+      // if (err.response && err.response.data && err.response.data.message) {
+      //   return err.response.data.message;
+      // }
+      return err.response;
     });
 };

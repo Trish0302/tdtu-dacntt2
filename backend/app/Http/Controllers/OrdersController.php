@@ -288,7 +288,7 @@ class OrdersController extends Controller
         try {
             $order = Order::findOrFail($id);
             $order->detail()->delete();
-            $order->history()->delete();
+            $order->histories()->delete();
             $order->delete();
 
             return response()->json([

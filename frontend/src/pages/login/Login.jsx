@@ -38,13 +38,13 @@ const Login = () => {
   const handleCheckValid = () => {
     console.log("vao day");
     if (email === "" && password === "") {
-      setMessage("Vui lòng điền đầy đủ thông tin đăng nhập");
+      setMessage("Please fill full of fields");
       return false;
     } else if (email === "") {
-      setMessage("Vui lòng điền Email");
+      setMessage("Please enter e-mail");
       return false;
     } else if (password === "") {
-      setMessage("Vui lòng nhập mật khẩu");
+      setMessage("Please enter password");
       return false;
     } else if (
       email &&
@@ -54,7 +54,7 @@ const Login = () => {
           /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
         )
     ) {
-      setMessage("Email không hợp lệ");
+      setMessage("Invalid Email");
       return false;
     } else {
       return true;
@@ -83,7 +83,7 @@ const Login = () => {
         className="h-[150px] md:h-[200px] w-fit rounded-xl shadow-lg"
       />
       <h1 className="text-center font-extrabold text-transparent text-3xl md:text-5xl bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 p-5 w-full">
-        Trang đăng nhập
+        Login to Dashboard
       </h1>
       <TextField
         label="Email"
@@ -106,10 +106,10 @@ const Login = () => {
         onClick={handleLogin}
         className="w-1/2 bg-violet-500 p-2 uppercase  text-white rounded shadow-md hover:opacity-80 duration-200 transition-all"
       >
-        Đăng nhập
+        Login
       </button>
       <small className="underline">
-        <a href="#">Quên mật khẩu?</a>
+        <a href="#">Forgot Password?</a>
       </small>
       <p>adminminhhieu@gmail.com</p>
       12345678

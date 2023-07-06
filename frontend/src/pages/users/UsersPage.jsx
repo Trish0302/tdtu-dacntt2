@@ -9,59 +9,108 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import {
+  Box,
   Card,
   IconButton,
+  LinearProgress,
   Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
+  Tooltip,
 } from "@mui/material";
 import { ListUserContext } from "../../stores/ListUserContext";
+import { useConfirm } from "material-ui-confirm";
+import { toast } from "react-toastify";
 
 const UsersPage = () => {
-  const userData = useContext(authContext);
+  const confirm = useConfirm();
   const navigate = useNavigate();
 
-  const { state, dispatch } = useContext(ListUserContext);
+  const { state, dispatch, isLoading } = useContext(ListUserContext);
   console.log("🚀 ~ file: UsersPage.jsx:29 ~ UsersPage ~ state:", state);
 
+  // pagination
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(0);
   //funcs
+
+  // functions
+
+  const handleChangeRowsPerPage = async (event) => {
+    setPage(0);
+    setRowsPerPage(parseInt(event.target.value, 10));
+    const result = await call(
+      `api/users?page=${page + 1}&page_size=${parseInt(
+        event.target.value,
+        10
+      )}`,
+      "GET",
+      null
+    );
+    dispatch({ type: "setList", payload: { list: result.data } });
+  };
+  const handleChangePage = async (event, newPage) => {
+    setPage(newPage);
+    const result = await call(
+      `api/users?page=${newPage + 1}&page_size=${rowsPerPage}`,
+      "GET",
+      null
+    );
+    dispatch({ type: "setList", payload: { list: result.data } });
+  };
   const handleOpenEdit = (event) => {
     const dataRow = JSON.parse(event.currentTarget.dataset.currentuser);
-    navigate(`/edit-user/${dataRow.id}`, { state: dataRow });
+    navigate(`/users/edit/${dataRow.id}`, { state: dataRow });
   };
   const handleOpenDetail = (event) => {
     const dataRow = JSON.parse(event.currentTarget.dataset.currentuser);
-    navigate(`/detail-user/${dataRow.id}`, { state: dataRow });
+    navigate(`/users/detail/${dataRow.id}`, { state: dataRow });
   };
 
   const handleDelete = (event) => {
     const dataRow = JSON.parse(event.currentTarget.dataset.currentuser);
-    call(`api/users/${dataRow.id}`, "DELETE").then(
-      dispatch({ type: "removeUser", sid: dataRow.id })
-    );
+    confirm({
+      confirmationButtonProps: { color: "error" },
+      description: `This will delete permanently ${dataRow.name}. You cannot undo this action`,
+    })
+      .then(() => {
+        call(`api/users/${dataRow.id}`, "DELETE").then(() => {
+          dispatch({ type: "removeUser", sid: dataRow.id });
+          toast.success("Delete Successfully!!!", { autoClose: 1000 });
+        });
+      })
+      .catch(() => {
+        console.log("Deletion cancelled.");
+      });
   };
 
   return (
-    <div className="h-full bg-violet-50 px-5 pt-24">
+    <div className="h-full bg-violet-50 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
       <div className="flex items-center">
         <Search />
         <button className="px-6 py-2 text-primary-500 bg-white rounded-lg font-semibold uppercase text-sm mr-10 ml-3">
-          Tìm
+          Find
         </button>
         <button
-          className="px-10 py-2 text-white bg-primary-500 rounded-lg font-semibold uppercase text-sm"
-          onClick={() => navigate("/add-user")}
+          className="px-5 py-2 text-white bg-primary-500 rounded-lg font-semibold uppercase text-sm hover:opacity-75 duration-300"
+          onClick={() => navigate("/users/add")}
         >
-          Thêm
+          Add&nbsp;New
         </button>
       </div>
 
       <Card sx={{ mt: 2 }}>
         <TableContainer sx={{ minWidth: 800 }}>
+          {isLoading && (
+            <Box sx={{ width: "100%" }}>
+              <LinearProgress color="secondary" />
+            </Box>
+          )}
           <Table>
             <TableHead>
               <TableRow>
@@ -84,32 +133,48 @@ const UsersPage = () => {
                     <TableCell align="left">{user.email}</TableCell>
                     <TableCell align="left">{user.phone}</TableCell>
                     <TableCell align="right">
-                      <IconButton aria-label="view">
-                        <VisibilityIcon
+                      <Tooltip title="View Detail">
+                        <IconButton aria-label="view">
+                          <VisibilityIcon
+                            data-currentuser={JSON.stringify(user)}
+                            onClick={handleOpenDetail}
+                          />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Edit">
+                        <IconButton
+                          aria-label="edit"
                           data-currentuser={JSON.stringify(user)}
-                          onClick={handleOpenDetail}
-                        />
-                      </IconButton>
-                      <IconButton
-                        aria-label="edit"
-                        data-currentuser={JSON.stringify(user)}
-                        onClick={handleOpenEdit}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton
-                        aria-label="delete"
-                        data-currentuser={JSON.stringify(user)}
-                        onClick={handleDelete}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
+                          onClick={handleOpenEdit}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Delete">
+                        <IconButton
+                          aria-label="delete"
+                          data-currentuser={JSON.stringify(user)}
+                          onClick={handleDelete}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 ))}
             </TableBody>
           </Table>
         </TableContainer>
+
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 15]}
+          component="div"
+          count={state.total}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </Card>
     </div>
   );

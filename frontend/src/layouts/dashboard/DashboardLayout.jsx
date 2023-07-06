@@ -2,8 +2,14 @@ import { Divider, styled } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import Nav from "../../components/nav/Nav";
 import Header from "../../components/header/Header";
+import PropTypes from "prop-types";
+import { useState } from "react";
+import { ToastContainer } from "react-toastify";
+import useScrollPosition from "../../hooks/useScrollPosition";
 
-const DashboardLayout = () => {
+const DashboardLayout = ({ children }) => {
+  const [openSidebar, setOpenSidebar] = useState();
+
   const APP_BAR_MOBILE = 30;
   const APP_BAR_DESKTOP = 50;
 
@@ -11,7 +17,7 @@ const DashboardLayout = () => {
     display: "flex",
     minHeight: "100%",
     // overflow: "hidden",
-    height: "auto",
+    height: "100vh",
   });
 
   const Main = styled("div")(({ theme }) => ({
@@ -29,15 +35,31 @@ const DashboardLayout = () => {
   }));
 
   return (
-    <StyledRoot>
-      <Nav />
+    <StyledRoot className="">
+      <Nav openSidebar={openSidebar} setOpenSidebar={setOpenSidebar} />
 
       <Main>
-        <Header />
+        <Header setOpenSidebar={setOpenSidebar} />
         <Outlet />
+        {children}
       </Main>
+      <ToastContainer
+        position="top-right"
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      {/* Same as */}
+      <ToastContainer />
     </StyledRoot>
   );
 };
-
+DashboardLayout.propTypes = {
+  children: PropTypes.any,
+};
 export default DashboardLayout;

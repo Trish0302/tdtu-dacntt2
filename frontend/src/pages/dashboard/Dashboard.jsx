@@ -18,9 +18,27 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import CardDashboard from "../../components/card/CardDashboard";
 
 const Dashboard = () => {
-  return <div className="h-screen bg-violet-50 px-5 pt-24">Dashboard</div>;
+  return (
+    <div className="bg-[#252836] px-5 h-full overflow-y-scroll hide-scroll pt-24 pb-5">
+      <div className="flex gap-4">
+        <div className="basis-1/4">
+          <CardDashboard />
+        </div>
+        <div className="basis-1/4">
+          <CardDashboard />
+        </div>
+        <div className="basis-1/4">
+          <CardDashboard />
+        </div>
+        <div className="basis-1/4">
+          <CardDashboard />
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Dashboard;
