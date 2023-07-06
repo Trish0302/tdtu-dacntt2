@@ -9,6 +9,7 @@ use App\Models\History;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\OrderHistory;
+use App\Models\Voucher;
 use Exception;
 use Illuminate\Http\Request;
 use stdClass;
@@ -22,8 +23,12 @@ class OrdersController extends Controller
             'address',
             'phone',
             'total',
+            'customer_id',
+            'store_id',
+            'created_at',
+            'updated_at',
         ],
-        'order_detail' => [
+        'detail' => [
             'id',
             'quantity',
             'total',
@@ -35,7 +40,29 @@ class OrdersController extends Controller
             'history_id',
             'created_at',
         ],
+        'customer' => [
+            'id',
+            'name',
+            'email',
+            'phone',
+            'avatar',
+            'address',
+        ],
+        'store' => [
+            'id',
+            'name',
+            'address',
+            'description',
+        ],
     ];
+
+    public function multiple_eager_load($association_list, $result = [])
+    {
+        foreach ($association_list as $association_name) {
+            $result[] = $association_name . ':' . join(',', $this->fields[$association_name]);
+        }
+        return $result;
+    }
 
     public function getOrderProgresses($order_id)
     {
@@ -77,7 +104,8 @@ class OrdersController extends Controller
             $orders = Order::select($this->fields['order']);
         }
 
-        $orders = $orders->orderBy('updated_at', 'desc')->paginate($request->page_size ?? 10, $this->fields['order']);
+        $orders = $orders->with($this->multiple_eager_load(['customer', 'store']))->orderBy('updated_at', 'desc')->paginate($request->page_size ?? 10, $this->fields['order']);
+
         $orders->map(function ($order) {
             $order->lastest_order_progress = OrderHistory::where('order_id', $order->id)
                 ->orderBy('updated_at', 'desc')
@@ -107,17 +135,15 @@ class OrdersController extends Controller
      */
     public function store(OrdersRequest $request)
     {
-        if (isset($request->validator) && $request->validator->fails()) {
-            return response()->json([
-                'message' => $request->validator->messages(),
-                'status' => 400,
-            ], 400);
-        }
-
         $sub_total = 0;
         foreach ($request->items as $food) {
             $sub_total += $food['quantity'] * $food['price'];
         }
+
+        $voucher_id = $request->voucher_id;
+        $voucher = Voucher::find($voucher_id);
+
+        $total = (100 - $voucher->discount) * $sub_total / 100;
 
         $payment_type = $request->payment_type;
         $transaction_code = time() . '_dacntt2';
@@ -125,11 +151,11 @@ class OrdersController extends Controller
             'name' => $request->name,
             'address' => $request->address,
             'phone' => $request->phone,
-            'total' => $sub_total,                  // missing
+            'total' => $total,
             'store_id' => $request->store_id,
-            'voucher_id' => $request->voucher_id,
-            'customer_id' => $request->customer_id, // missing
-            'payment_type' => $payment_type,        // missing
+            'voucher_id' => $voucher_id,
+            'customer_id' => $request->customer_id,
+            'payment_type' => $payment_type,
             'transaction_code' => $transaction_code,
         ]);
 
@@ -145,10 +171,10 @@ class OrdersController extends Controller
 
         if ($payment_type == 1) {
             $momo_payment = new MOMOController;
-            $confirmation_url = $momo_payment->handle($sub_total, $transaction_code);
+            $confirmation_url = $momo_payment->handle($total, $transaction_code);
         } else if ($payment_type == 2) {
             $vnp_payment = new VNPAYController;
-            $confirmation_url = $vnp_payment->payment($sub_total * 100, $transaction_code)['data'];
+            $confirmation_url = $vnp_payment->payment($total * 100, $transaction_code)['data'];
         }
 
         $order->histories()->create([
@@ -172,9 +198,10 @@ class OrdersController extends Controller
     public function show($id)
     {
         try {
-            $order = Order::select($this->fields['order'])->with(['detail' => function ($query) {
-                $query->select($this->fields['order_detail']);
-            }])->findOrFail($id)->setAttribute('history', $this->getOrderProgresses($id));
+            $order = Order::select($this->fields['order'])
+                ->with($this->multiple_eager_load(['customer', 'store', 'detail']))
+                ->findOrFail($id)
+                ->setAttribute('history', $this->getOrderProgresses($id));
 
             return response()->json([
                 'message' => 'Get order detail successfully!',
@@ -205,6 +232,11 @@ class OrdersController extends Controller
             $order_detail = $order->detail;
             $sub_total = 0;
 
+            $voucher_id = $request->voucher_id;
+            $voucher = Voucher::find($voucher_id);
+
+            $total = (100 - $voucher->discount) * $sub_total / 100;
+
             foreach ($order_detail as $index => $order_item) {
                 $food_item = $request->items[$index];
                 $item_total = $food_item['price'] * $food_item['quantity'];
@@ -222,11 +254,11 @@ class OrdersController extends Controller
                 'name' => $request->name,
                 'address' => $request->address,
                 'phone' => $request->phone,
-                'total' => $sub_total,                      // missing
+                'total' => $total,
                 'store_id' => $request->store_id,
                 'voucher_id' => $request->voucher_id,
-                'customer_id' => $request->customer_id,     // missing
-                'payment_type' => $request->payment_type,   // missing
+                'customer_id' => $request->customer_id,
+                'payment_type' => $request->payment_type,
             ]);
 
             return response()->json([

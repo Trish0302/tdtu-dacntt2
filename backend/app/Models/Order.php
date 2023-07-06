@@ -21,11 +21,6 @@ class Order extends Model
         'transaction_code',
     ];
 
-    public function customer()
-    {
-        return $this->belongsTo(Customer::class);
-    }
-
     public function detail()
     {
         return $this->hasMany(OrderDetail::class);
@@ -34,5 +29,15 @@ class Order extends Model
     public function histories()
     {
         return $this->hasMany(OrderHistory::class);
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
+    public function store()
+    {
+        return $this->belongsTo(Store::class);
     }
 }

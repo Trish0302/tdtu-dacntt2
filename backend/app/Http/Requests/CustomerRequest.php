@@ -3,8 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Request;
 
-class OrdersRequest extends FormRequest
+class CustomerRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,15 +26,11 @@ class OrdersRequest extends FormRequest
     {
         return [
             'name' => 'required',
+            'email' => 'required|email|unique:customers,email,' . (Request::instance()->id ?? ''),
+            'password' => 'required|confirmed|min:8',
             'address' => 'required',
-            'phone' => 'required|numeric',
-            'store_id' => 'required|exists:stores,id',
-            'voucher_id' => 'required|exists:vouchers,id',
-            'customer_id' => 'required|exists:customers,id',
-            'items.*.id' => 'required|exists:food,id',
-            'items.*.quantity' => 'required|numeric',
-            'items.*.price' => 'required|numeric',
-            'payment_type' => 'required|numeric',
+            'phone' => 'required',
+            'avatar' => 'nullable',
         ];
     }
 }
