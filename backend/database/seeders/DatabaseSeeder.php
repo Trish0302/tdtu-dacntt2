@@ -19,14 +19,14 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             FoodGroupSeeder::class,
             StoreSeeder::class,
-            CustomerSeeder::class,
+//            CustomerSeeder::class,
             FoodSeeder::class,
             StatusSeeder::class,
             VoucherSeeder::class,
             TransactionSeeder::class,
             DeliverySeeder::class,
             HistorySeeder::class,
-            OrderSeeder::class,
+//            OrderSeeder::class,
         ]);
     }
 }
