@@ -98,6 +98,9 @@ const DetailOrderPage = () => {
                           formik.touched.name && Boolean(formik.errors.name)
                         }
                         helperText={formik.touched.name && formik.errors.name}
+                        InputProps={{
+                          readOnly: true,
+                        }}
                       />
                       <TextField
                         variant="outlined"
@@ -114,6 +117,9 @@ const DetailOrderPage = () => {
                         helperText={
                           formik.touched.address && formik.errors.address
                         }
+                        InputProps={{
+                          readOnly: true,
+                        }}
                       />
 
                       <TextField
@@ -126,7 +132,9 @@ const DetailOrderPage = () => {
                           formik.touched.phone && Boolean(formik.errors.phone)
                         }
                         helperText={formik.touched.phone && formik.errors.phone}
-                        // fullWidth
+                        InputProps={{
+                          readOnly: true,
+                        }}
                       />
                       <TextField
                         sx={{ mx: 2, width: "800px" }}
@@ -147,6 +155,9 @@ const DetailOrderPage = () => {
                           formik.touched.total && Boolean(formik.errors.total)
                         }
                         helperText={formik.touched.total && formik.errors.total}
+                        InputProps={{
+                          readOnly: true,
+                        }}
                       />
                     </Stack>
 

@@ -49,6 +49,7 @@ const EditOrderPage = () => {
       valuesUpdate.items.map((item) => {
         // console.log(item);
         Object.assign(item, { price: item.total });
+        item["id"] = item.food_id;
         delete item["total"];
         delete item["food_id"];
         delete item["order_id"];
@@ -189,6 +190,7 @@ const EditOrderPage = () => {
                           formik.touched.total && Boolean(formik.errors.total)
                         }
                         helperText={formik.touched.total && formik.errors.total}
+                        disabled
                       />
                     </Stack>
 

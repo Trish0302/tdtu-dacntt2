@@ -91,6 +91,9 @@ const DetailStorePage = () => {
                     label="Name of Store"
                     name="name"
                     defaultValue={updateStore.name}
+                    InputProps={{
+                      readOnly: true,
+                    }}
                   />
                   <TextField
                     variant="outlined"
@@ -98,6 +101,9 @@ const DetailStorePage = () => {
                     label="Address"
                     defaultValue={updateStore.address}
                     name="address"
+                    InputProps={{
+                      readOnly: true,
+                    }}
                   />
                   {userArr && (
                     <Autocomplete
@@ -112,6 +118,9 @@ const DetailStorePage = () => {
                       renderInput={(params) => (
                         <TextField {...params} label="Owner" />
                       )}
+                      InputProps={{
+                        readOnly: true,
+                      }}
                     />
                   )}
                   <TextField
@@ -122,6 +131,9 @@ const DetailStorePage = () => {
                     rows={10}
                     defaultValue={updateStore.description}
                     name="description"
+                    InputProps={{
+                      readOnly: true,
+                    }}
                     // fullWidth
                   />
                 </Stack>

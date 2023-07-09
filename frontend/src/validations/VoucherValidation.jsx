@@ -17,7 +17,11 @@ const voucherValidationSchema = yup.object({
       "no-leading-zero",
       "Leading zero is not allowed",
       (value, context) => {
-        return context.originalValue && !context.originalValue.startsWith("0");
+        console.log(context);
+        return (
+          context.originalValue &&
+          !context.originalValue.toString().startsWith("0")
+        );
       }
     )
     .max(100, "Must small than 100")
