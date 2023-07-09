@@ -32,14 +32,7 @@ class FoodController extends Controller
             'name',
             'address',
             'description',
-            'user_id',
-        ],
-        'user' => [
-            'id',
-            'name',
-            'email',
-            'avatar',
-        ],
+        ]
     ];
 
     /**
@@ -212,5 +205,35 @@ class FoodController extends Controller
             ],
             'status' => 200,
         ], 200);
+    }
+
+    public function getDetail(Request $request)
+    {
+        try {
+            $id = $request->id;
+
+            $food = Food::select($this->fields['food'])
+                ->with([
+                    'food_group' => function ($query) {
+                        $query->select($this->fields['food_group']);
+                    },
+                    'food_group.store' => function ($query) {
+                        $query->select($this->fields['store']);
+                    },
+                ])
+                ->findOrFail($id);
+
+            return response()->json([
+                'message' => 'Get food detail successfully!',
+                'data' => $food,
+                'status' => 200,
+            ], 200);
+        } catch (Exception $err) {
+            return response()->json([
+                'status' => 400,
+                'data' => false,
+                'message' => $err->getMessage(),
+            ], 400);
+        }
     }
 }

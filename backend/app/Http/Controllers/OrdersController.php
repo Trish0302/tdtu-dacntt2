@@ -235,8 +235,6 @@ class OrdersController extends Controller
             $voucher_id = $request->voucher_id;
             $voucher = Voucher::find($voucher_id);
 
-            $total = (100 - $voucher->discount) * $sub_total / 100;
-
             foreach ($order_detail as $index => $order_item) {
                 $food_item = $request->items[$index];
                 $item_total = $food_item['price'] * $food_item['quantity'];
@@ -249,6 +247,8 @@ class OrdersController extends Controller
 
                 $sub_total += $item_total;
             }
+
+            $total = (100 - $voucher->discount) * $sub_total / 100;
 
             $order->update([
                 'name' => $request->name,
