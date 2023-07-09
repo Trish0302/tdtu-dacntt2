@@ -15,4 +15,9 @@ class OrderDetail extends Model
         'quantity',
         'total',
     ];
+
+    public function food()
+    {
+        return $this->belongsTo(Food::class);
+    }
 }
