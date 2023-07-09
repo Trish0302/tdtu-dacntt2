@@ -91,6 +91,9 @@ const DetailFoodGroupPage = () => {
                   name="name"
                   defaultValue={updateFoodGroup.name}
                   fullWidth
+                  InputProps={{
+                    readOnly: true,
+                  }}
                 />
                 <TextField
                   variant="outlined"
@@ -99,6 +102,9 @@ const DetailFoodGroupPage = () => {
                   name="slug"
                   defaultValue={updateFoodGroup.slug}
                   fullWidth
+                  InputProps={{
+                    readOnly: true,
+                  }}
                 />
                 {storeArr && (
                   <Autocomplete
@@ -112,6 +118,9 @@ const DetailFoodGroupPage = () => {
                     renderInput={(params) => (
                       <TextField {...params} label="Store" />
                     )}
+                    InputProps={{
+                      readOnly: true,
+                    }}
                   />
                 )}
               </Stack>
@@ -125,6 +134,9 @@ const DetailFoodGroupPage = () => {
                   name="description"
                   defaultValue={updateFoodGroup.description}
                   fullWidth
+                  InputProps={{
+                    readOnly: true,
+                  }}
                 />
               </Stack>
             </Card>

@@ -97,6 +97,9 @@ const DetailUserPage = () => {
                     onChange={changeHandler}
                     defaultValue={updateUser.name}
                     label="Full Name"
+                    InputProps={{
+                      readOnly: true,
+                    }}
                   />
                   <TextField
                     variant="outlined"
@@ -105,6 +108,9 @@ const DetailUserPage = () => {
                     onChange={changeHandler}
                     defaultValue={updateUser.phone}
                     label="Phone"
+                    InputProps={{
+                      readOnly: true,
+                    }}
                   />
                   <TextField
                     variant="outlined"
@@ -113,6 +119,9 @@ const DetailUserPage = () => {
                     onChange={changeHandler}
                     defaultValue={updateUser.email}
                     label="Email"
+                    InputProps={{
+                      readOnly: true,
+                    }}
                   />
                 </Stack>
                 <Stack direction="column" spacing={2}></Stack>
@@ -131,6 +140,9 @@ const DetailUserPage = () => {
                         value={null}
                         label="Role"
                         disabled
+                        InputProps={{
+                          readOnly: true,
+                        }}
                       >
                         <MenuItem value={10}>Ten</MenuItem>
                         <MenuItem value={20}>Twenty</MenuItem>
@@ -148,6 +160,9 @@ const DetailUserPage = () => {
                         value={null}
                         label="Belong to store"
                         disabled
+                        InputProps={{
+                          readOnly: true,
+                        }}
                       >
                         <MenuItem value={10}>Ten</MenuItem>
                         <MenuItem value={20}>Twenty</MenuItem>

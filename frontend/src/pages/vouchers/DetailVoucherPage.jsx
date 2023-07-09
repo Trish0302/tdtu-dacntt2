@@ -89,6 +89,9 @@ const DetailVoucherPage = () => {
                     onChange={formik.handleChange}
                     error={formik.touched.code && Boolean(formik.errors.code)}
                     helperText={formik.touched.code && formik.errors.code}
+                    InputProps={{
+                      readOnly: true,
+                    }}
                   />
                   <TextField
                     variant="outlined"
@@ -109,6 +112,7 @@ const DetailVoucherPage = () => {
                           <PercentIcon />
                         </InputAdornment>
                       ),
+                      readOnly: true,
                     }}
                   />
                 </Stack>

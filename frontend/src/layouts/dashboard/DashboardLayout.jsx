@@ -8,7 +8,7 @@ import { ToastContainer } from "react-toastify";
 import useScrollPosition from "../../hooks/useScrollPosition";
 
 const DashboardLayout = ({ children }) => {
-  const [openSidebar, setOpenSidebar] = useState();
+  const [openSidebar, setOpenSidebar] = useState(true);
 
   const APP_BAR_MOBILE = 30;
   const APP_BAR_DESKTOP = 50;
