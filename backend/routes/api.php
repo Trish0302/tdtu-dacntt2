@@ -31,7 +31,10 @@ Route::middleware('auth:sanctum', 'ability:admin,customer')->group(function () {
 
 Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
     Route::get('/food-groups', [FoodGroupsController::class, 'getAll']);
+
+    Route::get('/food/{id}', [FoodController::class, 'getDetail']);
     Route::get('/food', [FoodController::class, 'getAll']);
+
     Route::get('/orders/history', [OrdersController::class, 'viewHistory']);
 
     Route::apiResources([
