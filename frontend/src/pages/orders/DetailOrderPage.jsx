@@ -63,7 +63,7 @@ const DetailOrderPage = () => {
       {!loading ? (
         <div className="h-full">
           <form className="h-full">
-            <div className="h-full bg-violet-50 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
+            <div className="h-full bg-primary-100 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
               <p className="font-semibold mb-2 text-lg">
                 Detail information of Order
               </p>
@@ -229,7 +229,7 @@ const DetailOrderPage = () => {
           </form>
         </div>
       ) : (
-        <div className="w-full h-full flex items-center justify-center bg-violet-50">
+        <div className="w-full h-full flex items-center justify-center bg-primary-100">
           <CircularProgress color="secondary" />
         </div>
       )}

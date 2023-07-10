@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { AsyncStorage } from "AsyncStorage";
 import { callNon } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
-import { Button, TextField, Typography } from "@mui/material";
+import { Button, CircularProgress, TextField, Typography } from "@mui/material";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -10,10 +10,12 @@ const Login = () => {
   console.log("🚀 ~ file: Login.jsx:10 ~ Login ~ email:", email);
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState();
+  const [loading, setLoading] = useState(false);
 
   //functions
   const handleLogin = async () => {
     // handleCheckValid();
+    setLoading(true);
     if (handleCheckValid() === true) {
       const rs = callNon("api/login", "POST", {
         email,
@@ -26,6 +28,7 @@ const Login = () => {
         if (response.status === 200) {
           AsyncStorage.setItem("token-admin", JSON.stringify(response)).then(
             () => {
+              setLoading(false);
               setMessage(response.message);
               setTimeout(() => {
                 navigate("/");
@@ -33,9 +36,12 @@ const Login = () => {
             }
           );
         } else {
+          setLoading(false);
           setMessage(response.data.message);
         }
       });
+    } else {
+      setLoading(false);
     }
   };
 
@@ -68,6 +74,7 @@ const Login = () => {
   useEffect(() => {
     async function check() {
       const checkLogin = await AsyncStorage.getItem("token-admin");
+
       console.log(
         "🚀 ~ file: Login.jsx:24 ~ useEffect ~ checkLogin:",
         checkLogin
@@ -108,9 +115,15 @@ const Login = () => {
       )}
       <button
         onClick={handleLogin}
-        className="w-1/2 bg-violet-500 p-2 uppercase  text-white rounded shadow-md hover:opacity-80 duration-200 transition-all"
+        className={` ${
+          loading ? "opacity-75 select-none" : ""
+        } w-1/2 bg-violet-500 p-2 uppercase  text-white rounded shadow-md hover:opacity-80 duration-200 transition-all`}
       >
-        Login
+        {loading ? (
+          <CircularProgress className="text-sm" size="2rem" color="secondary" />
+        ) : (
+          "Login"
+        )}
       </button>
       <small className="underline">
         <a href="#">Forgot Password?</a>

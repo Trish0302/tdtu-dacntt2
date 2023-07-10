@@ -17,7 +17,7 @@ const Header = ({ setOpenSidebar }) => {
 
   return (
     <>
-      <div className="flex items-center justify-between pl-5 pr-5 lg:pr-[260px] bg-violet-50 py-7 w-full fixed  z-50 shadow-sm">
+      <div className="flex items-center justify-between pl-5 pr-5 lg:pr-[260px] bg-primary-100 py-7 w-full fixed  z-50 shadow-sm">
         <div className="lg:hidden block">
           <IconButton
             onClick={() => {
