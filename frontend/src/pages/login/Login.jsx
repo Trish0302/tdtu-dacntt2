@@ -17,11 +17,7 @@ const Login = () => {
     // handleCheckValid();
     setLoading(true);
     if (handleCheckValid() === true) {
-      const rs = callNon("api/login", "POST", {
-        email,
-        password,
-        type: "admin",
-      });
+      const rs = callNon("api/login", "POST", { email, password });
       // console.log("🚀 ~ file: Login.jsx:16 ~ handleLogin ~ rs:", rs);
       rs.then((response) => {
         console.log("🚀 ~ file: Login.jsx:18 ~ rs.then ~ response:", response);
@@ -32,7 +28,7 @@ const Login = () => {
               setMessage(response.message);
               setTimeout(() => {
                 navigate("/");
-              }, 2000);
+              }, 1000);
             }
           );
         } else {
@@ -74,7 +70,6 @@ const Login = () => {
   useEffect(() => {
     async function check() {
       const checkLogin = await AsyncStorage.getItem("token-admin");
-
       console.log(
         "🚀 ~ file: Login.jsx:24 ~ useEffect ~ checkLogin:",
         checkLogin

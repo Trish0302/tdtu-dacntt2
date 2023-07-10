@@ -63,7 +63,7 @@ const DetailOrderPage = () => {
       {!loading ? (
         <div className="h-full">
           <form className="h-full">
-            <div className="h-full bg-primary-100 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
+            <div className="h-full bg-violet-50 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
               <p className="font-semibold mb-2 text-lg">
                 Detail information of Order
               </p>
@@ -98,6 +98,9 @@ const DetailOrderPage = () => {
                           formik.touched.name && Boolean(formik.errors.name)
                         }
                         helperText={formik.touched.name && formik.errors.name}
+                        InputProps={{
+                          readOnly: true,
+                        }}
                       />
                       <TextField
                         variant="outlined"
@@ -114,6 +117,9 @@ const DetailOrderPage = () => {
                         helperText={
                           formik.touched.address && formik.errors.address
                         }
+                        InputProps={{
+                          readOnly: true,
+                        }}
                       />
 
                       <TextField
@@ -126,7 +132,9 @@ const DetailOrderPage = () => {
                           formik.touched.phone && Boolean(formik.errors.phone)
                         }
                         helperText={formik.touched.phone && formik.errors.phone}
-                        // fullWidth
+                        InputProps={{
+                          readOnly: true,
+                        }}
                       />
                       <TextField
                         sx={{ mx: 2, width: "800px" }}
@@ -147,6 +155,9 @@ const DetailOrderPage = () => {
                           formik.touched.total && Boolean(formik.errors.total)
                         }
                         helperText={formik.touched.total && formik.errors.total}
+                        InputProps={{
+                          readOnly: true,
+                        }}
                       />
                     </Stack>
 
@@ -229,7 +240,7 @@ const DetailOrderPage = () => {
           </form>
         </div>
       ) : (
-        <div className="w-full h-full flex items-center justify-center bg-primary-100">
+        <div className="w-full h-full flex items-center justify-center bg-violet-50">
           <CircularProgress color="secondary" />
         </div>
       )}

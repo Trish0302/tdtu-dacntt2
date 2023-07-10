@@ -41,6 +41,7 @@ const EditFoodPage = () => {
     validationSchema: FoodValidationSchema,
     enableReinitialize: true,
     onSubmit: (values) => {
+      values.price = values.price.replace(/,/g, "");
       console.log(
         "🚀 ~ file: EditFoodPage.jsx:67 ~ EditFoodPage ~ values:",
         values
@@ -55,8 +56,16 @@ const EditFoodPage = () => {
         )
           .then((res) => {
             console.log("🚀 ~ file: EditFoodPage.jsx:51 ~ .then ~ res:", res);
-            if (res.status === 422) {
-              toast.error(res.data.errors.slug[0], { autoClose: 2000 });
+            if (res.status != 200) {
+              if (res.data.errors) {
+                for (var key in res.data.errors) {
+                  var value = res.data.errors[key][0];
+                  console.log(value);
+                  toast.error(value, { autoClose: 2000 });
+                }
+              } else {
+                toast.error(res.data.message, { autoClose: 2000 });
+              }
             } else {
               dispatch({ type: "updateFood", item: values });
               toast.success("Update Successfully", { autoClose: 1000 });
@@ -140,7 +149,7 @@ const EditFoodPage = () => {
       {!loading ? (
         <div>
           <form onSubmit={formik.handleSubmit}>
-            <div className="h-full bg-primary-100 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
+            <div className="h-full bg-violet-50 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
               <p className="font-semibold mb-2 text-lg">
                 Edit Food Information
               </p>
@@ -192,6 +201,7 @@ const EditFoodPage = () => {
                         ","
                       )}
                       onChange={(e) => {
+                        console.log(e.target.value.replace(/,/g, ""));
                         formik.setFieldValue(
                           "price",
                           e.target.value.replace(/,/g, "")
@@ -270,7 +280,7 @@ const EditFoodPage = () => {
           </form>
         </div>
       ) : (
-        <div className="w-full h-full flex items-center justify-center bg-primary-100">
+        <div className="w-full h-full flex items-center justify-center bg-violet-50">
           <CircularProgress color="secondary" />
         </div>
       )}

@@ -73,7 +73,7 @@ const DetailFoodPage = () => {
   return (
     <>
       {!loading ? (
-        <div className="h-full bg-primary-100 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
+        <div className="h-full bg-violet-50 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
           <p className="font-semibold mb-2 text-lg">
             Detail Information of Food
           </p>
@@ -97,6 +97,9 @@ const DetailFoodPage = () => {
                   // onChange={changeHandler}
                   defaultValue={updateFood.name}
                   fullWidth
+                  InputProps={{
+                    readOnly: true,
+                  }}
                 />
                 <TextField
                   variant="outlined"
@@ -106,6 +109,9 @@ const DetailFoodPage = () => {
                   defaultValue={updateFood.slug}
                   fullWidth
                   // onChange={changeHandler}
+                  InputProps={{
+                    readOnly: true,
+                  }}
                 />
 
                 <TextField
@@ -115,6 +121,9 @@ const DetailFoodPage = () => {
                   name="price"
                   defaultValue={updateFood.price + " ₫"}
                   // onChange={changeHandler}
+                  InputProps={{
+                    readOnly: true,
+                  }}
                 />
                 {foodGroupArr && (
                   <Autocomplete
@@ -128,6 +137,9 @@ const DetailFoodPage = () => {
                     renderInput={(params) => (
                       <TextField {...params} label="Food Group" />
                     )}
+                    InputProps={{
+                      readOnly: true,
+                    }}
                   />
                 )}
               </Stack>
@@ -140,6 +152,9 @@ const DetailFoodPage = () => {
                 rows={10}
                 name="description"
                 defaultValue={updateFood.description}
+                InputProps={{
+                  readOnly: true,
+                }}
                 // onChange={changeHandler}
                 // fullWidth
               />
@@ -147,7 +162,7 @@ const DetailFoodPage = () => {
           </div>
         </div>
       ) : (
-        <div className="w-full h-full flex items-center justify-center bg-primary-100">
+        <div className="w-full h-full flex items-center justify-center bg-violet-50">
           <CircularProgress color="secondary" />
         </div>
       )}

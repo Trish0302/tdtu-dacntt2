@@ -61,7 +61,7 @@ const DetailUserPage = () => {
   return (
     <>
       {!loading ? (
-        <div className="h-full bg-primary-100 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
+        <div className="h-full bg-violet-50 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
           <p className="font-semibold mb-2 text-lg">User Information</p>
           <Divider />
           <Stack
@@ -97,6 +97,9 @@ const DetailUserPage = () => {
                     onChange={changeHandler}
                     defaultValue={updateUser.name}
                     label="Full Name"
+                    InputProps={{
+                      readOnly: true,
+                    }}
                   />
                   <TextField
                     variant="outlined"
@@ -105,6 +108,9 @@ const DetailUserPage = () => {
                     onChange={changeHandler}
                     defaultValue={updateUser.phone}
                     label="Phone"
+                    InputProps={{
+                      readOnly: true,
+                    }}
                   />
                   <TextField
                     variant="outlined"
@@ -113,6 +119,9 @@ const DetailUserPage = () => {
                     onChange={changeHandler}
                     defaultValue={updateUser.email}
                     label="Email"
+                    InputProps={{
+                      readOnly: true,
+                    }}
                   />
                 </Stack>
                 <Stack direction="column" spacing={2}></Stack>
@@ -131,6 +140,9 @@ const DetailUserPage = () => {
                         value={null}
                         label="Role"
                         disabled
+                        InputProps={{
+                          readOnly: true,
+                        }}
                       >
                         <MenuItem value={10}>Ten</MenuItem>
                         <MenuItem value={20}>Twenty</MenuItem>
@@ -148,6 +160,9 @@ const DetailUserPage = () => {
                         value={null}
                         label="Belong to store"
                         disabled
+                        InputProps={{
+                          readOnly: true,
+                        }}
                       >
                         <MenuItem value={10}>Ten</MenuItem>
                         <MenuItem value={20}>Twenty</MenuItem>
@@ -161,7 +176,7 @@ const DetailUserPage = () => {
           </Stack>
         </div>
       ) : (
-        <div className="w-full h-full flex items-center justify-center bg-primary-100">
+        <div className="w-full h-full flex items-center justify-center bg-violet-50">
           <CircularProgress color="secondary" />
         </div>
       )}

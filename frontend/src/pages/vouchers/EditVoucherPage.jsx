@@ -21,11 +21,6 @@ const EditVoucherPage = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const [userArr, setUserArr] = useState();
-  console.log(
-    "🚀 ~ file: EditStorePage.jsx:23 ~ EditStorePage ~ userArr:",
-    userArr
-  );
   const [updateVoucher, setUpdateVoucher] = useState({
     code: "",
     discount: "",
@@ -41,14 +36,27 @@ const EditVoucherPage = () => {
     validationSchema: voucherValidationSchema,
 
     onSubmit: (values) => {
+      console.log(values);
       try {
         call(`api/vouchers/${id}`, "PUT", values)
           .then((res) => {
-            dispatch({ type: "updateVoucher", item: values });
-            toast.success("Update Successfully", { autoClose: 1000 });
-            setTimeout(() => {
-              navigate("/vouchers");
-            }, 1500);
+            if (res.status != 200) {
+              if (res.data.errors) {
+                for (var key in res.data.errors) {
+                  var value = res.data.errors[key][0];
+                  console.log(value);
+                  toast.error(value, { autoClose: 2000 });
+                }
+              } else {
+                toast.error(res.data.message, { autoClose: 2000 });
+              }
+            } else {
+              dispatch({ type: "updateVoucher", item: values });
+              toast.success("Update Successfully", { autoClose: 1000 });
+              setTimeout(() => {
+                navigate("/vouchers");
+              }, 1500);
+            }
           })
           .catch((err) => console.log("add-error", err));
       } catch (error) {
@@ -71,7 +79,7 @@ const EditVoucherPage = () => {
   return (
     <div className="h-full">
       <form onSubmit={formik.handleSubmit} className="h-full">
-        <div className="h-full bg-primary-100 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
+        <div className="h-full bg-violet-50 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
           <p className="font-semibold mb-2 text-lg">Edit Voucher</p>
           <Divider />
           <div className="flex items-center w-full justify-center">

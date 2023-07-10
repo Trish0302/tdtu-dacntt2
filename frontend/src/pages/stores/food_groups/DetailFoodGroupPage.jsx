@@ -56,7 +56,7 @@ const DetailFoodGroupPage = () => {
   return (
     <>
       {!loading ? (
-        <div className="h-full bg-primary-100 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
+        <div className="h-full bg-violet-50 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
           <p className="font-semibold mb-2 text-lg">
             Detail Information of Food Group
           </p>
@@ -91,6 +91,9 @@ const DetailFoodGroupPage = () => {
                   name="name"
                   defaultValue={updateFoodGroup.name}
                   fullWidth
+                  InputProps={{
+                    readOnly: true,
+                  }}
                 />
                 <TextField
                   variant="outlined"
@@ -99,6 +102,9 @@ const DetailFoodGroupPage = () => {
                   name="slug"
                   defaultValue={updateFoodGroup.slug}
                   fullWidth
+                  InputProps={{
+                    readOnly: true,
+                  }}
                 />
                 {storeArr && (
                   <Autocomplete
@@ -112,6 +118,9 @@ const DetailFoodGroupPage = () => {
                     renderInput={(params) => (
                       <TextField {...params} label="Store" />
                     )}
+                    InputProps={{
+                      readOnly: true,
+                    }}
                   />
                 )}
               </Stack>
@@ -125,13 +134,16 @@ const DetailFoodGroupPage = () => {
                   name="description"
                   defaultValue={updateFoodGroup.description}
                   fullWidth
+                  InputProps={{
+                    readOnly: true,
+                  }}
                 />
               </Stack>
             </Card>
           </div>
         </div>
       ) : (
-        <div className="w-full h-full flex items-center justify-center bg-primary-100">
+        <div className="w-full h-full flex items-center justify-center bg-violet-50">
           <CircularProgress color="secondary" />
         </div>
       )}

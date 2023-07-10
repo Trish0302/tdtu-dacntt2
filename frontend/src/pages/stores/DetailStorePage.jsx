@@ -53,7 +53,7 @@ const DetailStorePage = () => {
   return (
     <>
       {!loading ? (
-        <div className="h-full bg-primary-100 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
+        <div className="h-full bg-violet-50 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
           <p className="font-semibold mb-2 text-lg">
             Detail Information of Store
           </p>
@@ -91,6 +91,9 @@ const DetailStorePage = () => {
                     label="Name of Store"
                     name="name"
                     defaultValue={updateStore.name}
+                    InputProps={{
+                      readOnly: true,
+                    }}
                   />
                   <TextField
                     variant="outlined"
@@ -98,6 +101,9 @@ const DetailStorePage = () => {
                     label="Address"
                     defaultValue={updateStore.address}
                     name="address"
+                    InputProps={{
+                      readOnly: true,
+                    }}
                   />
                   {userArr && (
                     <Autocomplete
@@ -112,6 +118,9 @@ const DetailStorePage = () => {
                       renderInput={(params) => (
                         <TextField {...params} label="Owner" />
                       )}
+                      InputProps={{
+                        readOnly: true,
+                      }}
                     />
                   )}
                   <TextField
@@ -122,6 +131,9 @@ const DetailStorePage = () => {
                     rows={10}
                     defaultValue={updateStore.description}
                     name="description"
+                    InputProps={{
+                      readOnly: true,
+                    }}
                     // fullWidth
                   />
                 </Stack>
@@ -130,7 +142,7 @@ const DetailStorePage = () => {
           </div>
         </div>
       ) : (
-        <div className="w-full h-full flex items-center justify-center bg-primary-100">
+        <div className="w-full h-full flex items-center justify-center bg-violet-50">
           <CircularProgress color="secondary" />
         </div>
       )}
