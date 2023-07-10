@@ -27,6 +27,7 @@ class FoodRequest extends FormRequest
         return [
             'name' => 'required',
             'slug' => 'required|unique:food,slug,' . (Request::instance()->id ?? ''),
+            'avatar' => 'nullable',
             'description' => 'required',
             'price' => 'required|numeric',
             'food_group_id' => 'required|exists:food_groups,id',

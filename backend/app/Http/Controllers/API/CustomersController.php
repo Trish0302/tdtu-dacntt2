@@ -53,11 +53,21 @@ class CustomersController extends Controller
      */
     public function store(CustomerRequest $request)
     {
+        if ($request->hasFile('avatar')) {
+            $uploaded_file_name = $request->file('avatar')->getClientOriginalName();
+            $avatar_name = pathinfo($uploaded_file_name, PATHINFO_FILENAME) . '_' . time();
+
+            $result = $request->file('avatar')->storeOnCloudinaryAs('customers', $avatar_name);
+            $avatar = $result->getSecurePath();
+        } else {
+            $avatar = 'https://res.cloudinary.com/ddusqwv7k/image/upload/v1688648527/users/default-avatar_1688648526.png';
+        }
+
         Customer::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'avatar' => $request->avatar,
+            'avatar' => $avatar,
             'phone' => $request->phone,
             'address' => $request->address,
             'password' => Hash::make($request->password),
@@ -103,11 +113,21 @@ class CustomersController extends Controller
         try {
             $customer = Customer::findOrFail($id, $this->fields);
 
+            if ($request->hasFile('avatar')) {
+                $uploaded_file_name = $request->file('avatar')->getClientOriginalName();
+                $avatar_name = pathinfo($uploaded_file_name, PATHINFO_FILENAME) . '_' . time();
+
+                $result = $request->file('avatar')->storeOnCloudinaryAs('users', $avatar_name);
+                $avatar = $result->getSecurePath();
+            } else {
+                $avatar = $customer->avatar;
+            }
+
             $customer->update([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'avatar' => $request->avatar ? $request->avatar : $customer->avatar,
+                'avatar' => $avatar,
                 'phone' => $request->phone,
                 'address' => $request->address,
                 'password' => Hash::make($request->password),

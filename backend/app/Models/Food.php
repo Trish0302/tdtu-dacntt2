@@ -12,6 +12,7 @@ class Food extends Model
     protected $fillable = [
         'name',
         'slug',
+        'avatar',
         'description',
         'price',
         'food_group_id'
@@ -21,5 +22,4 @@ class Food extends Model
     {
         return $this->belongsTo(FoodGroup::class);
     }
-
 }
