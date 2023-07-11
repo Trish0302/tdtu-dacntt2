@@ -105,12 +105,12 @@ const UsersPage = () => {
       </div>
 
       <Card sx={{ mt: 2 }}>
+        {isLoading && (
+          <Box sx={{ width: "100%" }}>
+            <LinearProgress color="secondary" />
+          </Box>
+        )}
         <TableContainer sx={{ minWidth: 800 }}>
-          {isLoading && (
-            <Box sx={{ width: "100%" }}>
-              <LinearProgress color="secondary" />
-            </Box>
-          )}
           <Table>
             <TableHead>
               <TableRow>
@@ -166,15 +166,17 @@ const UsersPage = () => {
           </Table>
         </TableContainer>
 
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 15]}
-          component="div"
-          count={state.total}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+        {!isLoading && (
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 15]}
+            component="div"
+            count={state.total}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        )}
       </Card>
     </div>
   );

@@ -22,12 +22,13 @@ use App\Http\Controllers\OrdersController;
 |
 */
 
-Route::post('/login', [AuthController::class, 'login']);
-
 Route::middleware('auth:sanctum', 'ability:admin,customer')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
     Route::get('/logout', [AuthController::class, 'logout']);
 });
+
+Route::get('/food-groups', [FoodGroupsController::class, 'getAll']);
+Route::get('/food', [FoodController::class, 'getAll']);
 
 Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
     Route::get('/food-groups', [FoodGroupsController::class, 'getAll']);
@@ -43,8 +44,8 @@ Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
         'stores.food_groups' => FoodGroupsController::class,
         'stores.food_groups.food' => FoodController::class,
         'orders' => OrdersController::class,
-        'customers' => CustomersController::class,
         'vouchers' => VouchersController::class,
+        'customers' => CustomersController::class,
     ]);
 });
 
@@ -53,6 +54,8 @@ Route::middleware('auth:sanctum', 'ability:customer')->group(function () {
         return 'hello';
     });
 });
+
+Route::post('/login', [AuthController::class, 'login']);
 
 // Payment response
 Route::get('/payment/respond', [PaymentController::class, 'respond']);
