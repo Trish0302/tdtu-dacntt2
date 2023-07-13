@@ -17,7 +17,11 @@ const Login = () => {
     // handleCheckValid();
     setLoading(true);
     if (handleCheckValid() === true) {
-      const rs = callNon("api/login", "POST", { email, password });
+      const rs = callNon("api/login", "POST", {
+        email,
+        password,
+        type: "admin",
+      });
       // console.log("🚀 ~ file: Login.jsx:16 ~ handleLogin ~ rs:", rs);
       rs.then((response) => {
         console.log("🚀 ~ file: Login.jsx:18 ~ rs.then ~ response:", response);

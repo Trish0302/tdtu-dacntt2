@@ -90,7 +90,7 @@ const UsersPage = () => {
   };
 
   return (
-    <div className="h-full bg-violet-50 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
+    <div className="h-full bg-primary-100 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
       <div className="flex items-center">
         <Search />
         <button className="px-6 py-2 text-primary-500 bg-white rounded-lg font-semibold uppercase text-sm mr-10 ml-3">
@@ -128,7 +128,13 @@ const UsersPage = () => {
                 state.list.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell align="left">{user.id}</TableCell>
-                    <TableCell align="left">{user.avatar}</TableCell>
+                    <TableCell align="left">
+                      <img
+                        src={user.avatar}
+                        className="w-10 h-10 rounded-full object-cover"
+                        alt={user.name}
+                      />
+                    </TableCell>
                     <TableCell align="left">{user.name}</TableCell>
                     <TableCell align="left">{user.email}</TableCell>
                     <TableCell align="left">{user.phone}</TableCell>

@@ -1,4 +1,3 @@
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -16,68 +15,64 @@ import {
   TextField,
 } from "@mui/material";
 import React, { useContext, useState } from "react";
-import { call, callUpload } from "../../utils/api";
-import { ListUserContext } from "../../stores/ListUserContext";
+import { ListCustomerContext } from "../../stores/ListCustomerContext";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import userValidationSchema from "../../validations/UserValidation";
 import { useFormik } from "formik";
+import customerValidationSchema from "../../validations/CustomerValidation";
+import { call, callUpload } from "../../utils/api";
+import { toast } from "react-toastify";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-const AddUserPage = () => {
-  const { state, dispatch } = useContext(ListUserContext);
+const AddCustomerPage = () => {
+  const { state, dispatch } = useContext(ListCustomerContext);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = React.useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = React.useState(false);
 
   const [previewPic, setPreviewPic] = useState();
 
+  const [addCustomer, setAddCustomer] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    password: "",
+    password_confirmation: "",
+  });
+  console.log(
+    "🚀 ~ file: AddCustomerPage.jsx:26 ~ AddCustomerPage ~ addCustomer:",
+    addCustomer
+  );
+
   const formik = useFormik({
     initialValues: {
       name: "",
       phone: "",
       email: "",
-      avatar: "",
+      address: "",
       password: "",
       password_confirmation: "",
     },
-    validationSchema: userValidationSchema,
+    validationSchema: customerValidationSchema,
     onSubmit: (values) => {
       // alert(JSON.stringify(values, null, 2));
-      console.log(values);
 
       const formData = new FormData();
       formData.append("name", values.name);
       formData.append("email", values.email);
       formData.append("phone", values.phone);
+      formData.append("address", values.address);
       formData.append("avatar", values.avatar);
       formData.append("password", values.password);
       formData.append("password_confirmation", values.password_confirmation);
 
       try {
-        callUpload("api/users", "POST", formData)
+        callUpload("api/customers", "POST", formData)
           .then((res) => {
-            console.log("🚀 ~ file: AddUserPage.jsx:50 ~ .then ~ res:", res);
-            dispatch({ type: "addUser", item: values });
-            if (res.status == 200) {
-              toast.success("Add Successfully", { autoClose: 1000 });
-              setTimeout(() => {
-                navigate("/users");
-              }, 1500);
-            } else {
-              let entries = Object.entries(res.data.message);
-              console.log(
-                "🚀 ~ file: AddUserPage.jsx:68 ~ .then ~ entries:",
-                entries
-              );
-              entries.map(([key, value]) => {
-                console.log("loi ne", key, value);
-
-                formik.setFieldError(key, value[0]);
-                toast.error(value[0], {
-                  autoClose: 2000,
-                });
-              });
-            }
+            dispatch({ type: "addCustomer", item: values });
+            toast.success("Add Successfully", { autoClose: 1000 });
+            setTimeout(() => {
+              navigate("/customers");
+            }, 1500);
           })
           .catch((err) => console.log("add-error", err));
       } catch (error) {
@@ -91,7 +86,6 @@ const AddUserPage = () => {
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleClickShowPasswordConfirm = () =>
     setShowPasswordConfirm((show) => !show);
-
   const changeUploadPicHandler = (e) => {
     // console.log(e.target.files[0]);
     setPreviewPic(URL.createObjectURL(e.target.files[0]));
@@ -99,10 +93,10 @@ const AddUserPage = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={formik.handleSubmit}>
+    <div className="h-full">
+      <form onSubmit={formik.handleSubmit} className="h-full">
         <div className="h-full bg-primary-100 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
-          <p className="font-semibold mb-2 text-lg">Add User</p>
+          <p className="font-semibold mb-2 text-lg">Add Customer</p>
           <Divider />
           <Stack
             direction="row"
@@ -180,7 +174,7 @@ const AddUserPage = () => {
             </Card>
             <Card sx={{ py: 2, flexBasis: "60%" }}>
               <div className="px-4 flex justify-between items-center mb-2">
-                <p className="font-semibold">Personal Information</p>
+                <p className="font-semibold">Customer Information</p>
                 <small>
                   Please confirm the information carefully before saving
                 </small>
@@ -220,48 +214,21 @@ const AddUserPage = () => {
                     error={formik.touched.phone && Boolean(formik.errors.phone)}
                     helperText={formik.touched.phone && formik.errors.phone}
                   />
+                  <TextField
+                    fullWidth
+                    id="address"
+                    name="address"
+                    label="Address"
+                    value={formik.values.address}
+                    onChange={formik.handleChange}
+                    error={
+                      formik.touched.address && Boolean(formik.errors.address)
+                    }
+                    helperText={formik.touched.address && formik.errors.address}
+                  />
                 </Stack>
               </Stack>
-              <Divider />
-              <div className="my-2 px-4">
-                <p className="font-semibold mb-2">Position Information</p>
-                <div className="flex justify-between pb-1 w-full">
-                  <Box sx={{ minWidth: 300 }}>
-                    <InputLabel className="mb-2 italic">Role</InputLabel>
-                    <FormControl fullWidth variant="outlined">
-                      <InputLabel id="role1">Role</InputLabel>
-                      <Select
-                        labelId="role1"
-                        id="demo-simple-select"
-                        value={null}
-                        label="Role"
-                      >
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Box>
-                  <Box sx={{ minWidth: 300 }}>
-                    <InputLabel className="mb-2 italic">
-                      Belong to store
-                    </InputLabel>
-                    <FormControl fullWidth variant="outlined">
-                      <InputLabel id="role2">Belong to store</InputLabel>
-                      <Select
-                        labelId="role2"
-                        id="demo-simple-select"
-                        value={null}
-                        label="Belong to store"
-                      >
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Box>
-                </div>
-              </div>
+
               <Divider />
               <div className="mt-2 px-4">
                 <p className="font-semibold">Password</p>
@@ -363,4 +330,4 @@ const AddUserPage = () => {
   );
 };
 
-export default AddUserPage;
+export default AddCustomerPage;

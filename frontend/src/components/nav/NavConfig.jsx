@@ -5,6 +5,7 @@ import LocalDiningIcon from "@mui/icons-material/LocalDining";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
 import PercentIcon from "@mui/icons-material/Percent";
 import ListAltIcon from "@mui/icons-material/ListAlt";
+import ContactsIcon from "@mui/icons-material/Contacts";
 
 const navConfig = [
   {
@@ -44,6 +45,11 @@ const navConfig = [
     title: "orders",
     path: "/orders",
     icon: <ListAltIcon className="text-primary-500" />,
+  },
+  {
+    title: "customers",
+    path: "/customers",
+    icon: <ContactsIcon className="text-primary-500" />,
   },
 ];
 

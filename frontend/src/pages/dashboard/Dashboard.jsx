@@ -22,7 +22,7 @@ import CardDashboard from "../../components/card/CardDashboard";
 
 const Dashboard = () => {
   return (
-    <div className="bg-[#252836] px-5 h-full overflow-y-scroll hide-scroll pt-24 pb-5">
+    <div className="bg-primary-100 px-5 h-full overflow-y-scroll hide-scroll pt-24 pb-5">
       <div className="flex gap-4">
         <div className="basis-1/4">
           <CardDashboard />

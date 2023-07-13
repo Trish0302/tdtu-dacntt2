@@ -12,6 +12,11 @@ const App = () => {
         fontSize: 14,
       },
     },
+    palette: {
+      secondary: {
+        main: "#f7a399",
+      },
+    },
   });
   return (
     <ThemeProvider theme={theme}>
