@@ -31,6 +31,7 @@ const FoodsPage = () => {
     storeId,
     foodGroupId
   );
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const confirm = useConfirm();
@@ -43,6 +44,7 @@ const FoodsPage = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
   const handleChangeRowsPerPage = async (event) => {
+    setLoading(true);
     setPage(0);
     setRowsPerPage(parseInt(event.target.value, 10));
     let result;
@@ -65,8 +67,10 @@ const FoodsPage = () => {
       );
     }
     dispatch({ type: "setList", payload: { list: result.data } });
+    setLoading(false);
   };
   const handleChangePage = async (event, newPage) => {
+    setLoading(true);
     setPage(newPage);
     let result;
     if (storeId && foodGroupId) {
@@ -85,6 +89,7 @@ const FoodsPage = () => {
       );
     }
     dispatch({ type: "setList", payload: { list: result.data } });
+    setLoading(false);
   };
 
   const handleOpenEdit = (event) => {
@@ -185,7 +190,7 @@ const FoodsPage = () => {
 
       <Card sx={{ mt: 2 }}>
         <TableContainer sx={{ minWidth: 800 }}>
-          {isLoading && (
+          {(loading || isLoading) && (
             <Box sx={{ width: "100%" }}>
               <LinearProgress color="secondary" />
             </Box>
@@ -215,7 +220,7 @@ const FoodsPage = () => {
                       }).format(food.price)}
                     </TableCell>
                     <TableCell align="right">
-                      <Tooltip title="View Detail">
+                      <Tooltip title="View Detail" arrow>
                         <IconButton aria-label="view">
                           <VisibilityIcon
                             data-currentfood={JSON.stringify(food)}
@@ -223,7 +228,7 @@ const FoodsPage = () => {
                           />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Edit">
+                      <Tooltip title="Edit" arrow>
                         <IconButton
                           aria-label="edit"
                           data-currentfood={JSON.stringify(food)}
@@ -232,7 +237,7 @@ const FoodsPage = () => {
                           <EditIcon />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Delete">
+                      <Tooltip title="Delete" arrow>
                         <IconButton
                           aria-label="delete"
                           data-currentfood={JSON.stringify(food)}

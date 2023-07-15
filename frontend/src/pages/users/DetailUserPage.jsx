@@ -80,7 +80,8 @@ const DetailUserPage = () => {
                 <p className="font-semibold text-lg">Profile Image</p>
                 <img
                   src={updateUser.avatar}
-                  className="h-[300px] w-fit object-cover rounded-lg shadow-md block flex-1"
+                  className="h-[300px] w-full object-cover rounded-lg shadow-md block flex-1"
+                  alt={updateUser.name}
                 />
               </div>
             </Card>
@@ -130,8 +131,8 @@ const DetailUserPage = () => {
               <Divider />
               <div className="my-2 px-4">
                 <p className="font-semibold pb-1">Position Information</p>
-                <div className="flex w-full justify-between pb-1">
-                  <Box sx={{ minWidth: 300 }}>
+                <div className="flex justify-between pb-1 w-full gap-7">
+                  <Box sx={{ width: "100%" }}>
                     <InputLabel className="mb-2">Role</InputLabel>
                     <FormControl fullWidth>
                       <InputLabel id="role">Role</InputLabel>
@@ -151,7 +152,7 @@ const DetailUserPage = () => {
                       </Select>
                     </FormControl>
                   </Box>
-                  <Box sx={{ minWidth: 300 }}>
+                  <Box sx={{ width: "100%" }}>
                     <InputLabel className="mb-2">Belong to store</InputLabel>
                     <FormControl fullWidth>
                       <InputLabel id="role">Belong to store</InputLabel>

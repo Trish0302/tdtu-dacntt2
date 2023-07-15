@@ -33,6 +33,7 @@ const UsersPage = () => {
 
   const { state, dispatch, isLoading } = useContext(ListUserContext);
   console.log("🚀 ~ file: UsersPage.jsx:29 ~ UsersPage ~ state:", state);
+  const [loading, setLoading] = useState(false);
 
   // pagination
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -42,6 +43,7 @@ const UsersPage = () => {
   // functions
 
   const handleChangeRowsPerPage = async (event) => {
+    setLoading(true);
     setPage(0);
     setRowsPerPage(parseInt(event.target.value, 10));
     const result = await call(
@@ -53,8 +55,10 @@ const UsersPage = () => {
       null
     );
     dispatch({ type: "setList", payload: { list: result.data } });
+    setLoading(false);
   };
   const handleChangePage = async (event, newPage) => {
+    setLoading(true);
     setPage(newPage);
     const result = await call(
       `api/users?page=${newPage + 1}&page_size=${rowsPerPage}`,
@@ -62,6 +66,7 @@ const UsersPage = () => {
       null
     );
     dispatch({ type: "setList", payload: { list: result.data } });
+    setLoading(false);
   };
   const handleOpenEdit = (event) => {
     const dataRow = JSON.parse(event.currentTarget.dataset.currentuser);
@@ -105,7 +110,7 @@ const UsersPage = () => {
       </div>
 
       <Card sx={{ mt: 2 }}>
-        {isLoading && (
+        {(loading || isLoading) && (
           <Box sx={{ width: "100%" }}>
             <LinearProgress color="secondary" />
           </Box>
@@ -139,7 +144,7 @@ const UsersPage = () => {
                     <TableCell align="left">{user.email}</TableCell>
                     <TableCell align="left">{user.phone}</TableCell>
                     <TableCell align="right">
-                      <Tooltip title="View Detail">
+                      <Tooltip title="View Detail" arrow>
                         <IconButton aria-label="view">
                           <VisibilityIcon
                             data-currentuser={JSON.stringify(user)}
@@ -147,7 +152,7 @@ const UsersPage = () => {
                           />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Edit">
+                      <Tooltip title="Edit" arrow>
                         <IconButton
                           aria-label="edit"
                           data-currentuser={JSON.stringify(user)}
@@ -156,7 +161,7 @@ const UsersPage = () => {
                           <EditIcon />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Delete">
+                      <Tooltip title="Delete" arrow>
                         <IconButton
                           aria-label="delete"
                           data-currentuser={JSON.stringify(user)}

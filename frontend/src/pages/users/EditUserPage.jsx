@@ -120,8 +120,8 @@ const EditUserPage = () => {
   return (
     <>
       {!loading ? (
-        <div>
-          <form onSubmit={formik.handleSubmit}>
+        <div className="h-full">
+          <form onSubmit={formik.handleSubmit} className="h-full">
             <div className="h-full bg-primary-100 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
               <p className="font-semibold mb-2 text-lg">
                 Edit User Information
@@ -145,7 +145,7 @@ const EditUserPage = () => {
                           htmlFor="dropzone-file"
                           className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
                         >
-                          <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                          <div className="flex flex-col items-center justify-center pt-5 pb-6 px-3 text-center">
                             <svg
                               aria-hidden="true"
                               className="w-10 h-10 mb-3 text-gray-400"
@@ -184,7 +184,8 @@ const EditUserPage = () => {
                     <div className="w-full flex flex-col gap-4 justify-center items-center ">
                       <img
                         src={previewPic}
-                        className="h-[300px] w-fit object-cover rounded-lg shadow-md block"
+                        className="h-[300px] w-full object-cover rounded-lg shadow-md block"
+                        alt={updateUser.name}
                       />
 
                       <Button
@@ -262,8 +263,8 @@ const EditUserPage = () => {
                   <Divider />
                   <div className="my-2 px-4">
                     <p className="font-semibold mb-2">Position Information</p>
-                    <div className="flex justify-between pb-1 w-full">
-                      <Box sx={{ minWidth: 300 }}>
+                    <div className="flex justify-between pb-1 w-full gap-7">
+                      <Box sx={{ width: "100%" }}>
                         <InputLabel className="mb-2">Role</InputLabel>
                         <FormControl fullWidth variant="outlined">
                           <InputLabel id="role">Role</InputLabel>
@@ -279,7 +280,7 @@ const EditUserPage = () => {
                           </Select>
                         </FormControl>
                       </Box>
-                      <Box sx={{ minWidth: 300 }}>
+                      <Box sx={{ width: "100%" }}>
                         <InputLabel className="mb-2">
                           Belong to store
                         </InputLabel>

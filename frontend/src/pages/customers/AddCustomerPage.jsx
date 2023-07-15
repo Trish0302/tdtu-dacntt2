@@ -69,10 +69,27 @@ const AddCustomerPage = () => {
         callUpload("api/customers", "POST", formData)
           .then((res) => {
             dispatch({ type: "addCustomer", item: values });
-            toast.success("Add Successfully", { autoClose: 1000 });
-            setTimeout(() => {
-              navigate("/customers");
-            }, 1500);
+            if (res.status == 200) {
+              toast.success("Add Successfully", { autoClose: 1000 });
+              setTimeout(() => {
+                navigate("/customers");
+              }, 1500);
+            } else {
+              console.log(res);
+              let entries = Object.entries(res.data.errors);
+              console.log(
+                "🚀 ~ file: AddUserPage.jsx:68 ~ .then ~ entries:",
+                entries
+              );
+              entries.map(([key, value]) => {
+                console.log("loi ne", key, value);
+
+                formik.setFieldError(key, value[0]);
+                toast.error(value[0], {
+                  autoClose: 2000,
+                });
+              });
+            }
           })
           .catch((err) => console.log("add-error", err));
       } catch (error) {
@@ -116,7 +133,7 @@ const AddCustomerPage = () => {
                       htmlFor="dropzone-file"
                       className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
                     >
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6 px-3 text-center">
                         <svg
                           aria-hidden="true"
                           className="w-10 h-10 mb-3 text-gray-400"

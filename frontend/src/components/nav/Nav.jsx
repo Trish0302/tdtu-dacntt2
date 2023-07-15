@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {
   Avatar,
   Box,
@@ -12,12 +13,16 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useContext, useState } from "react";
 import AcUnitIcon from "@mui/icons-material/AcUnit";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import navConfig from "./NavConfig";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useResponsive } from "ahooks";
+import { useEffect } from "react";
+import { AsyncStorage } from "AsyncStorage";
+import { call } from "../../utils/api";
+import { authContext } from "../../utils/auth";
 
 const NAV_WIDTH = "250px";
 
@@ -34,7 +39,28 @@ const Nav = ({ openSidebar, setOpenSidebar }) => {
     right: false,
   });
   const responsive = useResponsive();
+  const userInfo = useContext(authContext);
+  console.log("🚀 ~ file: Nav.jsx:43 ~ Nav ~ information :", userInfo);
+  // const [information, setInformation] = useState();
+
+  // useEffect(() => {
+  //   setInformation(userInfo);
+  // }, []);
   // console.log("🚀 ~ file: Nav.jsx:36 ~ Nav ~ responsive:", responsive);
+
+  // useEffect(() => {
+  //   async function getInfoUser() {
+  //     // const token_admin = await AsyncStorage.getItem("token-admin");
+  //     // console.log(
+  //     //   "🚀 ~ file: Nav.jsx:45 ~ getInfoUser ~ token_admin:",
+  //     //   token_admin
+  //     // );
+  //     const rs = await call(`api/user`);
+  //     setInformation(rs);
+  //     console.log("🚀 ~ file: Nav.jsx:51 ~ getInfoUser ~ rs:", rs);
+  //   }
+  //   getInfoUser();
+  // }, []);
 
   const list = () => (
     <div className=" ">
@@ -43,7 +69,7 @@ const Nav = ({ openSidebar, setOpenSidebar }) => {
         role="presentation"
         onClick={() => setOpenSidebar(false)}
       >
-        <List>
+        <List sx={{ paddingTop: 0 }}>
           {navConfig.map((text, index) => (
             <ListItem key={index} disablePadding>
               <ListItemButton
@@ -76,7 +102,7 @@ const Nav = ({ openSidebar, setOpenSidebar }) => {
         openSidebar ? "block" : "hidden"
       }`}
     >
-      <React.Fragment>
+      <div className="text-center">
         <Drawer
           open={!responsive.lg && !responsive.xl ? openSidebar : true}
           variant={`${
@@ -94,11 +120,11 @@ const Nav = ({ openSidebar, setOpenSidebar }) => {
           className="shadow-xl "
         >
           <Logo />
-          <ImageProfile />
+          {userInfo && <ImageProfile information={userInfo} />}
           <Divider />
           {list()}
         </Drawer>
-      </React.Fragment>
+      </div>
     </div>
   );
 };
@@ -136,18 +162,19 @@ const Logo = () => {
   );
 };
 
-const ImageProfile = () => {
+const ImageProfile = ({ information }) => {
   return (
-    <div className="py-6 px-12 w-full h-44 flex-col justify-center items-center text-center">
+    <div className="py-5  w-full  flex-col justify-center items-center text-center">
       <div className="w-full flex justify-center mb-2">
         <Avatar
           sx={{ width: 80, height: 80 }}
           alt="avatar"
           className="shadow-lg"
-          src="https://media.vogue.mx/photos/629e751da37e812991371b08/16:9/pass/Lisa-aka-Lalisa%20Manoban-Bulgari.jpg"
+          src={information.avatar}
         />
       </div>
-      <div className="font-semibold">MrHieu</div>
+      <div className="font-semibold">{information.name}</div>
+      <small className="">{information.email}</small>
       <div className="text-gray-500">
         <small>Admin</small>
       </div>
