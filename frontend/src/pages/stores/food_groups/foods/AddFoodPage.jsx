@@ -158,8 +158,8 @@ const AddFoodPage = () => {
   }, []);
 
   return (
-    <div>
-      <form onSubmit={formik.handleSubmit}>
+    <div className="h-full">
+      <form onSubmit={formik.handleSubmit} className="h-full">
         <div className="h-full bg-primary-100 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
           <p className="font-semibold mb-2 text-lg">Add Food</p>
           <Divider />

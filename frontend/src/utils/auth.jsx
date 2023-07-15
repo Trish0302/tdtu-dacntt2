@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { AsyncStorage } from "AsyncStorage";
 import { Navigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
+import { call } from "./api";
 
 export const authContext = createContext();
 const Auth = ({ children }) => {
@@ -15,7 +16,8 @@ const Auth = ({ children }) => {
   useEffect(() => {
     async function fetchData() {
       const data = await AsyncStorage.getItem("token-admin");
-      setUserInfo(data);
+      const rs = await call(`api/user`);
+      setUserInfo(rs);
 
       // console.log('🚀 ~ file: auth.js:16 ~ fetchData ~ data', data);
       if (data === undefined || data === "null") {
@@ -29,13 +31,11 @@ const Auth = ({ children }) => {
       }
     }
     fetchData();
-  }, [userInfo]);
+  }, []);
 
   return loading ? (
     auth ? (
-      <authContext.Provider value={JSON.parse(userInfo)}>
-        {children}
-      </authContext.Provider>
+      <authContext.Provider value={userInfo}>{children}</authContext.Provider>
     ) : (
       <Navigate to="/login" />
     )

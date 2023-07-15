@@ -29,6 +29,7 @@ const StoresPage = () => {
   const navigate = useNavigate();
   const confirm = useConfirm();
   const { state, dispatch, isLoading } = useContext(ListStoreContext);
+  const [loading, setLoading] = useState(false);
 
   console.log("🚀 ~ file: StoresPage.jsx:25 ~ StoresPage ~ state:", state);
 
@@ -39,6 +40,7 @@ const StoresPage = () => {
   const handleChangeRowsPerPage = async (event) => {
     setPage(0);
     setRowsPerPage(parseInt(event.target.value, 10));
+    setLoading(true);
     const result = await call(
       `api/stores?page=${page + 1}&page_size=${parseInt(
         event.target.value,
@@ -48,9 +50,11 @@ const StoresPage = () => {
       null
     );
     dispatch({ type: "setList", payload: { list: result.data } });
+    setLoading(false);
   };
   const handleChangePage = async (event, newPage) => {
     setPage(newPage);
+    setLoading(true);
     const result = await call(
       `api/stores?page=${newPage + 1}&page_size=${rowsPerPage}`,
       "GET",
@@ -61,6 +65,7 @@ const StoresPage = () => {
       result
     );
     dispatch({ type: "setList", payload: { list: result.data } });
+    setLoading(false);
   };
 
   const handleOpenEdit = (event) => {
@@ -110,7 +115,7 @@ const StoresPage = () => {
       </div>
 
       <Card sx={{ mt: 2 }}>
-        {isLoading && (
+        {(loading || isLoading) && (
           <Box sx={{ width: "100%" }}>
             <LinearProgress color="secondary" />
           </Box>
@@ -138,7 +143,7 @@ const StoresPage = () => {
                     <TableCell align="left">{store.description}</TableCell>
                     <TableCell align="left">{store?.user?.name}</TableCell>
                     <TableCell align="right">
-                      <Tooltip title="View Detail Food Groups">
+                      <Tooltip title="View Detail Food Groups" arrow>
                         <IconButton aria-label="view">
                           <RestaurantMenuIcon
                             data-currentstore={JSON.stringify(store)}
@@ -146,7 +151,7 @@ const StoresPage = () => {
                           />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="View Detail">
+                      <Tooltip title="View Detail" arrow>
                         <IconButton aria-label="view">
                           <VisibilityIcon
                             data-currentstore={JSON.stringify(store)}
@@ -154,7 +159,7 @@ const StoresPage = () => {
                           />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Edit">
+                      <Tooltip title="Edit" arrow>
                         <IconButton
                           aria-label="edit"
                           data-currentstore={JSON.stringify(store)}
@@ -163,7 +168,7 @@ const StoresPage = () => {
                           <EditIcon />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Delete">
+                      <Tooltip title="Delete" arrow>
                         <IconButton
                           aria-label="delete"
                           data-currentstore={JSON.stringify(store)}
