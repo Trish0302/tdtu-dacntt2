@@ -27,35 +27,39 @@ Route::middleware('auth:sanctum', 'ability:admin,customer')->group(function () {
     Route::get('/logout', [AuthController::class, 'logout']);
 });
 
-Route::get('/food-groups', [FoodGroupsController::class, 'getAll']);
-Route::get('/food', [FoodController::class, 'getAll']);
-
 Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
-    Route::get('/food-groups', [FoodGroupsController::class, 'getAll']);
-
-    Route::get('/food/{id}', [FoodController::class, 'getDetail']);
-    Route::get('/food', [FoodController::class, 'getAll']);
-
     Route::get('/orders/history', [OrdersController::class, 'viewHistory']);
 
     Route::apiResources([
         'users' => UsersController::class,
         'stores' => StoresController::class,
         'stores.food_groups' => FoodGroupsController::class,
-        'stores.food_groups.food' => FoodController::class,
         'orders' => OrdersController::class,
         'vouchers' => VouchersController::class,
         'customers' => CustomersController::class,
     ]);
+
+    Route::apiResources(
+        ['stores.food_groups.food' => FoodController::class],
+        ['except' => ['index', 'show']],
+    );
 });
 
 Route::middleware('auth:sanctum', 'ability:customer')->group(function () {
     Route::get('/test_customer', function () {
-        return 'hello vietnam';
+        return 'hello';
     });
 });
 
+
 Route::post('/login', [AuthController::class, 'login']);
+
+Route::get('/food-groups', [FoodGroupsController::class, 'getAll']);
+
+Route::get('/food', [FoodController::class, 'getAll']);
+Route::get('/stores/{store_id}/food_groups/{food_group_id}/food', [FoodController::class, 'index']);
+Route::get('/stores/{store_id}/food_groups/{food_group_id}/food/{food_id}', [FoodController::class, 'show']);
+Route::get('/food/{id}', [FoodController::class, 'getDetail']);
 
 // Payment response
 Route::get('/payment/respond', [PaymentController::class, 'respond']);
