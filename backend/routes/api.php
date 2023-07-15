@@ -51,7 +51,7 @@ Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
 
 Route::middleware('auth:sanctum', 'ability:customer')->group(function () {
     Route::get('/test_customer', function () {
-        return 'hello';
+        return 'hello vietnam';
     });
 });
 
