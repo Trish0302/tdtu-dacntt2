@@ -1,5 +1,3 @@
-import React, { useEffect } from "react";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -17,62 +15,67 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { call, callUpload } from "../../utils/api";
-import { ListUserContext } from "../../stores/ListUserContext";
-import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import customerValidationSchema from "../../validations/CustomerValidation";
 import { useFormik } from "formik";
-import userValidationSchema from "../../validations/UserValidation";
+import { useNavigate, useParams } from "react-router-dom";
+import { ListCustomerContext } from "../../stores/ListCustomerContext";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-const EditUserPage = () => {
+const EditCustomerPage = () => {
   const { id } = useParams();
-  const { state, dispatch } = useContext(ListUserContext);
+  const { state, dispatch } = useContext(ListCustomerContext);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = React.useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = React.useState(false);
 
-  const [updateUser, setUpdateUser] = useState({
+  const [updateCustomer, setUpdateCustomer] = useState({
     name: "",
     phone: "",
     email: "",
-    avatar: "",
+    address: "",
     password: "",
     password_confirmation: "",
   });
-
+  console.log(
+    "🚀 ~ file: EditUserPage.jsx:33 ~ EditUserPage ~ updateCustomer:",
+    updateCustomer
+  );
   const [previewPic, setPreviewPic] = useState();
 
   const formik = useFormik({
-    initialValues: { ...updateUser, password: "", password_confirmation: "" },
-    validationSchema: userValidationSchema,
+    initialValues: {
+      ...updateCustomer,
+      password: "",
+      password_confirmation: "",
+    },
+    validationSchema: customerValidationSchema,
     enableReinitialize: true,
     onSubmit: (values) => {
       console.log(values);
       const formData = new FormData();
+
       formData.append("id", id);
       formData.append("name", values.name);
       formData.append("email", values.email);
       formData.append("phone", values.phone);
+      formData.append("address", values.address);
       formData.append("avatar", values.avatar);
       formData.append("password", values.password);
       formData.append("password_confirmation", values.password_confirmation);
       formData.append("_method", "PUT");
 
-      for (var pair of formData.entries()) {
-        console.log(pair[0] + ", " + pair[1]);
-      }
-
       try {
-        callUpload(`api/users/${id}`, "POST", formData)
+        callUpload(`api/customers/${id}`, "POST", formData)
           .then((res) => {
-            console.log("🚀 ~ file: EditUserPage.jsx:65 ~ .then ~ res:", res);
-            dispatch({ type: "updateUser", item: values });
+            dispatch({ type: "updateCustomer", item: values });
             if (res.status == 200) {
               toast.success("Update Successfully", { autoClose: 1000 });
               setTimeout(() => {
-                navigate("/users");
+                navigate("/customers");
               }, 1500);
             } else {
               let entries = Object.entries(res.data.message);
@@ -91,8 +94,13 @@ const EditUserPage = () => {
             }
           })
           .catch((err) => console.log("add-error", err));
+        // toast.success('Add Successfully', { autoClose: 2000 });
+        setTimeout(() => {
+          navigate("/customers");
+        }, 2000);
       } catch (error) {
         console.log(error);
+        // toast.error('Something went wrong');
       }
     },
   });
@@ -109,9 +117,9 @@ const EditUserPage = () => {
 
   useEffect(() => {
     setLoading(true);
-    const data = call(`api/users/${id}`, "GET", null);
+    const data = call(`api/customers/${id}`, "GET", null);
     data.then((response) => {
-      setUpdateUser(response.data);
+      setUpdateCustomer(response.data);
       setPreviewPic(response.data.avatar);
       setLoading(false);
     });
@@ -124,7 +132,7 @@ const EditUserPage = () => {
           <form onSubmit={formik.handleSubmit}>
             <div className="h-full bg-primary-100 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
               <p className="font-semibold mb-2 text-lg">
-                Edit User Information
+                Edit Customer Information
               </p>
               <Divider />
               <Stack
@@ -257,48 +265,24 @@ const EditUserPage = () => {
                         }
                         helperText={formik.touched.phone && formik.errors.phone}
                       />
+                      <TextField
+                        fullWidth
+                        id="address"
+                        name="address"
+                        label="Address"
+                        value={formik.values.address}
+                        onChange={formik.handleChange}
+                        error={
+                          formik.touched.address &&
+                          Boolean(formik.errors.address)
+                        }
+                        helperText={
+                          formik.touched.address && formik.errors.address
+                        }
+                      />
                     </Stack>
                   </Stack>
-                  <Divider />
-                  <div className="my-2 px-4">
-                    <p className="font-semibold mb-2">Position Information</p>
-                    <div className="flex justify-between pb-1 w-full">
-                      <Box sx={{ minWidth: 300 }}>
-                        <InputLabel className="mb-2">Role</InputLabel>
-                        <FormControl fullWidth variant="outlined">
-                          <InputLabel id="role">Role</InputLabel>
-                          <Select
-                            labelId="role"
-                            id="demo-simple-select"
-                            value={null}
-                            label="Role"
-                          >
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Box>
-                      <Box sx={{ minWidth: 300 }}>
-                        <InputLabel className="mb-2">
-                          Belong to store
-                        </InputLabel>
-                        <FormControl fullWidth variant="outlined">
-                          <InputLabel id="role">Belong to store</InputLabel>
-                          <Select
-                            labelId="role"
-                            id="demo-simple-select"
-                            value={null}
-                            label="Belong to store"
-                          >
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Box>
-                    </div>
-                  </div>
+
                   <Divider />
                   <div className="mt-2 px-4">
                     <p className="font-semibold">Password</p>
@@ -410,4 +394,4 @@ const EditUserPage = () => {
   );
 };
 
-export default EditUserPage;
+export default EditCustomerPage;

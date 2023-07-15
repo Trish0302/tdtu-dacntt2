@@ -23,10 +23,10 @@ const NAV_WIDTH = "250px";
 
 // eslint-disable-next-line react/prop-types
 const Nav = ({ openSidebar, setOpenSidebar }) => {
-  console.log("🚀 ~ file: Nav.jsx:23 ~ Nav ~ openSidebar:", openSidebar);
+  // console.log("🚀 ~ file: Nav.jsx:23 ~ Nav ~ openSidebar:", openSidebar);
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  console.log("🚀 ~ file: Nav.jsx:25 ~ Nav ~ pathname:", pathname);
+  // console.log("🚀 ~ file: Nav.jsx:25 ~ Nav ~ pathname:", pathname);
   const [state, setState] = React.useState({
     top: false,
     left: false,
@@ -91,7 +91,7 @@ const Nav = ({ openSidebar, setOpenSidebar }) => {
               overflowX: "hidden",
             },
           }}
-          className="shadow-xl"
+          className="shadow-xl "
         >
           <Logo />
           <ImageProfile />

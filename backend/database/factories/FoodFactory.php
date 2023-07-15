@@ -15,6 +15,7 @@ class FoodFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
+            'avatar' => $this->faker->name(),
             'slug' => $this->faker->slug(2, false),
             'description' => $this->faker->text(),
             'price' => $this->faker->numberBetween(10000,1000000),

@@ -33,6 +33,10 @@ import { ListOrderProvider } from "./stores/ListOrderContext";
 import OrderPage from "./pages/orders/OrderPage";
 import EditOrderPage from "./pages/orders/EditOrderPage";
 import DetailOrderPage from "./pages/orders/DetailOrderPage";
+import AddCustomerPage from "./pages/customers/AddCustomerPage";
+import EditCustomerPage from "./pages/customers/EditCustomerPage";
+import DetailCustomerPage from "./pages/customers/DetailCustomerPage";
+import { ListCustomerProvider } from "./stores/ListCustomerContext";
 
 const Router = () => {
   const routes = useRoutes([
@@ -58,7 +62,36 @@ const Router = () => {
         },
         {
           path: "customers",
-          element: <CustomerPage />,
+          children: [
+            {
+              element: (
+                <ListCustomerProvider>
+                  <CustomerPage />
+                </ListCustomerProvider>
+              ),
+              index: true,
+            },
+            {
+              path: "add",
+              element: (
+                <ListCustomerProvider>
+                  <AddCustomerPage />
+                </ListCustomerProvider>
+              ),
+            },
+            {
+              path: "edit/:id",
+              element: (
+                <ListCustomerProvider>
+                  <EditCustomerPage />
+                </ListCustomerProvider>
+              ),
+            },
+            {
+              path: "detail/:id",
+              element: <DetailCustomerPage />,
+            },
+          ],
         },
         {
           path: "users",

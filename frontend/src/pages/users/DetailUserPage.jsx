@@ -33,6 +33,7 @@ const DetailUserPage = () => {
     name: "",
     phone: "",
     email: "",
+    avatar: "",
     password: "",
     password_confirmation: "",
   });
@@ -61,7 +62,7 @@ const DetailUserPage = () => {
   return (
     <>
       {!loading ? (
-        <div className="h-full bg-violet-50 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
+        <div className="h-full bg-primary-100 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
           <p className="font-semibold mb-2 text-lg">User Information</p>
           <Divider />
           <Stack
@@ -78,7 +79,7 @@ const DetailUserPage = () => {
               <div className="w-full flex flex-col gap-4 justify-center items-center h-full">
                 <p className="font-semibold text-lg">Profile Image</p>
                 <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Blackpink_Lisa_GMP_240622.png/800px-Blackpink_Lisa_GMP_240622.png"
+                  src={updateUser.avatar}
                   className="h-[300px] w-fit object-cover rounded-lg shadow-md block flex-1"
                 />
               </div>
@@ -176,7 +177,7 @@ const DetailUserPage = () => {
           </Stack>
         </div>
       ) : (
-        <div className="w-full h-full flex items-center justify-center bg-violet-50">
+        <div className="w-full h-full flex items-center justify-center bg-primary-100">
           <CircularProgress color="secondary" />
         </div>
       )}

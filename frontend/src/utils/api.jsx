@@ -58,3 +58,29 @@ export const call = async (url, med, params) => {
       return err.response;
     });
 };
+
+export const callUpload = async (url, med, formData) => {
+  let tk = null;
+  const item = await AsyncStorage.getItem("token-admin");
+  if (item !== undefined || item !== "null") {
+    const { access_token } = JSON.parse(item);
+    tk = access_token;
+  }
+  const options = {
+    method: med,
+    timeout: 15000,
+    headers: {
+      "content-type": "multipart/form-data",
+      accept: "application/json",
+      Authorization: `Bearer ${tk}`,
+    },
+    data: formData,
+    url: `${config.apiUrl}${url}`,
+  };
+  return axios(options)
+    .then((response) => response.data)
+    .catch((err) => {
+      console.log(err);
+      return err.response;
+    });
+};
