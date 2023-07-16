@@ -53,7 +53,6 @@ Route::middleware('auth:sanctum', 'ability:customer')->group(function () {
     });
 });
 
-
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/stores', [StoresController::class, 'index']);
