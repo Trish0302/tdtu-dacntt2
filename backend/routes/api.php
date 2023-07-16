@@ -33,14 +33,16 @@ Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
     Route::apiResources([
         'users' => UsersController::class,
         'stores' => StoresController::class,
-        'stores.food_groups' => FoodGroupsController::class,
         'orders' => OrdersController::class,
         'vouchers' => VouchersController::class,
         'customers' => CustomersController::class,
     ]);
 
     Route::apiResources(
-        ['stores.food_groups.food' => FoodController::class],
+        [
+            'stores.food_groups.food' => FoodController::class,
+            'stores.food_groups' => FoodGroupsController::class,
+        ],
         ['except' => ['index', 'show']],
     );
 });
@@ -55,6 +57,8 @@ Route::middleware('auth:sanctum', 'ability:customer')->group(function () {
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/food-groups', [FoodGroupsController::class, 'getAll']);
+Route::get('/stores/{store_id}/food_groups', [FoodGroupsController::class, 'index']);
+Route::get('/stores/{store_id}/food_groups/{food_group_id}', [FoodGroupsController::class, 'show']);
 
 Route::get('/food', [FoodController::class, 'getAll']);
 Route::get('/stores/{store_id}/food_groups/{food_group_id}/food', [FoodController::class, 'index']);
