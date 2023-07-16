@@ -29,12 +29,14 @@ const OrderPage = () => {
   const { state, dispatch, isLoading } = useContext(ListOrderContext);
 
   console.log("🚀 ~ file: StoresPage.jsx:25 ~ StoresPage ~ state:", state);
+  const [loading, setLoading] = useState(false);
 
   // funcs
   // pagination
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
   const handleChangeRowsPerPage = async (event) => {
+    setLoading(true);
     setPage(0);
     setRowsPerPage(parseInt(event.target.value, 10));
     const result = await call(
@@ -46,8 +48,10 @@ const OrderPage = () => {
       null
     );
     dispatch({ type: "setList", payload: { list: result.data } });
+    setLoading(false);
   };
   const handleChangePage = async (event, newPage) => {
+    setLoading(true);
     setPage(newPage);
     const result = await call(
       `api/orders?page=${newPage + 1}&page_size=${rowsPerPage}`,
@@ -59,6 +63,7 @@ const OrderPage = () => {
       result
     );
     dispatch({ type: "setList", payload: { list: result.data } });
+    setLoading(false);
   };
 
   const handleOpenEdit = (event) => {
@@ -89,7 +94,6 @@ const OrderPage = () => {
 
   return (
     <div className=" bg-primary-100 px-5 h-full overflow-y-scroll hide-scroll pt-24 pb-5">
-
       <div className="flex items-center w-full">
         <Search />
         <button className="px-6 py-2 text-primary-500 bg-white rounded-lg font-semibold uppercase text-sm ml-3">
@@ -105,7 +109,7 @@ const OrderPage = () => {
 
       <Card sx={{ mt: 2 }}>
         <TableContainer sx={{ minWidth: 800 }}>
-          {isLoading && (
+          {(loading || isLoading) && (
             <Box sx={{ width: "100%" }}>
               <LinearProgress color="secondary" />
             </Box>
@@ -137,7 +141,7 @@ const OrderPage = () => {
                       }).format(order.total)}
                     </TableCell>
                     <TableCell align="right">
-                      <Tooltip title="View Detail">
+                      <Tooltip title="View Detail" arrow>
                         <IconButton aria-label="view">
                           <VisibilityIcon
                             data-currentorder={JSON.stringify(order)}
@@ -145,7 +149,7 @@ const OrderPage = () => {
                           />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Edit">
+                      <Tooltip title="Edit" arrow>
                         <IconButton
                           aria-label="edit"
                           data-currentorder={JSON.stringify(order)}
@@ -154,7 +158,7 @@ const OrderPage = () => {
                           <EditIcon />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Delete">
+                      <Tooltip title="Delete" arrow>
                         <IconButton
                           aria-label="delete"
                           data-currentorder={JSON.stringify(order)}

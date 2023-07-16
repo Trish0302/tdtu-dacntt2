@@ -231,7 +231,7 @@ const DetailOrderPage = () => {
                               {row.quantity}
                             </TableCell>
                             <TableCell component="th" scope="row">
-                              {row.total}
+                              {row.total.toLocaleString()}
                             </TableCell>
                           </TableRow>
                         ))}

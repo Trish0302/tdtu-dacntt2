@@ -78,7 +78,8 @@ const EditCustomerPage = () => {
                 navigate("/customers");
               }, 1500);
             } else {
-              let entries = Object.entries(res.data.message);
+              console.log(res);
+              let entries = Object.entries(res.data.errors);
               console.log(
                 "🚀 ~ file: AddUserPage.jsx:68 ~ .then ~ entries:",
                 entries
@@ -95,9 +96,6 @@ const EditCustomerPage = () => {
           })
           .catch((err) => console.log("add-error", err));
         // toast.success('Add Successfully', { autoClose: 2000 });
-        setTimeout(() => {
-          navigate("/customers");
-        }, 2000);
       } catch (error) {
         console.log(error);
         // toast.error('Something went wrong');
@@ -128,8 +126,8 @@ const EditCustomerPage = () => {
   return (
     <>
       {!loading ? (
-        <div>
-          <form onSubmit={formik.handleSubmit}>
+        <div className="h-full">
+          <form onSubmit={formik.handleSubmit} className="h-full">
             <div className="h-full bg-primary-100 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
               <p className="font-semibold mb-2 text-lg">
                 Edit Customer Information
@@ -153,7 +151,7 @@ const EditCustomerPage = () => {
                           htmlFor="dropzone-file"
                           className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
                         >
-                          <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                          <div className="flex flex-col items-center justify-center pt-5 pb-6 px-3 text-center">
                             <svg
                               aria-hidden="true"
                               className="w-10 h-10 mb-3 text-gray-400"

@@ -32,12 +32,14 @@ const FoodGroupsPage = () => {
   const { state, dispatch, isLoading } = useContext(ListFoodGroupContext);
 
   console.log("🚀 ~ file: StoresPage.jsx:25 ~ FoodGroupsPage ~ state:", state);
+  const [loading, setLoading] = useState(false);
 
   // funcs
   // pagination
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
   const handleChangeRowsPerPage = async (event) => {
+    setLoading(true);
     setPage(0);
     setRowsPerPage(parseInt(event.target.value, 10));
     let result;
@@ -62,8 +64,10 @@ const FoodGroupsPage = () => {
     }
 
     dispatch({ type: "setList", payload: { list: result.data } });
+    setLoading(false);
   };
   const handleChangePage = async (event, newPage) => {
+    setLoading(true);
     setPage(newPage);
     let result;
     if (location.state) {
@@ -83,6 +87,7 @@ const FoodGroupsPage = () => {
     }
 
     dispatch({ type: "setList", payload: { list: result.data } });
+    setLoading(false);
   };
 
   const handleOpenEdit = (event) => {
@@ -184,7 +189,7 @@ const FoodGroupsPage = () => {
 
       <Card sx={{ mt: 2 }}>
         <TableContainer sx={{ minWidth: 800 }}>
-          {isLoading && (
+          {(loading || isLoading) && (
             <Box sx={{ width: "100%" }}>
               <LinearProgress color="secondary" />
             </Box>
@@ -208,7 +213,7 @@ const FoodGroupsPage = () => {
                     <TableCell align="left">{foodGroup.slug}</TableCell>
                     <TableCell align="right">
                       {location.state && (
-                        <Tooltip title="View Detail Food">
+                        <Tooltip title="View Detail Food" arrow>
                           <IconButton aria-label="view">
                             <FastfoodIcon
                               data-currentfoodgroup={JSON.stringify(foodGroup)}
@@ -217,7 +222,7 @@ const FoodGroupsPage = () => {
                           </IconButton>
                         </Tooltip>
                       )}
-                      <Tooltip title="View Detail">
+                      <Tooltip title="View Detail" arrow>
                         <IconButton aria-label="view">
                           <VisibilityIcon
                             data-currentfoodgroup={JSON.stringify(foodGroup)}
@@ -225,7 +230,7 @@ const FoodGroupsPage = () => {
                           />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Edit">
+                      <Tooltip title="Edit" arrow>
                         <IconButton
                           aria-label="edit"
                           data-currentfoodgroup={JSON.stringify(foodGroup)}
@@ -234,7 +239,7 @@ const FoodGroupsPage = () => {
                           <EditIcon />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Delete">
+                      <Tooltip title="Delete" arrow>
                         <IconButton
                           aria-label="delete"
                           data-currentfoodgroup={JSON.stringify(foodGroup)}
