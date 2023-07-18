@@ -24,6 +24,7 @@ use App\Http\Controllers\OrdersController;
 
 Route::middleware('auth:sanctum', 'ability:admin,customer')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
+    Route::put('/password', [AuthController::class, 'update_password']);
     Route::get('/logout', [AuthController::class, 'logout']);
 });
 
@@ -31,8 +32,6 @@ Route::get('/food-groups', [FoodGroupsController::class, 'getAll']);
 Route::get('/food', [FoodController::class, 'getAll']);
 
 Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
-    Route::post('/users/{id}/update-password', [UsersController::class, 'update_password']);
-
     Route::get('/food-groups', [FoodGroupsController::class, 'getAll']);
 
     Route::get('/food/{id}', [FoodController::class, 'getDetail']);

@@ -17,13 +17,6 @@ class RegisterUserRequest extends FormRequest
         return true;
     }
 
-    protected function prepareForValidation()
-    {
-        if (Request::instance()->update_password == true) {
-            $this->merge(['id' => $this->route('id')]);
-        }
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *

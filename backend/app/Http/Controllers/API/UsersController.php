@@ -102,10 +102,8 @@ class UsersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(RegisterUserRequest $request, $id)
+    public function update(RegisterUserRequest $request)
     {
-        $request->merge(['id' => $id]);
-
         if (isset($request->validator) && $request->validator->fails()) {
             return response()->json([
                 'message' => $request->validator->messages(),
@@ -132,35 +130,6 @@ class UsersController extends Controller
 
             return response()->json([
                 'message' => 'Update user information successfully!',
-                'data' => $user,
-                'status' => 200,
-            ], 200);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Invalid user. Please try again!',
-                'status' => 400,
-            ], 400);
-        }
-    }
-
-    public function update_password(RegisterUserRequest $request)
-    {
-        if (isset($request->validator) && $request->validator->fails()) {
-            return response()->json([
-                'message' => $request->validator->messages(),
-                'status' => 400,
-            ], 400);
-        }
-
-        try {
-            $user = User::findOrFail($request->id);
-
-            $user->update([
-                'password' => Hash::make($request->password),
-            ]);
-
-            return response()->json([
-                'message' => 'Update user password successfully!',
                 'data' => $user,
                 'status' => 200,
             ], 200);
