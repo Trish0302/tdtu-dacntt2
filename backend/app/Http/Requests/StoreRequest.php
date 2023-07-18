@@ -27,6 +27,7 @@ class StoreRequest extends FormRequest
         return [
             'id' => Request::instance()->id ? 'exists:stores,id' : '',
             'name' => 'required',
+            'avatar' => 'nullable',
             'address' => 'required',
             'description' => 'required',
             'user_id' => 'required|exists:users,id',
