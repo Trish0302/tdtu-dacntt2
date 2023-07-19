@@ -28,7 +28,7 @@ export const call = async (url, med, params) => {
   let tk = null;
   const item = await AsyncStorage.getItem("token-admin");
   // console.log("🚀 ~ file: api.jsx:29 ~ call ~ item:", item);
-  if (item !== undefined || item !== "null") {
+  if (item != undefined || item != "null") {
     const { access_token } = JSON.parse(item);
     tk = access_token;
   }
@@ -62,7 +62,7 @@ export const call = async (url, med, params) => {
 export const callUpload = async (url, med, formData) => {
   let tk = null;
   const item = await AsyncStorage.getItem("token-admin");
-  if (item !== undefined || item !== "null") {
+  if (item != undefined || item != "null") {
     const { access_token } = JSON.parse(item);
     tk = access_token;
   }

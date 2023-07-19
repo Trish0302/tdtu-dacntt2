@@ -216,20 +216,29 @@ class FoodController extends Controller
 
     public function getAll(Request $request)
     {
-        $food_groups = Food::select($this->fields['food'])->with(['food_group' => function ($query) {
-            $query->select($this->fields['food_group'])->with(['store' => function ($query) {
-                $query->select($this->fields['store']);
+        if (isset($request->store_id)) {
+            $food = Store::find($request->store_id)->food();
+        } else {
+            $food = Food::select($this->fields['food'])->with(['food_group' => function ($query) {
+                $query->select($this->fields['food_group'])->with(['store' => function ($query) {
+                    $query->select($this->fields['store']);
+                }]);
             }]);
-        }])->orderBy('updated_at', 'desc')->paginate($request->page_size ?? 10);
+        }
+
+        $results = $food->orderBy('food.updated_at', 'desc')->paginate(
+            $request->page_size ?? 10,
+            $this->fields['food']
+        );
 
         return response()->json([
             'message' => 'Get food list successfully!',
-            'data' => $food_groups->items(),
+            'data' => $results->items(),
             'paging' => [
-                'current_page' => $food_groups->currentPage(),
-                'per_page' => $food_groups->perPage(),
-                'total' => $food_groups->total(),
-                'last_page' => $food_groups->lastPage(),
+                'current_page' => $results->currentPage(),
+                'per_page' => $results->perPage(),
+                'total' => $results->total(),
+                'last_page' => $results->lastPage(),
             ],
             'status' => 200,
         ], 200);

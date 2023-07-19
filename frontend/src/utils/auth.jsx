@@ -4,6 +4,7 @@ import { AsyncStorage } from "AsyncStorage";
 import { Navigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import { call } from "./api";
+import Loader from "../components/loader/Loader";
 
 export const authContext = createContext();
 const Auth = ({ children }) => {
@@ -18,6 +19,7 @@ const Auth = ({ children }) => {
       const data = await AsyncStorage.getItem("token-admin");
       const rs = await call(`api/user`);
       setUserInfo(rs);
+      console.log("🚀 ~ file: auth.jsx:22 ~ fetchData ~ rs:", rs);
 
       // console.log('🚀 ~ file: auth.js:16 ~ fetchData ~ data', data);
       if (data === undefined || data === "null") {
@@ -40,7 +42,7 @@ const Auth = ({ children }) => {
       <Navigate to="/login" />
     )
   ) : (
-    <CircularProgress />
+    <Loader />
   );
 };
 Auth.propTypes = {
