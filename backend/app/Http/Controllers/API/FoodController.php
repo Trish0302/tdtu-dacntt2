@@ -19,6 +19,7 @@ class FoodController extends Controller
             'food.avatar',
             'food.description',
             'food.price',
+            'food.discount',
             'food.food_group_id',
         ],
         'food_group' => [
@@ -51,6 +52,8 @@ class FoodController extends Controller
                 ->select($this->fields['food'])
                 ->orderBy('created_at', 'desc')
                 ->paginate($request->page_size ?? 10);
+
+            $this->get_discounted_price($food);
 
             return response()->json([
                 'message' => 'Get food list successfully!',
@@ -99,6 +102,7 @@ class FoodController extends Controller
                 'avatar' => $avatar,
                 'description' => $request->description,
                 'price' => $request->price,
+                'discount' => $request->discount,
                 'food_group_id' => $request->food_group_id,
             ]);
 
@@ -125,6 +129,8 @@ class FoodController extends Controller
                 ->food()
                 ->where('food_group_id', '=', $food_group_id)
                 ->findOrFail($food_id, $this->fields['food']);
+
+            $food->setAttribute('discounted_price', $food->price * (100 - $food->discount) / 100);
 
             return response()->json([
                 'message' => 'Get food detail successfully!',
@@ -171,6 +177,7 @@ class FoodController extends Controller
                 'avatar' => $avatar,
                 'description' => $request->description,
                 'price' => $request->price,
+                'discount' => $request->discount,
                 'food_group_id' => $request->food_group_id,
             ]);
 
@@ -231,6 +238,8 @@ class FoodController extends Controller
             $this->fields['food']
         );
 
+        $this->get_discounted_price($results);
+
         return response()->json([
             'message' => 'Get food list successfully!',
             'data' => $results->items(),
@@ -260,6 +269,8 @@ class FoodController extends Controller
                 ])
                 ->findOrFail($id);
 
+            $food->setAttribute('discounted_price', $food->price * (100 - $food->discount) / 100);
+
             return response()->json([
                 'message' => 'Get food detail successfully!',
                 'data' => $food,
@@ -272,5 +283,13 @@ class FoodController extends Controller
                 'message' => $err->getMessage(),
             ], 400);
         }
+    }
+
+    private function get_discounted_price($input_arr)
+    {
+        $input_arr->map(function ($food) {
+            $food->discounted_price = $food->price * (100 - $food->discount) / 100;
+            return $food;
+        });
     }
 }
