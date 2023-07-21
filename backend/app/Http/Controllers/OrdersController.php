@@ -31,15 +31,14 @@ class OrdersController extends Controller
         'detail' => [
             'id',
             'quantity',
-            'total',
             'food_id',
             'order_id',
+            'unit_price',
         ],
         'detail.food' => [
             'id',
             'name',
             'slug',
-            'price',
             'avatar',
         ],
         'history' => [
@@ -172,7 +171,7 @@ class OrdersController extends Controller
                 'order_id' => $order_id,
                 'food_id' => $food['id'],
                 'quantity' => $food['quantity'],
-                'total' => $food['price'] * $food['quantity'],
+                'unit_price' => $food['price'],
             ]);
         }
 
@@ -248,7 +247,7 @@ class OrdersController extends Controller
                 $order_item->update([
                     'food_id' => $food_item['id'],
                     'quantity' => $food_item['quantity'],
-                    'total' => $item_total,
+                    'unit_price' => $food_item['price'],
                 ]);
 
                 $sub_total += $item_total;
