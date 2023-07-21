@@ -39,8 +39,8 @@ class OrdersController extends Controller
             'id',
             'name',
             'slug',
-            'avatar',
             'price',
+            'avatar',
         ],
         'history' => [
             'order_id',
@@ -233,7 +233,6 @@ class OrdersController extends Controller
      */
     public function update(OrdersRequest $request, $id)
     {
-
         try {
             $order = Order::findOrFail($id);
             $order_detail = $order->detail;
