@@ -126,7 +126,6 @@ class CustomersController extends Controller
             $customer->update([
                 'name' => $request->name,
                 'email' => $request->email,
-                'password' => Hash::make($request->password),
                 'avatar' => $avatar,
                 'phone' => $request->phone,
                 'address' => $request->address,
