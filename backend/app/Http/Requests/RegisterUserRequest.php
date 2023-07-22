@@ -24,11 +24,18 @@ class RegisterUserRequest extends FormRequest
      */
     public function rules()
     {
+        if (Request::instance()->update_password == true) {
+            return [
+                'password' => 'required|confirmed|min:8',
+                'current_password' => 'required|password',
+            ];
+        }
+
         return [
-            'id' => Request::instance()->id ? 'exists:users,id' : '',
+            'id' => 'exists:users,id',
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . (Request::instance()->id ?? ''),
-            'password' => 'required|confirmed|min:8',
+            'password' => Request::instance()->id ? 'nullable' : 'required|confirmed|min:8',
             'phone' => 'required',
             'avatar' => 'nullable',
         ];

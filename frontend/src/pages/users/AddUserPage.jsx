@@ -225,7 +225,7 @@ const AddUserPage = () => {
               <Divider />
               <div className="my-2 px-4">
                 <p className="font-semibold mb-2">Position Information</p>
-                <div className="flex justify-between pb-1 w-full  gap-7">
+                <div className="flex justify-between pb-1 w-full gap-7">
                   <Box sx={{ width: "100%" }}>
                     <InputLabel className="mb-2 italic">Role</InputLabel>
                     <FormControl fullWidth variant="outlined">

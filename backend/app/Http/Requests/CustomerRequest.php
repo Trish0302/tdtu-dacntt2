@@ -27,7 +27,7 @@ class CustomerRequest extends FormRequest
         return [
             'name' => 'required',
             'email' => 'required|email|unique:customers,email,' . (Request::instance()->id ?? ''),
-            'password' => 'required|confirmed|min:8',
+            'password' => Request::instance()->id ? 'nullable' : 'required|confirmed|min:8',
             'address' => 'required',
             'phone' => 'required',
             'avatar' => 'nullable',

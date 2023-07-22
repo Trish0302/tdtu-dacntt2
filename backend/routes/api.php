@@ -24,6 +24,7 @@ use App\Http\Controllers\OrdersController;
 
 Route::middleware('auth:sanctum', 'ability:admin,customer')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
+    Route::put('/password', [AuthController::class, 'update_password']);
     Route::get('/logout', [AuthController::class, 'logout']);
 });
 
