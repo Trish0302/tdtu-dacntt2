@@ -15,7 +15,8 @@ class Food extends Model
         'avatar',
         'description',
         'price',
-        'food_group_id'
+        'discount',
+        'food_group_id',
     ];
 
     public function food_group()
