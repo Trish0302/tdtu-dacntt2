@@ -44,11 +44,8 @@ class FoodController extends Controller
     public function index($store_id, $food_group_id, Request $request)
     {
         try {
-            $food = Store::findOrFail($store_id)
-                ->food_groups()
-                ->findOrFail($food_group_id)
-                ->food()
-                ->select($this->fields['food'])
+            $food = $this->get_food_list()
+                ->where('food_group_id', $food_group_id)
                 ->orderBy('created_at', 'desc')
                 ->paginate($request->page_size ?? 10);
 
@@ -219,11 +216,7 @@ class FoodController extends Controller
         if (isset($request->store_id)) {
             $food = Store::find($request->store_id)->food();
         } else {
-            $food = Food::select($this->fields['food'])->with(['food_group' => function ($query) {
-                $query->select($this->fields['food_group'])->with(['store' => function ($query) {
-                    $query->select($this->fields['store']);
-                }]);
-            }]);
+            $food = $this->get_food_list();
         }
 
         $results = $food->orderBy('food.updated_at', 'desc')->paginate(
@@ -272,5 +265,14 @@ class FoodController extends Controller
                 'message' => $err->getMessage(),
             ], 400);
         }
+    }
+
+    private function get_food_list()
+    {
+        return Food::select($this->fields['food'])->with(['food_group' => function ($query) {
+            $query->select($this->fields['food_group'])->with(['store' => function ($query) {
+                $query->select($this->fields['store']);
+            }]);
+        }]);
     }
 }
