@@ -30,6 +30,7 @@ class FoodRequest extends FormRequest
             'avatar' => 'nullable',
             'description' => 'required',
             'price' => 'required|numeric',
+            'discount' => 'required|numeric|between:1,100',
             'food_group_id' => 'required|exists:food_groups,id',
         ];
     }
