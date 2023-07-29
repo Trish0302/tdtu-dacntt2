@@ -23,6 +23,7 @@ class StoreSeeder extends Seeder
                 'user_id' => 1,
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'avatar' => 'https://res.cloudinary.com/ddusqwv7k/image/upload/v1688648527/users/default-avatar_1688648526.png',
             ],
             [
                 'name' => 'cua hang 2 user 1',
@@ -31,6 +32,7 @@ class StoreSeeder extends Seeder
                 'user_id' => 1,
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'avatar' => 'https://res.cloudinary.com/ddusqwv7k/image/upload/v1688648527/users/default-avatar_1688648526.png',
             ],
             [
                 'name' => 'cua hang 3 user 1',
@@ -39,6 +41,7 @@ class StoreSeeder extends Seeder
                 'user_id' => 1,
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'avatar' => 'https://res.cloudinary.com/ddusqwv7k/image/upload/v1688648527/users/default-avatar_1688648526.png',
             ],
             [
                 'name' => 'cua hang 1 user 2',
@@ -47,6 +50,7 @@ class StoreSeeder extends Seeder
                 'user_id' => 2,
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'avatar' => 'https://res.cloudinary.com/ddusqwv7k/image/upload/v1688648527/users/default-avatar_1688648526.png',
             ],
             [
                 'name' => 'cua hang 2 user 2',
@@ -55,6 +59,7 @@ class StoreSeeder extends Seeder
                 'user_id' => 2,
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'avatar' => 'https://res.cloudinary.com/ddusqwv7k/image/upload/v1688648527/users/default-avatar_1688648526.png',
             ],
             [
                 'name' => 'cua hang 3 user 2',
@@ -63,6 +68,7 @@ class StoreSeeder extends Seeder
                 'user_id' => 2,
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'avatar' => 'https://res.cloudinary.com/ddusqwv7k/image/upload/v1688648527/users/default-avatar_1688648526.png',
             ],
             [
                 'name' => 'cua hang 4 user 2',
@@ -71,6 +77,7 @@ class StoreSeeder extends Seeder
                 'user_id' => 2,
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'avatar' => 'https://res.cloudinary.com/ddusqwv7k/image/upload/v1688648527/users/default-avatar_1688648526.png',
             ],
         ]);
     }
