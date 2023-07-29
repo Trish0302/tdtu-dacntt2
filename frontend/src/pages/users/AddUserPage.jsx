@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Card,
+  CircularProgress,
   Divider,
   FormControl,
   FormHelperText,
@@ -29,6 +30,7 @@ const AddUserPage = () => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = React.useState(false);
 
+  const [loadingCallAPI, setLoadingCallAPI] = useState(false);
   const [previewPic, setPreviewPic] = useState();
 
   const formik = useFormik({
@@ -54,8 +56,12 @@ const AddUserPage = () => {
       formData.append("password_confirmation", values.password_confirmation);
 
       try {
+        setLoadingCallAPI(true);
         callUpload("api/users", "POST", formData)
           .then((res) => {
+            if (res) {
+              setLoadingCallAPI(false);
+            }
             console.log("🚀 ~ file: AddUserPage.jsx:50 ~ .then ~ res:", res);
             dispatch({ type: "addUser", item: values });
             if (res.status == 200) {
@@ -120,7 +126,7 @@ const AddUserPage = () => {
                   <div className="flex items-center justify-center w-full">
                     <label
                       htmlFor="dropzone-file"
-                      className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                      className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
                     >
                       <div className="flex flex-col items-center justify-center pt-5 pb-6 px-3 text-center ">
                         <svg
@@ -350,11 +356,21 @@ const AddUserPage = () => {
                 width: "fit-content",
                 textTransform: "uppercase",
                 paddingX: "20px",
+                background: "#ef6351",
+                color: "white",
+                ":hover": {
+                  background: "#ffa397",
+                },
               }}
+              disabled={loadingCallAPI}
               // onClick={addHandler}
               type="submit"
             >
-              Add
+              {loadingCallAPI ? (
+                <CircularProgress size="1.5rem" color="secondary" />
+              ) : (
+                "ADD"
+              )}
             </Button>
           </div>
         </div>

@@ -23,11 +23,13 @@ import { useFormik } from "formik";
 import { useNavigate, useParams } from "react-router-dom";
 import { ListCustomerContext } from "../../stores/ListCustomerContext";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import customerEditValidationSchema from "../../validations/CustomerEditValidation";
 
 const EditCustomerPage = () => {
   const { id } = useParams();
   const { state, dispatch } = useContext(ListCustomerContext);
   const [loading, setLoading] = useState(false);
+  const [loadingCallAPI, setLoadingCallAPI] = useState(false);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = React.useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = React.useState(false);
@@ -52,7 +54,7 @@ const EditCustomerPage = () => {
       password: "",
       password_confirmation: "",
     },
-    validationSchema: customerValidationSchema,
+    validationSchema: customerEditValidationSchema,
     enableReinitialize: true,
     onSubmit: (values) => {
       console.log(values);
@@ -64,13 +66,15 @@ const EditCustomerPage = () => {
       formData.append("phone", values.phone);
       formData.append("address", values.address);
       formData.append("avatar", values.avatar);
-      formData.append("password", values.password);
-      formData.append("password_confirmation", values.password_confirmation);
       formData.append("_method", "PUT");
 
       try {
+        setLoadingCallAPI(true);
         callUpload(`api/customers/${id}`, "POST", formData)
           .then((res) => {
+            if (res) {
+              setLoadingCallAPI(false);
+            }
             dispatch({ type: "updateCustomer", item: values });
             if (res.status == 200) {
               toast.success("Update Successfully", { autoClose: 1000 });
@@ -104,9 +108,6 @@ const EditCustomerPage = () => {
   });
 
   //func
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const handleClickShowPasswordConfirm = () =>
-    setShowPasswordConfirm((show) => !show);
 
   const changeUploadPicHandler = (e) => {
     setPreviewPic(URL.createObjectURL(e.target.files[0]));
@@ -145,11 +146,11 @@ const EditCustomerPage = () => {
                   className="basis-1/4"
                 >
                   {!previewPic ? (
-                    <div className="flex justify-between w-full">
-                      <div className="flex items-center justify-center w-full">
+                    <div className="flex justify-between w-full h-full">
+                      <div className="flex items-center justify-center w-full h-full">
                         <label
                           htmlFor="dropzone-file"
-                          className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                          className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
                         >
                           <div className="flex flex-col items-center justify-center pt-5 pb-6 px-3 text-center">
                             <svg
@@ -280,89 +281,6 @@ const EditCustomerPage = () => {
                       />
                     </Stack>
                   </Stack>
-
-                  <Divider />
-                  <div className="mt-2 px-4">
-                    <p className="font-semibold">Password</p>
-                    <Stack
-                      direction="column"
-                      spacing={2}
-                      sx={{ width: "100%" }}
-                      mt={2}
-                    >
-                      <FormControl variant="outlined">
-                        <InputLabel htmlFor="outlined-adornment-password">
-                          Password
-                        </InputLabel>
-                        <OutlinedInput
-                          id="outlined-adornment-password"
-                          type={showPassword ? "text" : "password"}
-                          value={formik.values.password}
-                          onChange={formik.handleChange}
-                          error={
-                            formik.touched.password &&
-                            Boolean(formik.errors.password)
-                          }
-                          name="password"
-                          endAdornment={
-                            <InputAdornment position="end">
-                              <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={handleClickShowPassword}
-                                edge="end"
-                              >
-                                {showPassword ? (
-                                  <VisibilityOff />
-                                ) : (
-                                  <Visibility />
-                                )}
-                              </IconButton>
-                            </InputAdornment>
-                          }
-                          label="Password"
-                        />
-                        <FormHelperText sx={{ color: "red" }}>
-                          {formik.touched.password && formik.errors.password}
-                        </FormHelperText>
-                      </FormControl>
-                      <FormControl variant="outlined">
-                        <InputLabel htmlFor="outlined-adornment-confirm-password">
-                          Confirm Password
-                        </InputLabel>
-                        <OutlinedInput
-                          id="outlined-adornment-confirm-password"
-                          type={showPasswordConfirm ? "text" : "password"}
-                          value={formik.values.password_confirmation}
-                          onChange={formik.handleChange}
-                          error={
-                            formik.touched.password_confirmation &&
-                            Boolean(formik.errors.password_confirmation)
-                          }
-                          name="password_confirmation"
-                          endAdornment={
-                            <InputAdornment position="end">
-                              <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={handleClickShowPasswordConfirm}
-                                edge="end"
-                              >
-                                {showPasswordConfirm ? (
-                                  <VisibilityOff />
-                                ) : (
-                                  <Visibility />
-                                )}
-                              </IconButton>
-                            </InputAdornment>
-                          }
-                          label="Confirm Password"
-                        />
-                        <FormHelperText sx={{ color: "red" }}>
-                          {formik.touched.password_confirmation &&
-                            formik.errors.password_confirmation}
-                        </FormHelperText>
-                      </FormControl>
-                    </Stack>
-                  </div>
                 </Card>
               </Stack>
               <div className="w-full items-center justify-center flex">
@@ -371,13 +289,22 @@ const EditCustomerPage = () => {
                   sx={{
                     mt: 2,
                     width: "fit-content",
-                    paddingX: "20px",
                     textTransform: "uppercase",
+                    paddingX: "20px",
+                    background: "#ef6351",
+                    color: "white",
+                    ":hover": {
+                      background: "#ffa397",
+                    },
                   }}
-                  // onClick={updateHandler}
+                  disabled={loadingCallAPI}
                   type="submit"
                 >
-                  Save
+                  {loadingCallAPI ? (
+                    <CircularProgress size="1.5rem" color="secondary" />
+                  ) : (
+                    "SAVE"
+                  )}
                 </Button>
               </div>
             </div>
