@@ -37,6 +37,7 @@ import AddCustomerPage from "./pages/customers/AddCustomerPage";
 import EditCustomerPage from "./pages/customers/EditCustomerPage";
 import DetailCustomerPage from "./pages/customers/DetailCustomerPage";
 import { ListCustomerProvider } from "./stores/ListCustomerContext";
+import ChangePasswordUserPage from "./pages/users/ChangePasswordUserPage";
 
 const Router = () => {
   const routes = useRoutes([
@@ -117,6 +118,14 @@ const Router = () => {
               element: (
                 <ListUserProvider>
                   <EditUserPage />
+                </ListUserProvider>
+              ),
+            },
+            {
+              path: "change-password/:id",
+              element: (
+                <ListUserProvider>
+                  <ChangePasswordUserPage />
                 </ListUserProvider>
               ),
             },
