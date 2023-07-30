@@ -76,6 +76,15 @@ const Nav = ({ openSidebar, setOpenSidebar }) => {
                 onClick={() => {
                   navigate(`${text.path}`);
                 }}
+                sx={{
+                  "&.Mui-selected": {
+                    backgroundColor: "#ffe3e0",
+                  },
+
+                  ":hover": {
+                    backgroundColor: "#ffe3e0",
+                  },
+                }}
                 selected={
                   pathname.split("/").includes(text.title.replace(" ", "-"))
                     ? true
@@ -113,8 +122,8 @@ const Nav = ({ openSidebar, setOpenSidebar }) => {
             sx: {
               width: NAV_WIDTH,
               bgcolor: "background.default",
-              borderRightStyle: "dashed",
               overflowX: "hidden",
+              boxShadow: "3px 0 5px -2px rgba(0, 0, 0, 0.1)",
             },
           }}
           className="shadow-xl "

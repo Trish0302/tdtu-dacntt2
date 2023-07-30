@@ -2,24 +2,32 @@ import {
   Autocomplete,
   Button,
   Card,
+  CircularProgress,
   Divider,
   FormHelperText,
+  InputAdornment,
   Stack,
   TextField,
 } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ListFoodContext } from "../../../../stores/ListFoodContext";
-import { call } from "../../../../utils/api";
+import { call, callUpload } from "../../../../utils/api";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import FoodValidationSchema from "../../../../validations/FoodValidation";
+import PercentIcon from "@mui/icons-material/Percent";
 
 const AddFoodPage = () => {
   const location = useLocation();
   const { state, dispatch } = useContext(ListFoodContext);
   const navigate = useNavigate();
   const [foodGroupArr, setFoodGroupArr] = useState();
+  console.log(
+    "🚀 ~ file: AddFoodPage.jsx:25 ~ AddFoodPage ~ foodGroupArr:",
+    foodGroupArr
+  );
+  const [loadingCallAPI, setLoadingCallAPI] = useState(false);
 
   const [selectStoreId, setSelectStoreId] = useState();
   const [addFood, setAddFood] = useState({
@@ -27,26 +35,48 @@ const AddFoodPage = () => {
     slug: "",
     description: "",
     price: "",
+    discount: "",
     food_group_id: location.state?.foodGroupId,
+    avatar: "",
   });
   console.log(
     "🚀 ~ file: AddFoodaddFoodPage.jsx:26 ~ AddFoodaddFoodPage ~ addFood:",
     addFood
   );
+  const [previewPic, setPreviewPic] = useState();
+
+  const changeUploadPicHandler = (e) => {
+    // console.log(e.target.files[0]);
+    setPreviewPic(URL.createObjectURL(e.target.files[0]));
+    formik.setFieldValue("avatar", e.target.files[0]);
+  };
 
   const formik = useFormik({
     initialValues: addFood,
     validationSchema: FoodValidationSchema,
     onSubmit: (values) => {
       console.log(values);
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("slug", values.slug);
+      formData.append("description", values.description);
+      formData.append("price", values.price);
+      formData.append("food_group_id", values.food_group_id);
+      formData.append("discount", values.discount);
+      formData.append("avatar", values.avatar);
+
       if (location.state) {
+        setLoadingCallAPI(true);
         try {
-          const callAPI = call(
+          const callAPI = callUpload(
             `api/stores/${location.state.storeId}/food_groups/${location.state.foodGroupId}/food`,
             "POST",
-            values
+            formData
           )
             .then((res) => {
+              if (res) {
+                setLoadingCallAPI(false);
+              }
               console.log("🚀 ~ file: AddFoodPage.jsx:50 ~ .then ~ res:", res);
               if (res.status == 422) {
                 toast.error(`${res.data.errors.slug[0]}`, { autoClose: 1000 });
@@ -74,13 +104,17 @@ const AddFoodPage = () => {
           toast.error("Something went wrong");
         }
       } else {
+        setLoadingCallAPI(true);
         try {
-          call(
+          callUpload(
             `api/stores/${selectStoreId}/food_groups/${formik.values.food_group_id}/food`,
             "POST",
-            values
+            formData
           )
             .then((res) => {
+              if (res) {
+                setLoadingCallAPI(false);
+              }
               if (res.status === 422) {
                 toast.error(res.data.errors.slug[0], { autoClose: 2000 });
               } else {
@@ -108,39 +142,6 @@ const AddFoodPage = () => {
     },
   });
 
-  const changeHandler = (e) => {
-    setAddFood({ ...addFood, [e.target.name]: e.target.value });
-  };
-
-  const addHandler = async () => {
-    try {
-      call(
-        `api/stores/${location.state.storeId}/food_groups/${location.state.foodGroupId}/food`,
-        "POST",
-        addFood
-      )
-        .then((res) => {
-          dispatch({ type: "addFood", item: addFood });
-          toast.success("Add Successfully", { autoClose: 1000 });
-          setTimeout(() => {
-            navigate(
-              `/stores/${location.state.storeId}/food-group/${location.state.foodGroupId}/food`,
-              {
-                state: {
-                  storeId: location.state.storeId,
-                  foodGroupId: location.state.foodGroupId,
-                },
-              }
-            );
-          }, 1500);
-        })
-        .catch((err) => console.log("add-error", err));
-    } catch (error) {
-      console.log(error);
-      // toast.error('Something went wrong');
-    }
-  };
-
   useEffect(() => {
     const foodGroupArr = [];
     const fetchData = async () => {
@@ -163,7 +164,80 @@ const AddFoodPage = () => {
         <div className="h-full bg-primary-100 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
           <p className="font-semibold mb-2 text-lg">Add Food</p>
           <Divider />
-          <div className="flex items-center w-full justify-center">
+          <Stack
+            direction="row"
+            spacing={5}
+            mt={2}
+            px={4}
+            sx={{ display: "flex" }}
+          >
+            <Card
+              sx={{ p: 2, flex: 1, flexBasis: "30%" }}
+              className="basis-1/4"
+            >
+              {!previewPic ? (
+                <div className="flex justify-between w-full h-full">
+                  <div className="flex items-center justify-center w-full">
+                    <label
+                      htmlFor="dropzone-file"
+                      className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                    >
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6 px-3 text-center ">
+                        <svg
+                          aria-hidden="true"
+                          className="w-10 h-10 mb-3 text-gray-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                          ></path>
+                        </svg>
+                        <p className="mb-2 text-sm text-gray-500">
+                          <span className="font-semibold">
+                            Upload Food Image
+                          </span>{" "}
+                          or drag to this section
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Format JPEG, PNG,JPG
+                        </p>
+                      </div>
+                      <input
+                        id="dropzone-file"
+                        type="file"
+                        className="hidden"
+                        onChange={changeUploadPicHandler}
+                      />
+                    </label>
+                  </div>
+                </div>
+              ) : (
+                <div className="w-full flex flex-col gap-4 justify-center items-center ">
+                  <img
+                    src={previewPic}
+                    className="h-[300px] w-fit object-cover rounded-lg shadow-md block"
+                  />
+
+                  <Button variant="outlined" color="error" className="w-full">
+                    <label htmlFor="dropzone-file1" className="w-full">
+                      Select another image
+                    </label>
+                  </Button>
+                  <input
+                    id="dropzone-file1"
+                    type="file"
+                    className="hidden"
+                    onChange={changeUploadPicHandler}
+                  />
+                </div>
+              )}
+            </Card>
             <Card sx={{ py: 2, my: 2 }}>
               <div className="px-4 flex justify-between items-center mb-2">
                 <p className="font-semibold">Food Information</p>
@@ -221,10 +295,10 @@ const AddFoodPage = () => {
                       options={foodGroupArr}
                       value={
                         location.state
-                          ? foodGroupArr.find(
+                          ? null
+                          : foodGroupArr.find(
                               (item) => item.id == formik.values.food_group_id
                             )?.label
-                          : null
                       }
                       onChange={(e, value) => {
                         formik.setFieldValue("food_group_id", value?.id);
@@ -247,6 +321,26 @@ const AddFoodPage = () => {
                     />
                   </>
                 )}
+
+                <TextField
+                  variant="outlined"
+                  placeholder="Discount"
+                  label="Discount (%)"
+                  name="discount"
+                  value={formik.values.discount}
+                  onChange={formik.handleChange}
+                  error={
+                    formik.touched.discount && Boolean(formik.errors.discount)
+                  }
+                  helperText={formik.touched.discount && formik.errors.discount}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment>
+                        <PercentIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
               </Stack>
 
               <TextField
@@ -268,18 +362,29 @@ const AddFoodPage = () => {
                 // fullWidth
               />
             </Card>
-          </div>
+          </Stack>
           <div className="w-full items-center justify-center flex">
             <Button
               variant="contained"
               sx={{
                 mt: 2,
                 width: "fit-content",
+                textTransform: "uppercase",
+                paddingX: "20px",
+                background: "#ef6351",
+                color: "white",
+                ":hover": {
+                  background: "#ffa397",
+                },
               }}
+              disabled={loadingCallAPI}
               type="submit"
-              // onClick={addHandler}
             >
-              ADD
+              {loadingCallAPI ? (
+                <CircularProgress size="1.5rem" color="secondary" />
+              ) : (
+                "ADD"
+              )}
             </Button>
           </div>
         </div>

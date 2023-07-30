@@ -19,6 +19,7 @@ const Auth = ({ children }) => {
       const data = await AsyncStorage.getItem("token-admin");
       const rs = await call(`api/user`);
       setUserInfo(rs);
+      console.log("🚀 ~ file: auth.jsx:22 ~ fetchData ~ rs:", rs);
 
       // console.log('🚀 ~ file: auth.js:16 ~ fetchData ~ data', data);
       if (data === undefined || data === "null") {
@@ -41,7 +42,9 @@ const Auth = ({ children }) => {
       <Navigate to="/login" />
     )
   ) : (
-    <Loader />
+    <div className="w-full h-full bg-primary-100">
+      <Loader />
+    </div>
   );
 };
 Auth.propTypes = {

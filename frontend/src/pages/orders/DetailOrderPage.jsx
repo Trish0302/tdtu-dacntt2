@@ -225,13 +225,13 @@ const DetailOrderPage = () => {
                               {row.food.name}
                             </TableCell>
                             <TableCell component="th" scope="row">
-                              {row.food.price.toLocaleString()}
+                              {row.unit_price.toLocaleString()}
                             </TableCell>
                             <TableCell component="th" scope="row">
                               {row.quantity}
                             </TableCell>
                             <TableCell component="th" scope="row">
-                              {row.total.toLocaleString()}
+                              {(row.unit_price * row.quantity).toLocaleString()}
                             </TableCell>
                           </TableRow>
                         ))}

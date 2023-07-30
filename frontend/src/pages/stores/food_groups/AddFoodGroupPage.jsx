@@ -173,10 +173,6 @@ const AddFoodGroupPage = () => {
                       storeArr.find((item) => item.id == formik.values.store_id)
                         ?.label
                     }
-                    defaultValue={
-                      storeArr.find((item) => item.id == location.state.storeId)
-                        ?.label
-                    }
                     onChange={(e, value) =>
                       formik.setFieldValue("store_id", value?.id)
                     }
@@ -223,9 +219,15 @@ const AddFoodGroupPage = () => {
               sx={{
                 mt: 2,
                 width: "fit-content",
+                textTransform: "uppercase",
+                paddingX: "20px",
+                background: "#ef6351",
+                color: "white",
+                ":hover": {
+                  background: "#ffa397",
+                },
               }}
               type="submit"
-              // onClick={addHandler}
             >
               ADD
             </Button>
