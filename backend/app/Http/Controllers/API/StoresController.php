@@ -16,12 +16,11 @@ class StoresController extends Controller
         'email',
         'phone',
         'avatar',
-        'created_at',
-        'updated_at',
     ];
 
     private $store_fields = [
         'id',
+        'avatar',
         'name',
         'address',
         'description',
@@ -68,15 +67,27 @@ class StoresController extends Controller
             ], 400);
         }
 
+        if ($request->hasFile('avatar')) {
+            $uploaded_file_name = $request->file('avatar')->getClientOriginalName();
+            $avatar_name = pathinfo($uploaded_file_name, PATHINFO_FILENAME) . '_' . time();
+
+            $result = $request->file('avatar')->storeOnCloudinaryAs('store', $avatar_name);
+            $avatar = $result->getSecurePath();
+        } else {
+            $avatar = 'https://res.cloudinary.com/ddusqwv7k/image/upload/v1688648527/users/default-avatar_1688648526.png';
+        }
+
         Store::create([
             'name' => $request->name,
+            'avatar' => $avatar,
             'address' => $request->address,
             'description' => $request->description,
             'user_id' => $request->user_id,
         ]);
 
         return response()->json([
-            'message' => 'Create new user successfully!',
+            'message' => 'Create new store successfully!',
+            'data' => true,
             'status' => 200,
         ], 200);
     }
@@ -110,7 +121,7 @@ class StoresController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(StoreRequest $request, $id)
+    public function update(StoreRequest $request)
     {
         if (isset($request->validator) && $request->validator->fails()) {
             return response()->json([
@@ -122,10 +133,21 @@ class StoresController extends Controller
         try {
             $store = Store::findOrFail($request->id, $this->store_fields);
 
+            if ($request->hasFile('avatar')) {
+                $uploaded_file_name = $request->file('avatar')->getClientOriginalName();
+                $avatar_name = pathinfo($uploaded_file_name, PATHINFO_FILENAME) . '_' . time();
+
+                $result = $request->file('avatar')->storeOnCloudinaryAs('store', $avatar_name);
+                $avatar = $result->getSecurePath();
+            } else {
+                $avatar = $store->avatar;
+            }
+
             $store->name = $request->name;
             $store->address = $request->address;
             $store->description = $request->description;
             $store->user_id = $request->user_id;
+            $store->avatar = $avatar;
 
             $store->save();
 

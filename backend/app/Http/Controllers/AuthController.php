@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PasswordRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
-use App\Http\Requests\RegisterUserRequest;
 use App\Models\Customer;
 use App\Models\User;
 
@@ -49,6 +49,33 @@ class AuthController extends Controller
     public function user(Request $request)
     {
         return $request->user();
+    }
+
+    public function update_password(PasswordRequest $request)
+    {
+        if (isset($request->validator) && $request->validator->fails()) {
+            return response()->json([
+                'message' => $request->validator->messages(),
+                'status' => 400,
+            ], 400);
+        }
+
+        try {
+            $request->user()->update([
+                'password' => Hash::make($request->password),
+            ]);
+
+            return response()->json([
+                'message' => 'Update user password successfully!',
+                'data' => true,
+                'status' => 200,
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Invalid user. Please try again!',
+                'status' => 400,
+            ], 400);
+        }
     }
 
     public function logout()

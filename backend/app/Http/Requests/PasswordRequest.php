@@ -3,9 +3,10 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
-class StoreRequest extends FormRequest
+class PasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,12 +26,12 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'id' => Request::instance()->id ? 'exists:stores,id' : '',
-            'name' => 'required',
-            'avatar' => 'nullable',
-            'address' => 'required',
-            'description' => 'required',
-            'user_id' => 'required|exists:users,id',
+            'password' => 'required|confirmed|min:8',
+            'current_password' => ['required', function ($attribute, $value, $fail) {
+                if (!Hash::check($value, Auth::user()->password)) {
+                    $fail('The current password does not match.');
+                }
+            }],
         ];
     }
 

@@ -24,6 +24,7 @@ use App\Http\Controllers\OrdersController;
 
 Route::middleware('auth:sanctum', 'ability:admin,customer')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
+    Route::put('/password', [AuthController::class, 'update_password']);
     Route::get('/logout', [AuthController::class, 'logout']);
 });
 
@@ -66,6 +67,8 @@ Route::get('/food', [FoodController::class, 'getAll']);
 Route::get('/stores/{store_id}/food_groups/{food_group_id}/food', [FoodController::class, 'index']);
 Route::get('/stores/{store_id}/food_groups/{food_group_id}/food/{food_id}', [FoodController::class, 'show']);
 Route::get('/food/{id}', [FoodController::class, 'getDetail']);
+
+Route::post('/register', [CustomersController::class, 'store']);
 
 // Payment response
 Route::get('/payment/respond', [PaymentController::class, 'respond']);

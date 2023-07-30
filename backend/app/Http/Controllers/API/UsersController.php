@@ -117,7 +117,6 @@ class UsersController extends Controller
             $user->name = $request->name;
             $user->email = $request->email;
             $user->phone = $request->phone;
-            $user->password = Hash::make($request->password);
 
             if ($request->hasFile('avatar')) {
                 $uploaded_file_name = $request->file('avatar')->getClientOriginalName();
@@ -130,7 +129,7 @@ class UsersController extends Controller
             $user->save();
 
             return response()->json([
-                'message' => 'Update user successfully!',
+                'message' => 'Update user information successfully!',
                 'data' => $user,
                 'status' => 200,
             ], 200);
