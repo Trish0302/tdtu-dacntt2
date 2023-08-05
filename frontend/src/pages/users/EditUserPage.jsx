@@ -20,15 +20,17 @@ import {
 import { useContext, useState } from "react";
 import { call, callUpload } from "../../utils/api";
 import { ListUserContext } from "../../stores/ListUserContext";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import userValidationSchema from "../../validations/UserValidation";
+import userEditValidationSchema from "../../validations/UserEditValidation";
 
 const EditUserPage = () => {
   const { id } = useParams();
   const { state, dispatch } = useContext(ListUserContext);
   const [loading, setLoading] = useState(false);
+  const [loadingCallAPI, setLoadingCallAPI] = useState(false);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = React.useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = React.useState(false);
@@ -45,8 +47,8 @@ const EditUserPage = () => {
   const [previewPic, setPreviewPic] = useState();
 
   const formik = useFormik({
-    initialValues: { ...updateUser, password: "", password_confirmation: "" },
-    validationSchema: userValidationSchema,
+    initialValues: { ...updateUser },
+    validationSchema: userEditValidationSchema,
     enableReinitialize: true,
     onSubmit: (values) => {
       console.log(values);
@@ -65,8 +67,12 @@ const EditUserPage = () => {
       }
 
       try {
+        setLoadingCallAPI(true);
         callUpload(`api/users/${id}`, "POST", formData)
           .then((res) => {
+            if (res) {
+              setLoadingCallAPI(false);
+            }
             console.log("🚀 ~ file: EditUserPage.jsx:65 ~ .then ~ res:", res);
             dispatch({ type: "updateUser", item: values });
             if (res.status == 200) {
@@ -98,9 +104,6 @@ const EditUserPage = () => {
   });
 
   //func
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const handleClickShowPasswordConfirm = () =>
-    setShowPasswordConfirm((show) => !show);
 
   const changeUploadPicHandler = (e) => {
     setPreviewPic(URL.createObjectURL(e.target.files[0]));
@@ -143,7 +146,7 @@ const EditUserPage = () => {
                       <div className="flex items-center justify-center w-full">
                         <label
                           htmlFor="dropzone-file"
-                          className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                          className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
                         >
                           <div className="flex flex-col items-center justify-center pt-5 pb-6 px-3 text-center">
                             <svg
@@ -301,86 +304,12 @@ const EditUserPage = () => {
                     </div>
                   </div>
                   <Divider />
-                  <div className="mt-2 px-4">
-                    <p className="font-semibold">Password</p>
-                    <Stack
-                      direction="column"
-                      spacing={2}
-                      sx={{ width: "100%" }}
-                      mt={2}
-                    >
-                      <FormControl variant="outlined">
-                        <InputLabel htmlFor="outlined-adornment-password">
-                          Password
-                        </InputLabel>
-                        <OutlinedInput
-                          id="outlined-adornment-password"
-                          type={showPassword ? "text" : "password"}
-                          value={formik.values.password}
-                          onChange={formik.handleChange}
-                          error={
-                            formik.touched.password &&
-                            Boolean(formik.errors.password)
-                          }
-                          name="password"
-                          endAdornment={
-                            <InputAdornment position="end">
-                              <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={handleClickShowPassword}
-                                edge="end"
-                              >
-                                {showPassword ? (
-                                  <VisibilityOff />
-                                ) : (
-                                  <Visibility />
-                                )}
-                              </IconButton>
-                            </InputAdornment>
-                          }
-                          label="Password"
-                        />
-                        <FormHelperText sx={{ color: "red" }}>
-                          {formik.touched.password && formik.errors.password}
-                        </FormHelperText>
-                      </FormControl>
-                      <FormControl variant="outlined">
-                        <InputLabel htmlFor="outlined-adornment-confirm-password">
-                          Confirm Password
-                        </InputLabel>
-                        <OutlinedInput
-                          id="outlined-adornment-confirm-password"
-                          type={showPasswordConfirm ? "text" : "password"}
-                          value={formik.values.password_confirmation}
-                          onChange={formik.handleChange}
-                          error={
-                            formik.touched.password_confirmation &&
-                            Boolean(formik.errors.password_confirmation)
-                          }
-                          name="password_confirmation"
-                          endAdornment={
-                            <InputAdornment position="end">
-                              <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={handleClickShowPasswordConfirm}
-                                edge="end"
-                              >
-                                {showPasswordConfirm ? (
-                                  <VisibilityOff />
-                                ) : (
-                                  <Visibility />
-                                )}
-                              </IconButton>
-                            </InputAdornment>
-                          }
-                          label="Confirm Password"
-                        />
-                        <FormHelperText sx={{ color: "red" }}>
-                          {formik.touched.password_confirmation &&
-                            formik.errors.password_confirmation}
-                        </FormHelperText>
-                      </FormControl>
-                    </Stack>
+                  <div className="px-4 pt-2">
+                    <Button>
+                      <Link to={`/users/change-password/${id}`}>
+                        Change Password
+                      </Link>
+                    </Button>
                   </div>
                 </Card>
               </Stack>
@@ -390,13 +319,23 @@ const EditUserPage = () => {
                   sx={{
                     mt: 2,
                     width: "fit-content",
-                    paddingX: "20px",
                     textTransform: "uppercase",
+                    paddingX: "20px",
+                    background: "#ef6351",
+                    color: "white",
+                    ":hover": {
+                      background: "#ffa397",
+                    },
                   }}
-                  // onClick={updateHandler}
+                  disabled={loadingCallAPI}
+                  // onClick={addHandler}
                   type="submit"
                 >
-                  Save
+                  {loadingCallAPI ? (
+                    <CircularProgress size="1.5rem" color="secondary" />
+                  ) : (
+                    "SAVE"
+                  )}
                 </Button>
               </div>
             </div>

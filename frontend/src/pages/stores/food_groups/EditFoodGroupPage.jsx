@@ -61,29 +61,6 @@ const EditFoodGroupPage = () => {
   });
 
   //func
-  const changeHandler = (e) => {
-    setUpdateFoodGroup({ ...updateFoodGroup, [e.target.name]: e.target.value });
-  };
-
-  const updateHandler = async () => {
-    try {
-      call(`api/stores/${storeId}/food_groups/${id}`, "PUT", updateFoodGroup)
-        .then((res) => {
-          dispatch({ type: "updateFoodGroup", item: updateFoodGroup });
-          toast.success("Update Successfully", { autoClose: 1000 });
-          setTimeout(() => {
-            navigate(`/stores/${storeId}/food-group`, {
-              state: { storeId: storeId },
-            });
-          }, 1500);
-        })
-        .catch((err) => console.log("add-error", err));
-      // toast.success('Add Successfully', { autoClose: 2000 });
-    } catch (error) {
-      console.log(error);
-      // toast.error('Something went wrong');
-    }
-  };
 
   useEffect(() => {
     setLoading(true);
@@ -209,9 +186,15 @@ const EditFoodGroupPage = () => {
                   sx={{
                     mt: 2,
                     width: "fit-content",
+                    textTransform: "uppercase",
+                    paddingX: "20px",
+                    background: "#ef6351",
+                    color: "white",
+                    ":hover": {
+                      background: "#ffa397",
+                    },
                   }}
                   type="submit"
-                  // onClick={updateHandler}
                 >
                   SAVE
                 </Button>

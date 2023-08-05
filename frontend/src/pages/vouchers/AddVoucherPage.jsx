@@ -110,9 +110,16 @@ const AddVoucherPage = () => {
               sx={{
                 mt: 2,
                 width: "fit-content",
+                textTransform: "uppercase",
+                paddingX: "20px",
+                background: "#ef6351",
+                color: "white",
+                ":hover": {
+                  background: "#ffa397",
+                },
               }}
-              type="submit"
               // onClick={addHandler}
+              type="submit"
             >
               ADD
             </Button>

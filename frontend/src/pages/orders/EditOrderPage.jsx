@@ -258,13 +258,13 @@ const EditOrderPage = () => {
                               {row.food.name}
                             </TableCell>
                             <TableCell component="th" scope="row">
-                              {row.food.price.toLocaleString()}
+                              {row.unit_price.toLocaleString()}
                             </TableCell>
                             <TableCell component="th" scope="row">
                               {row.quantity}
                             </TableCell>
                             <TableCell component="th" scope="row">
-                              {row.total.toLocaleString()}
+                              {(row.unit_price * row.quantity).toLocaleString()}
                             </TableCell>
                           </TableRow>
                         ))}
@@ -279,8 +279,14 @@ const EditOrderPage = () => {
                   sx={{
                     mt: 2,
                     width: "fit-content",
+                    textTransform: "uppercase",
+                    paddingX: "20px",
+                    background: "#ef6351",
+                    color: "white",
+                    ":hover": {
+                      background: "#ffa397",
+                    },
                   }}
-                  // onClick={updateHandler}
                   type="submit"
                 >
                   SAVE
