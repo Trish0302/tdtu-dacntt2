@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ListStoreContext } from "../../stores/ListStoreContext";
-import { call } from "../../utils/api";
+import { call, callUpload } from "../../utils/api";
 import {
   Autocomplete,
   Button,
@@ -19,23 +19,17 @@ const EditStorePage = () => {
   const { id } = useParams();
   const { state, dispatch } = useContext(ListStoreContext);
   const [loading, setLoading] = useState(false);
+  const [loadingCallAPI, setLoadingCallAPI] = useState(false);
   const navigate = useNavigate();
+  const [previewPic, setPreviewPic] = useState();
 
   const [userArr, setUserArr] = useState();
-  console.log(
-    "🚀 ~ file: EditStorePage.jsx:23 ~ EditStorePage ~ userArr:",
-    userArr
-  );
   const [updateStore, setUpdateStore] = useState({
     name: "",
     address: "",
     description: "",
     user_id: "",
   });
-  console.log(
-    "🚀 ~ file: EditUserPage.jsx:33 ~ EditUserPage ~ updateStore:",
-    updateStore
-  );
 
   const formik = useFormik({
     initialValues: updateStore,
@@ -43,14 +37,44 @@ const EditStorePage = () => {
     validationSchema: storeValidationSchema,
 
     onSubmit: (values) => {
+      const formData = new FormData();
+      formData.append("id", id);
+      formData.append("name", values.name);
+      formData.append("address", values.address);
+      formData.append("description", values.description);
+      formData.append("user_id", values.user_id);
+      formData.append("avatar", values.avatar);
+      formData.append("_method", "PUT");
+
       try {
-        call(`api/stores/${id}`, "PUT", values)
+        setLoadingCallAPI(true);
+        callUpload(`api/stores/${id}`, "POST", formData)
           .then((res) => {
+            if (res) {
+              setLoadingCallAPI(false);
+            }
+            console.log("🚀 ~ file: EditUserPage.jsx:65 ~ .then ~ res:", res);
             dispatch({ type: "updateStore", item: values });
-            toast.success("Update Successfully", { autoClose: 1000 });
-            setTimeout(() => {
-              navigate("/stores");
-            }, 1500);
+            if (res.status == 200) {
+              toast.success("Update Successfully", { autoClose: 1000 });
+              setTimeout(() => {
+                navigate("/stores");
+              }, 1500);
+            } else {
+              let entries = Object.entries(res.data.message);
+              console.log(
+                "🚀 ~ file: AddUserPage.jsx:68 ~ .then ~ entries:",
+                entries
+              );
+              entries.map(([key, value]) => {
+                console.log("loi ne", key, value);
+
+                formik.setFieldError(key, value[0]);
+                toast.error(value[0], {
+                  autoClose: 2000,
+                });
+              });
+            }
           })
           .catch((err) => console.log("add-error", err));
       } catch (error) {
@@ -61,25 +85,9 @@ const EditStorePage = () => {
   });
 
   //func
-  const changeHandler = (e) => {
-    setUpdateStore({ ...updateStore, [e.target.name]: e.target.value });
-  };
-
-  const updateHandler = async () => {
-    try {
-      call(`api/stores/${id}`, "PUT", updateStore)
-        .then((res) => {
-          dispatch({ type: "updateStore", item: updateStore });
-          toast.success("Update Successfully", { autoClose: 1000 });
-          setTimeout(() => {
-            navigate("/stores");
-          }, 1500);
-        })
-        .catch((err) => console.log("add-error", err));
-    } catch (error) {
-      console.log(error);
-      // toast.error('Something went wrong');
-    }
+  const changeUploadPicHandler = (e) => {
+    setPreviewPic(URL.createObjectURL(e.target.files[0]));
+    formik.setFieldValue("avatar", e.target.files[0]);
   };
 
   useEffect(() => {
@@ -87,6 +95,7 @@ const EditStorePage = () => {
     const data = call(`api/stores/${id}`, "GET", null);
     data.then((response) => {
       setUpdateStore(response.data);
+      setPreviewPic(response.data.avatar);
       setLoading(false);
     });
   }, []);
@@ -110,7 +119,85 @@ const EditStorePage = () => {
                 Edit information of Store
               </p>
               <Divider />
-              <div className="flex items-center w-full justify-center">
+              <Stack
+                direction="row"
+                spacing={5}
+                mt={2}
+                px={4}
+                sx={{ display: "flex" }}
+              >
+                <Card
+                  sx={{ p: 2, flex: 1, flexBasis: "30%" }}
+                  className="basis-1/4"
+                >
+                  {!previewPic ? (
+                    <div className="flex justify-between w-full h-full">
+                      <div className="flex items-center justify-center w-full h-full">
+                        <label
+                          htmlFor="dropzone-file"
+                          className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                        >
+                          <div className="flex flex-col items-center justify-center pt-5 pb-6 px-3 text-center">
+                            <svg
+                              aria-hidden="true"
+                              className="w-10 h-10 mb-3 text-gray-400"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                              ></path>
+                            </svg>
+                            <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                              <span className="font-semibold">
+                                Upload Profile Image
+                              </span>{" "}
+                              or drag to this section
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              Format JPEG, PNG,JPG
+                            </p>
+                          </div>
+                          <input
+                            id="dropzone-file"
+                            type="file"
+                            className="hidden"
+                            onChange={changeUploadPicHandler}
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="w-full flex flex-col gap-4 justify-center items-center ">
+                      <img
+                        src={previewPic}
+                        className="h-[300px] w-full object-cover rounded-lg shadow-md block"
+                        alt={updateStore.name}
+                      />
+
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        className="w-full"
+                      >
+                        <label htmlFor="dropzone-file1" className="w-full">
+                          Select another image
+                        </label>
+                      </Button>
+                      <input
+                        id="dropzone-file1"
+                        type="file"
+                        className="hidden"
+                        onChange={changeUploadPicHandler}
+                      />
+                    </div>
+                  )}
+                </Card>
                 <Card sx={{ py: 2, my: 2 }}>
                   <div className="px-4 flex justify-between items-center mb-2">
                     <p className="font-semibold">
@@ -208,18 +295,29 @@ const EditStorePage = () => {
                     </Stack>
                   </div>
                 </Card>
-              </div>
+              </Stack>
               <div className="w-full items-center justify-center flex">
                 <Button
                   variant="contained"
                   sx={{
                     mt: 2,
                     width: "fit-content",
+                    textTransform: "uppercase",
+                    paddingX: "20px",
+                    background: "#ef6351",
+                    color: "white",
+                    ":hover": {
+                      background: "#ffa397",
+                    },
                   }}
-                  // onClick={updateHandler}
+                  disabled={loadingCallAPI}
                   type="submit"
                 >
-                  SAVE
+                  {loadingCallAPI ? (
+                    <CircularProgress color="secondary" size="1.5rem" />
+                  ) : (
+                    "SAVE"
+                  )}
                 </Button>
               </div>
             </div>

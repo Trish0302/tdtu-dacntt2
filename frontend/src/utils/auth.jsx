@@ -42,7 +42,9 @@ const Auth = ({ children }) => {
       <Navigate to="/login" />
     )
   ) : (
-    <Loader />
+    <div className="w-full h-full bg-primary-100">
+      <Loader />
+    </div>
   );
 };
 Auth.propTypes = {
