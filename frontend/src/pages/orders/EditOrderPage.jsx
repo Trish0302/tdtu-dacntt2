@@ -49,20 +49,20 @@ const EditOrderPage = () => {
       valuesUpdate.items.map((item) => {
         // console.log(item);
         Object.assign(item, { price: item.total });
+        item["price"] = item["unit_price"];
         item["id"] = item.food_id;
         delete item["total"];
         delete item["food_id"];
         delete item["order_id"];
+        delete item["unit_price"];
       });
       delete valuesUpdate["detail"];
       delete valuesUpdate["history"];
       delete valuesUpdate["total"];
       valuesUpdate = {
         ...valuesUpdate,
-        store_id: 1,
         voucher_id: 1,
         payment_type: 1,
-        customer_id: 1,
       };
 
       console.log(valuesUpdate);
@@ -70,11 +70,28 @@ const EditOrderPage = () => {
       try {
         call(`api/orders/${id}`, "PUT", valuesUpdate)
           .then((res) => {
-            dispatch({ type: "updateOrder", item: valuesUpdate });
-            toast.success("Update Successfully", { autoClose: 1000 });
-            setTimeout(() => {
-              navigate("/orders");
-            }, 1500);
+            if (res.status == 200) {
+              dispatch({ type: "updateOrder", item: valuesUpdate });
+              toast.success("Update Successfully", { autoClose: 1000 });
+              setTimeout(() => {
+                navigate("/orders");
+              }, 1500);
+            } else {
+              console.log(res);
+              let entries = Object.entries(res.data.messages);
+              console.log(
+                "🚀 ~ file: AddUserPage.jsx:68 ~ .then ~ entries:",
+                entries
+              );
+              entries.map(([key, value]) => {
+                console.log("loi ne", key, value);
+
+                formik.setFieldError(key, value[0]);
+                toast.error(value[0], {
+                  autoClose: 2000,
+                });
+              });
+            }
           })
           .catch((err) => console.log("add-error", err));
       } catch (error) {
