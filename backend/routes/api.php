@@ -52,7 +52,7 @@ Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
         [
             'orders' => OrdersController::class
         ],
-        ['except' => ['store', 'update']],
+        ['except' => ['store']],
     );
 
     Route::apiResources(
