@@ -26,6 +26,9 @@ Route::middleware('auth:sanctum', 'ability:admin,customer')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
     Route::put('/password', [AuthController::class, 'update_password']);
     Route::get('/logout', [AuthController::class, 'logout']);
+
+    Route::post('/orders', [OrdersController::class, 'store']);
+    Route::put('/customers/{id}', [CustomersController::class, 'update']);
 });
 
 Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
@@ -33,9 +36,7 @@ Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
 
     Route::apiResources([
         'users' => UsersController::class,
-        'orders' => OrdersController::class,
         'vouchers' => VouchersController::class,
-        'customers' => CustomersController::class,
     ]);
 
     Route::apiResources(
@@ -45,6 +46,20 @@ Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
             'stores.food_groups' => FoodGroupsController::class,
         ],
         ['except' => ['index', 'show']],
+    );
+
+    Route::apiResources(
+        [
+            'orders' => OrdersController::class
+        ],
+        ['except' => ['store', 'update']],
+    );
+
+    Route::apiResources(
+        [
+            'customers' => CustomersController::class,
+        ],
+        ['except' => ['update']],
     );
 });
 
