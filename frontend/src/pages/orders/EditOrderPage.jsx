@@ -285,6 +285,17 @@ const EditOrderPage = () => {
                             </TableCell>
                           </TableRow>
                         ))}
+                        <TableRow
+                          sx={{
+                            "&:last-child td, &:last-child th": {
+                              border: 0,
+                            },
+                          }}
+                        >
+                          <TableCell>
+                            Total: {updateOrder.total.toLocaleString()} ₫
+                          </TableCell>
+                        </TableRow>
                       </TableBody>
                     </Table>
                   </TableContainer>

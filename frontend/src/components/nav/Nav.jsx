@@ -40,7 +40,6 @@ const Nav = ({ openSidebar, setOpenSidebar }) => {
   });
   const responsive = useResponsive();
   const userInfo = useContext(authContext);
-  console.log("🚀 ~ file: Nav.jsx:43 ~ Nav ~ information :", userInfo);
   // const [information, setInformation] = useState();
 
   // useEffect(() => {
