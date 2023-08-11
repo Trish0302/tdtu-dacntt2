@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\UsersController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrdersController;
+use App\Http\Controllers\RatingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,9 +65,8 @@ Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
 });
 
 Route::middleware('auth:sanctum', 'ability:customer')->group(function () {
-    Route::get('/test_customer', function () {
-        return 'hello';
-    });
+    Route::get('/get-voucher-by-code/{voucher_code}', [VouchersController::class, 'getVoucherByCode']);
+    Route::get('/get-ratings-for-customer/{customer_id}', [RatingController::class, 'getRatingsForCustomer']);
 });
 
 Route::post('/login', [AuthController::class, 'login']);
