@@ -25,6 +25,7 @@ class OrdersController extends Controller
             'total',
             'customer_id',
             'store_id',
+            'voucher_id',
             'created_at',
             'updated_at',
         ],
@@ -59,6 +60,11 @@ class OrdersController extends Controller
             'name',
             'address',
             'description',
+        ],
+        'voucher' => [
+            'id',
+            'code',
+            'discount',
         ],
     ];
 
@@ -205,7 +211,9 @@ class OrdersController extends Controller
     {
         try {
             $order = Order::select($this->fields['order'])
-                ->with($this->multiple_eager_load(['customer', 'store', 'detail', 'detail.food']))
+                ->with($this->multiple_eager_load([
+                    'customer', 'store', 'detail', 'detail.food', 'voucher'
+                ]))
                 ->findOrFail($id)
                 ->setAttribute('history', $this->getOrderProgresses($id));
 

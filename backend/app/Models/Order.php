@@ -40,4 +40,9 @@ class Order extends Model
     {
         return $this->belongsTo(Store::class);
     }
+
+    public function voucher()
+    {
+        return $this->belongsTo(Voucher::class);
+    }
 }
