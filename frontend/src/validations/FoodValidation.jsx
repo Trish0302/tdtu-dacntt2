@@ -23,7 +23,7 @@ const FoodValidationSchema = yup.object({
     .test(
       "Is positive?",
       "The number must be greater than 0",
-      (value) => value > 0
+      (value) => value >= 0
     )
     .test(
       "no-leading-zero",
