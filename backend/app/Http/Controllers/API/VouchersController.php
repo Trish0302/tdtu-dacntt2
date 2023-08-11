@@ -139,4 +139,20 @@ class VouchersController extends Controller
             ], 400);
         }
     }
+
+    public function getVoucherByCode($voucher_code)
+    {
+        try {
+            return response()->json([
+                'message' => 'Get voucher successfully!',
+                'data' => Voucher::where('code', $voucher_code)->firstOrFail($this->fields),
+                'status' => 200,
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Invalid voucher code. Please try again!',
+                'status' => 400,
+            ], 400);
+        }
+    }
 }
