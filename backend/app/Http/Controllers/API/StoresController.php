@@ -34,9 +34,20 @@ class StoresController extends Controller
      */
     public function index(Request $request)
     {
-        $stores = Store::select($this->store_fields)->with(['user' => function ($query) {
-            $query->select($this->user_fields);
-        }])->orderBy('created_at', 'desc')->paginate($request->page_size ?? 10);
+        $query = $request->q;
+
+        $stores = Store::where('name', 'like', '%' . $query . '%')
+            ->orWhere('address', 'like', '%' . $query . '%')
+            ->orWhere('id', $query)
+            ->select($this->store_fields)
+            ->with(['user' => function ($q) {
+                $q->select($this->user_fields);
+            }])
+            ->orWhereHas('user', function ($q) use ($query) {
+                return $q->where('users.name', $query);
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate($request->page_size ?? 10);
 
         $result = response()->json([
             'data' => $stores->items(),

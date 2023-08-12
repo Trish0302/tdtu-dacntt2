@@ -45,8 +45,15 @@ class FoodController extends Controller
     public function index($store_id, $food_group_id, Request $request)
     {
         try {
+            $query = $request->q;
+
             $food = $this->get_food_list()
                 ->where('food_group_id', $food_group_id)
+                ->where(function ($q) use ($query) {
+                    $q->where('name', 'like', '%' . $query . '%')
+                        ->orWhere('slug', 'like', '%' . $query . '%')
+                        ->orWhere('id', $query);
+                })
                 ->orderBy('created_at', 'desc')
                 ->paginate($request->page_size ?? 10);
 

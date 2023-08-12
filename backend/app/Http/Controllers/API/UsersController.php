@@ -28,7 +28,18 @@ class UsersController extends Controller
      */
     public function index(Request $request)
     {
-        $users = User::orderBy('created_at', 'desc')
+        $query = $request->q;
+        $users = new User;
+
+        if (isset($query)) {
+            $users = $users
+                ->where('name', 'like', '%' . $query . '%')
+                ->orWhere('email', 'like', '%' . $query . '%')
+                ->orWhere('phone', $query)
+                ->orWhere('id', $query);
+        }
+
+        $users = $users->orderBy('created_at', 'desc')
             ->paginate($request->page_size ?? 10, $this->fields);
 
         return $users;
