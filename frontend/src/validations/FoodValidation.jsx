@@ -6,7 +6,7 @@ const FoodValidationSchema = yup.object({
 
   food_group_id: yup
     .string("Enter your the name of food group")
-    .required("Which food group of this food belong"),
+    .required("Which food group of this food belong?"),
   slug: yup
     .string("Enter the slug of food")
     .required("The slug of food is required"),
