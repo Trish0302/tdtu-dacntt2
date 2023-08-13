@@ -37,10 +37,13 @@ const StoresPage = () => {
   // pagination
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
+  const [fromPage, setFromPage] = useState(0);
+  const [toPage, setToPage] = useState(state.total < 5 ? state.total : 5);
   const handleChangeRowsPerPage = async (event) => {
-    setPage(0);
-    setRowsPerPage(parseInt(event.target.value, 10));
     setLoading(true);
+    setPage(0);
+    setToPage(parseInt(event.target.value, 10));
+    setRowsPerPage(parseInt(event.target.value, 10));
     const result = await call(
       `api/stores?page=${page + 1}&page_size=${parseInt(
         event.target.value,
@@ -53,8 +56,26 @@ const StoresPage = () => {
     setLoading(false);
   };
   const handleChangePage = async (event, newPage) => {
-    setPage(newPage);
     setLoading(true);
+    setPage(newPage);
+    setToPage(() => {
+      if (page < newPage) {
+        return toPage + rowsPerPage > state.total
+          ? state.total
+          : toPage + rowsPerPage;
+      } else {
+        return toPage - rowsPerPage < 0 ? rowsPerPage : toPage - rowsPerPage;
+      }
+    });
+    setFromPage(() => {
+      if (page < newPage) {
+        return fromPage + rowsPerPage > state.total
+          ? state.total
+          : fromPage + rowsPerPage;
+      } else {
+        return fromPage - rowsPerPage < 0 ? 0 : fromPage - rowsPerPage;
+      }
+    });
     const result = await call(
       `api/stores?page=${newPage + 1}&page_size=${rowsPerPage}`,
       "GET",
@@ -93,6 +114,7 @@ const StoresPage = () => {
           dispatch({ type: "removeStore", sid: dataRow.id });
           toast.success("Delete Successfully!!!", { autoClose: 1000 });
         });
+        setToPage(toPage - 1);
       })
       .catch(() => {
         console.log("Deletion cancelled.");
@@ -125,6 +147,7 @@ const StoresPage = () => {
             <TableHead>
               <TableRow>
                 <TableCell align="left">ID</TableCell>
+                <TableCell align="left">Avatar</TableCell>
                 <TableCell align="left">Name</TableCell>
                 <TableCell align="left">Address</TableCell>
                 <TableCell align="left">Description</TableCell>
@@ -138,6 +161,13 @@ const StoresPage = () => {
                 state.list.map((store) => (
                   <TableRow key={store.id}>
                     <TableCell align="left">{store.id}</TableCell>
+                    <TableCell align="left">
+                      <img
+                        src={store.avatar}
+                        className="w-10 h-10 rounded-full object-cover"
+                        alt={store.name}
+                      />
+                    </TableCell>
                     <TableCell align="left">{store.name}</TableCell>
                     <TableCell align="left">{store.address}</TableCell>
                     <TableCell align="left">{store.description}</TableCell>

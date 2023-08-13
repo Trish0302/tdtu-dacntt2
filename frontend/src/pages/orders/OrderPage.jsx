@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import React, { useContext, useState } from "react";
 import Search from "../../components/search/Search";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useConfirm } from "material-ui-confirm";
 import { ListOrderContext } from "../../stores/ListOrderContext";
 import { call } from "../../utils/api";
@@ -35,9 +35,12 @@ const OrderPage = () => {
   // pagination
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
+  const [fromPage, setFromPage] = useState(0);
+  const [toPage, setToPage] = useState(state.total < 5 ? state.total : 5);
   const handleChangeRowsPerPage = async (event) => {
     setLoading(true);
     setPage(0);
+    setToPage(parseInt(event.target.value, 10));
     setRowsPerPage(parseInt(event.target.value, 10));
     const result = await call(
       `api/orders?page=${page + 1}&page_size=${parseInt(
@@ -53,6 +56,24 @@ const OrderPage = () => {
   const handleChangePage = async (event, newPage) => {
     setLoading(true);
     setPage(newPage);
+    setToPage(() => {
+      if (page < newPage) {
+        return toPage + rowsPerPage > state.total
+          ? state.total
+          : toPage + rowsPerPage;
+      } else {
+        return toPage - rowsPerPage < 0 ? rowsPerPage : toPage - rowsPerPage;
+      }
+    });
+    setFromPage(() => {
+      if (page < newPage) {
+        return fromPage + rowsPerPage > state.total
+          ? state.total
+          : fromPage + rowsPerPage;
+      } else {
+        return fromPage - rowsPerPage < 0 ? 0 : fromPage - rowsPerPage;
+      }
+    });
     const result = await call(
       `api/orders?page=${newPage + 1}&page_size=${rowsPerPage}`,
       "GET",
@@ -86,6 +107,7 @@ const OrderPage = () => {
           dispatch({ type: "removeOrder", sid: dataRow.id });
           toast.success("Delete Successfully!!!", { autoClose: 1000 });
         });
+        setToPage(toPage - 1);
       })
       .catch(() => {
         console.log("Deletion cancelled.");
@@ -118,9 +140,11 @@ const OrderPage = () => {
             <TableHead>
               <TableRow>
                 <TableCell align="left">ID</TableCell>
-                <TableCell align="left">Name</TableCell>
+                <TableCell align="left">Recipient</TableCell>
                 <TableCell align="left">Address</TableCell>
                 <TableCell align="left">Phone</TableCell>
+                <TableCell align="left">Customer Name</TableCell>
+                <TableCell align="left">Store Name</TableCell>
                 <TableCell align="left">Total</TableCell>
                 <TableCell align="right" />
               </TableRow>
@@ -134,6 +158,16 @@ const OrderPage = () => {
                     <TableCell align="left">{order.name}</TableCell>
                     <TableCell align="left">{order.address}</TableCell>
                     <TableCell align="left">{order.phone}</TableCell>
+                    <TableCell align="left">
+                      <Link to={`/customers/detail/${order.customer.id}`}>
+                        {order.customer.name}
+                      </Link>
+                    </TableCell>
+                    <TableCell align="left">
+                      <Link to={`/stores/detail/${order.store.id}`}>
+                        {order.store.name}
+                      </Link>
+                    </TableCell>
                     <TableCell align="left">
                       {new Intl.NumberFormat("vi-VN", {
                         style: "currency",

@@ -8,9 +8,10 @@ const initialState = {
 };
 const removeFoodGroup = (sid, state) => {
   const temp = [...state.list];
+  const total = state.total;
   const index = temp.findIndex((item) => item.id === sid);
   temp.splice(index, 1);
-  return { ...state, list: temp };
+  return { ...state, list: temp, total: total - 1 };
 };
 const addFoodGroup = (item, state) => {
   const temp = [...state.list];

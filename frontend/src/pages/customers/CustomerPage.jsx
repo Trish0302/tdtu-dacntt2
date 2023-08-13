@@ -37,11 +37,14 @@ const CustomerPage = () => {
   // pagination
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
+  const [fromPage, setFromPage] = useState(0);
+  const [toPage, setToPage] = useState(state.total < 5 ? state.total : 5);
   // functions
 
   const handleChangeRowsPerPage = async (event) => {
     setLoading(true);
     setPage(0);
+    setToPage(parseInt(event.target.value, 10));
     setRowsPerPage(parseInt(event.target.value, 10));
     const result = await call(
       `api/customers?page=${page + 1}&page_size=${parseInt(
@@ -57,6 +60,24 @@ const CustomerPage = () => {
   const handleChangePage = async (event, newPage) => {
     setLoading(true);
     setPage(newPage);
+    setToPage(() => {
+      if (page < newPage) {
+        return toPage + rowsPerPage > state.total
+          ? state.total
+          : toPage + rowsPerPage;
+      } else {
+        return toPage - rowsPerPage < 0 ? rowsPerPage : toPage - rowsPerPage;
+      }
+    });
+    setFromPage(() => {
+      if (page < newPage) {
+        return fromPage + rowsPerPage > state.total
+          ? state.total
+          : fromPage + rowsPerPage;
+      } else {
+        return fromPage - rowsPerPage < 0 ? 0 : fromPage - rowsPerPage;
+      }
+    });
     const result = await call(
       `api/customers?page=${newPage + 1}&page_size=${rowsPerPage}`,
       "GET",
@@ -85,6 +106,7 @@ const CustomerPage = () => {
           dispatch({ type: "removeCustomer", sid: dataRow.id });
           toast.success("Delete Successfully!!!", { autoClose: 1000 });
         });
+        setToPage(toPage - 1);
       })
       .catch(() => {
         console.log("Deletion cancelled.");
@@ -141,7 +163,9 @@ const CustomerPage = () => {
                     <TableCell align="left">{customer.name}</TableCell>
                     <TableCell align="left">{customer.email}</TableCell>
                     <TableCell align="left">{customer.phone}</TableCell>
-                    <TableCell align="left">{customer.address}</TableCell>
+                    <TableCell align="left" className="max-w-[200px] truncate">
+                      {customer.address}
+                    </TableCell>
                     <TableCell align="right">
                       <Tooltip title="View Detail" arrow>
                         <IconButton aria-label="view">

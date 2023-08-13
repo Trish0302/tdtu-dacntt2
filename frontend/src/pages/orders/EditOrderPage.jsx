@@ -129,7 +129,7 @@ const EditOrderPage = () => {
               </p>
               <Divider />
               <div className="flex flex-col items-center w-full justify-center">
-                <Card sx={{ py: 2, my: 2 }}>
+                <Card sx={{ py: 2, my: 2 }} className="basis-3/4">
                   <div className="px-4 flex justify-between items-center mb-2">
                     <p className="font-semibold">
                       Order{" "}
@@ -189,7 +189,7 @@ const EditOrderPage = () => {
                         // fullWidth
                       />
                       <TextField
-                        sx={{ mx: 2, width: "800px" }}
+                        sx={{ width: "100%" }}
                         placeholder="Total price of order"
                         label="Total price of order"
                         name="total"

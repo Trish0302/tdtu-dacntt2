@@ -122,7 +122,7 @@ const AddUserPage = () => {
               className="basis-1/4"
             >
               {!previewPic ? (
-                <div className="flex justify-between w-full">
+                <div className="flex justify-between w-full h-full">
                   <div className="flex items-center justify-center w-full">
                     <label
                       htmlFor="dropzone-file"
@@ -157,6 +157,7 @@ const AddUserPage = () => {
                       <input
                         id="dropzone-file"
                         type="file"
+                        accept="image/*"
                         className="hidden"
                         onChange={changeUploadPicHandler}
                       />

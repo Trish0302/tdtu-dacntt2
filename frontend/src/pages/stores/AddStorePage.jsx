@@ -149,6 +149,7 @@ const AddStorePage = () => {
                       <input
                         id="dropzone-file"
                         type="file"
+                        accept="image/*"
                         className="hidden"
                         onChange={changeUploadPicHandler}
                       />
@@ -177,7 +178,7 @@ const AddStorePage = () => {
               )}
             </Card>
 
-            <Card sx={{ py: 2, my: 2 }}>
+            <Card sx={{ py: 2, my: 2 }} className="basis-3/4">
               <div className="px-4 flex justify-between items-center mb-2">
                 <small>
                   Please confirm the information carefully before saving
@@ -241,7 +242,7 @@ const AddStorePage = () => {
                     />
                   )}
                   <TextField
-                    sx={{ mx: 2, width: "800px" }}
+                    sx={{ width: "100%" }}
                     placeholder="Description about store"
                     multiline
                     label="Description about store"

@@ -26,6 +26,7 @@ const DetailFoodPage = () => {
     description: "",
     price: "",
     food_group_id: foodGroupId,
+    food_group: { store: { name: "" } },
   });
   console.log(
     "🚀 ~ file: EditFoodGroupPage.jsx:33 ~ EditFoodGroupPage ~ updateFood:",
@@ -37,11 +38,7 @@ const DetailFoodPage = () => {
 
   useEffect(() => {
     setLoading(true);
-    const data = call(
-      `api/stores/${storeId}/food_groups/${foodGroupId}/food/${foodId}`,
-      "GET",
-      null
-    );
+    const data = call(`api/food/${foodId}`, "GET", null);
     data.then((response) => {
       console.log(
         "🚀 ~ file: EditFoodGroupPage.jsx:57 ~ data.then ~ response:",
@@ -53,7 +50,9 @@ const DetailFoodPage = () => {
         price: numberWithCommas(response.data.price),
       });
       setPreviewPic(response.data.avatar);
-      setLoading(false);
+      if (response) {
+        setLoading(false);
+      }
     });
   }, []);
 
@@ -139,16 +138,11 @@ const DetailFoodPage = () => {
                     className="h-[300px] w-fit object-cover rounded-lg shadow-md block"
                   />
 
-                  <Button variant="outlined" color="error" className="w-full">
-                    <label htmlFor="dropzone-file1" className="w-full">
-                      Select another image
-                    </label>
-                  </Button>
                   <input id="dropzone-file1" type="file" className="hidden" />
                 </div>
               )}
             </Card>
-            <Card sx={{ py: 2, my: 2 }}>
+            <Card sx={{ py: 2, my: 2 }} className="basis-3/4">
               <div className="px-4 flex justify-between items-center mb-2">
                 <p className="font-semibold">
                   {" "}
@@ -157,7 +151,13 @@ const DetailFoodPage = () => {
                 </p>
               </div>
               <Divider />
-              <Stack direction="column" spacing={2} m={2}>
+              <Stack
+                direction="column"
+                spacing={2}
+                pt={2}
+                px={2}
+                sx={{ width: "100%" }}
+              >
                 <TextField
                   variant="outlined"
                   placeholder="Name of food"
@@ -194,6 +194,20 @@ const DetailFoodPage = () => {
                     readOnly: true,
                   }}
                 />
+
+                <TextField
+                  variant="outlined"
+                  placeholder="Store"
+                  label="Store"
+                  name="store"
+                  defaultValue={updateFood.food_group.store.name}
+                  // onChange={changeHandler}
+                  disabled={true}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+
                 {foodGroupArr && (
                   <Autocomplete
                     disablePortal
@@ -211,22 +225,23 @@ const DetailFoodPage = () => {
                     }}
                   />
                 )}
+                {updateFood.food_group.store.name && (
+                  <TextField
+                    sx={{ width: "100%" }}
+                    placeholder="Description about food"
+                    multiline
+                    label="Description about food"
+                    rows={10}
+                    name="description"
+                    defaultValue={updateFood.description}
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    // onChange={changeHandler}
+                    // fullWidth
+                  />
+                )}
               </Stack>
-
-              <TextField
-                sx={{ mx: 2, width: "800px" }}
-                placeholder="Description about food"
-                multiline
-                label="Description about food"
-                rows={10}
-                name="description"
-                defaultValue={updateFood.description}
-                InputProps={{
-                  readOnly: true,
-                }}
-                // onChange={changeHandler}
-                // fullWidth
-              />
             </Card>
           </Stack>
         </div>

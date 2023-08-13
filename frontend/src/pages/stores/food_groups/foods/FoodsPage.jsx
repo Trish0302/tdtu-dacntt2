@@ -43,9 +43,12 @@ const FoodsPage = () => {
   // pagination
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
+  const [fromPage, setFromPage] = useState(0);
+  const [toPage, setToPage] = useState(state.total < 5 ? state.total : 5);
   const handleChangeRowsPerPage = async (event) => {
     setLoading(true);
     setPage(0);
+    setToPage(parseInt(event.target.value, 10));
     setRowsPerPage(parseInt(event.target.value, 10));
     let result;
     if (storeId && foodGroupId) {
@@ -72,6 +75,24 @@ const FoodsPage = () => {
   const handleChangePage = async (event, newPage) => {
     setLoading(true);
     setPage(newPage);
+    setToPage(() => {
+      if (page < newPage) {
+        return toPage + rowsPerPage > state.total
+          ? state.total
+          : toPage + rowsPerPage;
+      } else {
+        return toPage - rowsPerPage < 0 ? rowsPerPage : toPage - rowsPerPage;
+      }
+    });
+    setFromPage(() => {
+      if (page < newPage) {
+        return fromPage + rowsPerPage > state.total
+          ? state.total
+          : fromPage + rowsPerPage;
+      } else {
+        return fromPage - rowsPerPage < 0 ? 0 : fromPage - rowsPerPage;
+      }
+    });
     let result;
     if (storeId && foodGroupId) {
       result = await call(
@@ -156,6 +177,7 @@ const FoodsPage = () => {
           dispatch({ type: "removeFood", sid: dataRow.id });
           toast.success("Delete Successfully!!!", { autoClose: 1000 });
         });
+        setToPage(toPage - 1);
       })
       .catch((err) => {
         console.log("Deletion cancelled.", err);
@@ -199,9 +221,12 @@ const FoodsPage = () => {
             <TableHead>
               <TableRow>
                 <TableCell align="left">ID</TableCell>
+                <TableCell align="left">Avatar</TableCell>
                 <TableCell align="left">Name</TableCell>
                 <TableCell align="left">Slug</TableCell>
                 <TableCell align="left">Price</TableCell>
+                <TableCell align="left">Discount Rate</TableCell>
+                <TableCell align="left">Discounted Price</TableCell>
                 <TableCell align="right" />
               </TableRow>
             </TableHead>
@@ -211,6 +236,13 @@ const FoodsPage = () => {
                 state.list.map((food) => (
                   <TableRow key={food.id}>
                     <TableCell align="left">{food.id}</TableCell>
+                    <TableCell align="left">
+                      <img
+                        src={food.avatar}
+                        className="w-10 h-10 rounded-full object-cover"
+                        alt={food.name}
+                      />
+                    </TableCell>
                     <TableCell align="left">{food.name}</TableCell>
                     <TableCell align="left">{food.slug}</TableCell>
                     <TableCell align="left">
@@ -218,6 +250,13 @@ const FoodsPage = () => {
                         style: "currency",
                         currency: "VND",
                       }).format(food.price)}
+                    </TableCell>
+                    <TableCell align="left">{food.discount} %</TableCell>
+                    <TableCell align="left">
+                      {new Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      }).format(food.discounted_price)}
                     </TableCell>
                     <TableCell align="right">
                       <Tooltip title="View Detail" arrow>
