@@ -23,7 +23,14 @@ class VouchersController extends Controller
      */
     public function index(Request $request)
     {
-        $vouchers = Voucher::orderBy('created_at', 'desc')
+        $query = $request->q;
+        $vouchers = new Voucher;
+
+        if ($query) {
+            $vouchers = $vouchers->where('code', $query);
+        }
+
+        $vouchers = $vouchers->orderBy('created_at', 'desc')
             ->paginate($request->page_size ?? 10, $this->fields);
 
         $result = response()->json([
