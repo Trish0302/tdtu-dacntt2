@@ -69,7 +69,7 @@ const DetailOrderPage = () => {
               </p>
               <Divider />
               <div className="flex flex-col items-center w-full justify-center">
-                <Card sx={{ py: 2, my: 2 }}>
+                <Card sx={{ py: 2, my: 2, width: "70%" }}>
                   <div className="px-4 flex justify-between items-center mb-2">
                     <p className="font-semibold">
                       Order{" "}
@@ -137,7 +137,7 @@ const DetailOrderPage = () => {
                         }}
                       />
                       <TextField
-                        sx={{ mx: 2, width: "800px" }}
+                        sx={{ width: "100%" }}
                         placeholder="Total price of order"
                         label="Total price of order"
                         name="total"
@@ -195,7 +195,7 @@ const DetailOrderPage = () => {
                   </div>
                 </Card>
 
-                <Card className="w-[832px]" sx={{ px: 4, py: 2 }}>
+                <Card sx={{ px: 2, py: 2, width: "70%" }}>
                   <span className="font-semibold">Detail Order</span>
                   <TableContainer className="mt-2">
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -235,20 +235,21 @@ const DetailOrderPage = () => {
                             </TableCell>
                           </TableRow>
                         ))}
-                        <TableRow
-                          sx={{
-                            "&:last-child td, &:last-child th": {
-                              border: 0,
-                            },
-                          }}
-                        >
-                          <TableCell>
-                            Total: {updateOrder.total.toLocaleString()} ₫
-                          </TableCell>
-                        </TableRow>
                       </TableBody>
                     </Table>
                   </TableContainer>
+
+                  <div className="flex flex-col gap-2 mt-2">
+                    <div className="">
+                      Code Voucher: {updateOrder.voucher.code}{" "}
+                    </div>
+                    <div className="">
+                      Discount: {updateOrder.voucher.discount} %
+                    </div>
+                    <div className="font-semibold">
+                      Total: {updateOrder.total.toLocaleString()} ₫
+                    </div>
+                  </div>
                 </Card>
               </div>
             </div>

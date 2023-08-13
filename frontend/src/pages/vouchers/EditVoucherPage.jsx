@@ -8,6 +8,7 @@ import { ListVoucherContext } from "../../stores/ListVoucherContext";
 import {
   Button,
   Card,
+  CircularProgress,
   Divider,
   InputAdornment,
   Stack,
@@ -76,7 +77,11 @@ const EditVoucherPage = () => {
       setLoading(false);
     });
   }, []);
-  return (
+  return loading ? (
+    <div className="flex items-center justify-center w-full h-full bg-primary-100">
+      <CircularProgress color="secondary" />
+    </div>
+  ) : (
     <div className="h-full">
       <form onSubmit={formik.handleSubmit} className="h-full">
         <div className="h-full bg-primary-100 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">

@@ -198,7 +198,7 @@ const EditStorePage = () => {
                     </div>
                   )}
                 </Card>
-                <Card sx={{ py: 2, my: 2 }}>
+                <Card sx={{ py: 2, my: 2 }} className="basis-3/4">
                   <div className="px-4 flex justify-between items-center mb-2">
                     <p className="font-semibold">
                       Store{" "}
@@ -274,7 +274,7 @@ const EditStorePage = () => {
                         />
                       )}
                       <TextField
-                        sx={{ mx: 2, width: "800px" }}
+                        sx={{ width: "100%" }}
                         placeholder="Description about store"
                         multiline
                         label="Description about store"

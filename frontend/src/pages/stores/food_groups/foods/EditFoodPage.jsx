@@ -25,6 +25,7 @@ const EditFoodPage = () => {
   const navigate = useNavigate();
 
   const [foodGroupArr, setFoodGroupArr] = useState();
+  const [storeArr, setStoreArr] = useState();
 
   const [updateFood, setUpdateFood] = useState({
     name: "",
@@ -33,11 +34,15 @@ const EditFoodPage = () => {
     price: "",
     discount: "",
     food_group_id: foodGroupId,
+    store_id: "",
   });
   console.log(
     "🚀 ~ file: EditFoodGroupPage.jsx:33 ~ EditFoodGroupPage ~ updateFood:",
     updateFood
   );
+
+  const [selectStoreId, setSelectStoreId] = useState();
+
   const [previewPic, setPreviewPic] = useState();
   const [loadingCallAPI, setLoadingCallAPI] = useState(false);
 
@@ -61,6 +66,7 @@ const EditFoodPage = () => {
       console.log(values);
 
       const formData = new FormData();
+      formData.append("id", foodId);
       formData.append("name", values.name);
       formData.append("slug", values.slug);
       formData.append("description", values.description);
@@ -95,9 +101,15 @@ const EditFoodPage = () => {
               dispatch({ type: "updateFood", item: values });
               toast.success("Update Successfully", { autoClose: 1000 });
               setTimeout(() => {
-                navigate(`/stores/${storeId}/food-group/${foodGroupId}/food`, {
-                  state: { storeId, foodGroupId },
-                });
+                navigate(
+                  `/stores/${selectStoreId}/food-group/${values.food_group_id}/food`,
+                  {
+                    state: {
+                      storeId: selectStoreId,
+                      foodGroupId: values.food_group_id,
+                    },
+                  }
+                );
               }, 1500);
             }
           })
@@ -113,11 +125,7 @@ const EditFoodPage = () => {
 
   useEffect(() => {
     setLoading(true);
-    const data = call(
-      `api/stores/${storeId}/food_groups/${foodGroupId}/food/${foodId}`,
-      "GET",
-      null
-    );
+    const data = call(`api/food/${foodId}`, "GET", null);
     data.then((response) => {
       setUpdateFood({
         ...response.data,
@@ -125,9 +133,47 @@ const EditFoodPage = () => {
       });
       setPreviewPic(response.data.avatar);
       // setUpdateFood(response.data);
+      setSelectStoreId(response.data.food_group.store_id);
       setLoading(false);
     });
   }, []);
+
+  useEffect(() => {
+    const storeArr = [];
+    const fetchData = async () => {
+      // const rs = await call("api/food-groups?page_size=1000");
+      const rs = await call("api/stores?page_size=1000");
+      rs.data.map((item) =>
+        storeArr.push({
+          label: item.name,
+          id: item.id,
+        })
+      );
+      setStoreArr(storeArr);
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const foodGroupArr = [];
+    const fetchData = async () => {
+      // const rs = await call("api/food-groups?page_size=1000");
+      const rs = await call(
+        `api/stores/${selectStoreId}/food_groups?page_size=1000`
+      );
+      rs.data.map((item) =>
+        foodGroupArr.push({
+          label: item.name,
+          id: item.id,
+        })
+      );
+      setFoodGroupArr(foodGroupArr);
+    };
+
+    if (selectStoreId) {
+      fetchData();
+    }
+  }, [selectStoreId]);
 
   useEffect(() => {
     const foodGroupArr = [];
@@ -231,7 +277,7 @@ const EditFoodPage = () => {
                     </div>
                   )}
                 </Card>
-                <Card sx={{ py: 2, my: 2 }}>
+                <Card sx={{ py: 2, my: 2 }} className="basis-3/4">
                   <div className="px-4 flex justify-between items-center mb-2">
                     <p className="font-semibold">
                       {" "}
@@ -245,7 +291,13 @@ const EditFoodPage = () => {
                     </small>
                   </div>
                   <Divider />
-                  <Stack direction="column" spacing={2} m={2}>
+                  <Stack
+                    direction="column"
+                    spacing={2}
+                    pt={2}
+                    px={2}
+                    sx={{ width: "100%" }}
+                  >
                     <TextField
                       variant="outlined"
                       placeholder="Name of food"
@@ -288,6 +340,39 @@ const EditFoodPage = () => {
                       }
                       helperText={formik.touched.price && formik.errors.price}
                     />
+
+                    {storeArr && (
+                      <>
+                        <Autocomplete
+                          disablePortal
+                          disabled={location.state ? true : false}
+                          id=""
+                          options={storeArr}
+                          value={
+                            storeArr.find((item) => item.id == selectStoreId)
+                              ?.label
+                          }
+                          onChange={(e, value) => {
+                            formik.setFieldValue("store_id", value?.id);
+                            setSelectStoreId(value?.id);
+                          }}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              label="Store"
+                              error={
+                                formik.touched.store_id &&
+                                Boolean(formik.errors.store_id)
+                              }
+                              helperText={
+                                formik.touched.store_id &&
+                                formik.errors.store_id
+                              }
+                            />
+                          )}
+                        />
+                      </>
+                    )}
 
                     {foodGroupArr && (
                       <Autocomplete
@@ -340,26 +425,25 @@ const EditFoodPage = () => {
                         ),
                       }}
                     />
+                    <TextField
+                      sx={{ width: "100%" }}
+                      placeholder="Description about food"
+                      multiline
+                      label="Description about food"
+                      rows={10}
+                      name="description"
+                      value={formik.values.description}
+                      onChange={formik.handleChange}
+                      error={
+                        formik.touched.description &&
+                        Boolean(formik.errors.description)
+                      }
+                      helperText={
+                        formik.touched.description && formik.errors.description
+                      }
+                      // fullWidth
+                    />
                   </Stack>
-
-                  <TextField
-                    sx={{ mx: 2, width: "800px" }}
-                    placeholder="Description about food"
-                    multiline
-                    label="Description about food"
-                    rows={10}
-                    name="description"
-                    value={formik.values.description}
-                    onChange={formik.handleChange}
-                    error={
-                      formik.touched.description &&
-                      Boolean(formik.errors.description)
-                    }
-                    helperText={
-                      formik.touched.description && formik.errors.description
-                    }
-                    // fullWidth
-                  />
                 </Card>
               </Stack>
               <div className="w-full items-center justify-center flex">

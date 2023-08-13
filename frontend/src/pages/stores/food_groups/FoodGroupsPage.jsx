@@ -38,9 +38,12 @@ const FoodGroupsPage = () => {
   // pagination
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
+  const [fromPage, setFromPage] = useState(0);
+  const [toPage, setToPage] = useState(state.total < 5 ? state.total : 5);
   const handleChangeRowsPerPage = async (event) => {
     setLoading(true);
     setPage(0);
+    setToPage(parseInt(event.target.value, 10));
     setRowsPerPage(parseInt(event.target.value, 10));
     let result;
 
@@ -69,6 +72,24 @@ const FoodGroupsPage = () => {
   const handleChangePage = async (event, newPage) => {
     setLoading(true);
     setPage(newPage);
+    setToPage(() => {
+      if (page < newPage) {
+        return toPage + rowsPerPage > state.total
+          ? state.total
+          : toPage + rowsPerPage;
+      } else {
+        return toPage - rowsPerPage < 0 ? rowsPerPage : toPage - rowsPerPage;
+      }
+    });
+    setFromPage(() => {
+      if (page < newPage) {
+        return fromPage + rowsPerPage > state.total
+          ? state.total
+          : fromPage + rowsPerPage;
+      } else {
+        return fromPage - rowsPerPage < 0 ? 0 : fromPage - rowsPerPage;
+      }
+    });
     let result;
     if (location.state) {
       result = await call(
@@ -158,6 +179,7 @@ const FoodGroupsPage = () => {
             toast.success("Delete Successfully!!!", { autoClose: 1000 });
           });
         }
+        setToPage(toPage - 1);
       })
       .catch(() => {
         console.log("Deletion cancelled.");
@@ -200,6 +222,8 @@ const FoodGroupsPage = () => {
                 <TableCell align="left">ID</TableCell>
                 <TableCell align="left">Name</TableCell>
                 <TableCell align="left">Slug</TableCell>
+                <TableCell align="left">Store Name</TableCell>
+                <TableCell align="left">Description</TableCell>
                 <TableCell align="right" />
               </TableRow>
             </TableHead>
@@ -211,6 +235,10 @@ const FoodGroupsPage = () => {
                     <TableCell align="left">{foodGroup.id}</TableCell>
                     <TableCell align="left">{foodGroup.name}</TableCell>
                     <TableCell align="left">{foodGroup.slug}</TableCell>
+                    <TableCell align="left">{foodGroup.store.name}</TableCell>
+                    <TableCell align="left" className="truncate max-w-[200px] ">
+                      {foodGroup.description}
+                    </TableCell>
                     <TableCell align="right">
                       {location.state && (
                         <Tooltip title="View Detail Food" arrow>
