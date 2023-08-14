@@ -86,4 +86,4 @@ Route::get('/food/{id}', [FoodController::class, 'getDetail']);
 Route::post('/register', [CustomersController::class, 'store']);
 
 // Payment response
-Route::get('/payment/respond', [PaymentController::class, 'respond']);
+Route::get('/payment/respond', [PaymentController::class, 'respond'])->name('paymentRespond');;
