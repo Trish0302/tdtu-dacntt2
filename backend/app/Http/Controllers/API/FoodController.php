@@ -45,8 +45,12 @@ class FoodController extends Controller
     public function index($store_id, $food_group_id, Request $request)
     {
         try {
+            $query_params = $request->q;
             $food = $this->get_food_list()
                 ->where('food_group_id', $food_group_id)
+                ->where(function ($q) use ($query_params) {
+                    $q->where('name', 'like', '%' . $query_params . '%')->orWhere('id', $query_params);
+                })
                 ->orderBy('created_at', 'desc')
                 ->paginate($request->page_size ?? 10);
 
@@ -220,10 +224,13 @@ class FoodController extends Controller
 
     public function getAll(Request $request)
     {
+        $food = $this->get_food_list();
+
         if (isset($request->store_id)) {
-            $food = Store::find($request->store_id)->food();
-        } else {
-            $food = $this->get_food_list();
+            $store_id = $request->store_id;
+            $food = $this->get_food_list()->whereHas('food_group.store', function ($query) use ($store_id) {
+                $query->where('stores.id', $store_id);
+            });
         }
 
         $results = $food->orderBy('food.updated_at', 'desc')->paginate(

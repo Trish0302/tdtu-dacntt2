@@ -32,7 +32,7 @@ class RatingController extends Controller
                 ->get();
 
             return response()->json([
-                'message' => 'Get voucher successfully!',
+                'message' => 'Get rating list successfully!',
                 'data' => $ratings,
                 'status' => 200,
             ], 200);
