@@ -108,6 +108,8 @@ class OrdersController extends Controller
      */
     public function index(Request $request)
     {
+        $query = $request->q;
+
         if ($request->exists('customer_id')) {
             $orders = Order::where('customer_id', $request->customer_id);
         } else if ($request->exists('store_id')) {
@@ -116,7 +118,17 @@ class OrdersController extends Controller
             $orders = Order::select($this->fields['order']);
         }
 
-        $orders = $orders->with($this->multiple_eager_load(['customer', 'store']))->orderBy('updated_at', 'desc')->paginate($request->page_size ?? 10, $this->fields['order']);
+        $orders = $orders->with($this->multiple_eager_load(['customer', 'store']))
+            ->where('name', 'like', '%' . $query . '%')
+            ->orWhere('address', 'like', '%' . $query . '%')
+            ->orWhereHas('customer', function ($q) use ($query) {
+                return $q->where('customers.name', 'like', '%' . $query . '%');
+            })
+            ->orWhereHas('store', function ($q) use ($query) {
+                return $q->where('stores.name', 'like', '%' . $query . '%');
+            })
+            ->orderBy('updated_at', 'desc')
+            ->paginate($request->page_size ?? 10, $this->fields['order']);
 
         $orders->map(function ($order) {
             $order->lastest_order_progress = OrderHistory::where('order_id', $order->id)

@@ -29,7 +29,12 @@ class CustomersController extends Controller
      */
     public function index(Request $request)
     {
-        $customers = Customer::orderBy('created_at', 'desc')
+        $query = $request->q;
+
+        $customers = Customer::where('name', 'like', '%' . $query . '%')
+            ->orWhere('address', 'like', '%' . $query . '%')
+            ->orWhere('email', $query)
+            ->orderBy('created_at', 'desc')
             ->paginate($request->page_size ?? 10, $this->fields);
 
         return response()->json([
