@@ -49,6 +49,9 @@ class FoodController extends Controller
 
             $food = $this->get_food_list($query)
                 ->where('food_group_id', $food_group_id)
+                ->where(function ($q) use ($query_params) {
+                    $q->where('name', 'like', '%' . $query_params . '%')->orWhere('id', $query_params);
+                })
                 ->orderBy('created_at', 'desc')
                 ->paginate($request->page_size ?? 10);
 
