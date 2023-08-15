@@ -67,6 +67,6 @@ class MOMOController extends Controller
         // return redirect()->to($jsonResult['payUrl']);
         // header('Location: ' . $jsonResult['payUrl']);
 
-        return $jsonResult['payUrl'];
+        return $jsonResult;
     }
 }
