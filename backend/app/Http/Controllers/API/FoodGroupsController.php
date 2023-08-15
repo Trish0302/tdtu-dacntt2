@@ -43,16 +43,25 @@ class FoodGroupsController extends Controller
     public function index($store_id, Request $request)
     {
         try {
-            $store = Store::find($store_id)->food_groups()->orderBy('created_at', 'desc')->paginate($request->page_size ?? 5);
+            $query = $request->q;
+            $food_groups = Store::find($store_id)->food_groups();
+
+            if (isset($query)) {
+                $food_groups = $this->getQueryForDefaultSearch($food_groups, $query);
+            }
+
+            $food_groups = $food_groups
+                ->orderBy('created_at', 'desc')
+                ->paginate($request->page_size ?? 5);
 
             return response()->json([
                 'message' => 'Get food group successfully!',
-                'data' => $store->items(),
+                'data' => $food_groups->items(),
                 'paging' => [
-                    'current_page' => $store->currentPage(),
-                    'per_page' => $store->perPage(),
-                    'total' => $store->total(),
-                    'last_page' => $store->lastPage(),
+                    'current_page' => $food_groups->currentPage(),
+                    'per_page' => $food_groups->perPage(),
+                    'total' => $food_groups->total(),
+                    'last_page' => $food_groups->lastPage(),
                 ],
                 'status' => 200,
             ], 200);
@@ -189,11 +198,19 @@ class FoodGroupsController extends Controller
 
     public function getAll(Request $request)
     {
-        $food_groups = FoodGroup::select($this->fields['food_group'])->with(['store' => function ($query) {
-            $query->select($this->fields['store'])->with(['user' => function ($query) {
-                $query->select($this->fields['user']);
-            }]);
-        }])->orderBy('updated_at', 'desc')->paginate($request->page_size ?? 10);
+        $query = $request->q;
+        $food_groups = $this->getQueryForDefaultSearch(new FoodGroup, $query);
+        $food_groups = $food_groups->select($this->fields['food_group'])
+            ->with(['store' => function ($query) {
+                $query->select($this->fields['store'])->with(['user' => function ($query) {
+                    $query->select($this->fields['user']);
+                }]);
+            }])
+            ->orWhereHas('store', function ($q) use ($query) {
+                return $q->where('name', 'like', '%' . $query . '%');
+            })
+            ->orderBy('updated_at', 'desc')
+            ->paginate($request->page_size ?? 10);
 
         return response()->json([
             'message' => 'Get food group successfully!',
@@ -206,5 +223,17 @@ class FoodGroupsController extends Controller
             ],
             'status' => 200,
         ], 200);
+    }
+
+    public function getQueryForDefaultSearch($model, $query)
+    {
+        return $model->where(
+            function ($q) use ($query) {
+                return $q
+                    ->where('id', $query)
+                    ->orWhere('name', 'like', '%' . $query . '%')
+                    ->orWhere('slug', 'like', '%' . $query . '%');
+            }
+        );
     }
 }

@@ -45,8 +45,14 @@ class FoodController extends Controller
     public function index($store_id, $food_group_id, Request $request)
     {
         try {
+<<<<<<< HEAD
             $query_params = $request->q;
             $food = $this->get_food_list()
+=======
+            $query = $request->q;
+
+            $food = $this->get_food_list($query)
+>>>>>>> 825f7725ded5ace515bf6131ac0496fb53ba3c4d
                 ->where('food_group_id', $food_group_id)
                 ->where(function ($q) use ($query_params) {
                     $q->where('name', 'like', '%' . $query_params . '%')->orWhere('id', $query_params);
@@ -224,6 +230,7 @@ class FoodController extends Controller
 
     public function getAll(Request $request)
     {
+<<<<<<< HEAD
         $food = $this->get_food_list();
 
         if (isset($request->store_id)) {
@@ -231,6 +238,15 @@ class FoodController extends Controller
             $food = $this->get_food_list()->whereHas('food_group.store', function ($query) use ($store_id) {
                 $query->where('stores.id', $store_id);
             });
+=======
+        $query = $request->q;
+
+        if (isset($request->store_id)) {
+            $food = Store::find($request->store_id)->food();
+            $food = $this->getQueryForDefaultSearch($food, $query);
+        } else {
+            $food = $this->get_food_list($query);
+>>>>>>> 825f7725ded5ace515bf6131ac0496fb53ba3c4d
         }
 
         $results = $food->orderBy('food.updated_at', 'desc')->paginate(
@@ -285,13 +301,26 @@ class FoodController extends Controller
         }
     }
 
-    private function get_food_list()
+    private function get_food_list($query)
     {
-        return Food::select($this->fields['food'])->with(['food_group' => function ($query) {
+        $food = Food::select($this->fields['food'])->with(['food_group' => function ($query) {
             $query->select($this->fields['food_group'])->with(['store' => function ($query) {
                 $query->select($this->fields['store']);
             }]);
         }]);
+
+        return $this->getQueryForDefaultSearch($food, $query);
+    }
+
+    public function getQueryForDefaultSearch($model, $query)
+    {
+        return $model->where(
+            function ($q) use ($query) {
+                $q->where('food.name', 'like', '%' . $query . '%')
+                    ->orWhere('food.slug', 'like', '%' . $query . '%')
+                    ->orWhere('food.id', $query);
+            }
+        );
     }
 
     private function get_discounted_price($input_arr)

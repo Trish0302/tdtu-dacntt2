@@ -235,7 +235,7 @@ const FoodGroupsPage = () => {
                     <TableCell align="left">{foodGroup.id}</TableCell>
                     <TableCell align="left">{foodGroup.name}</TableCell>
                     <TableCell align="left">{foodGroup.slug}</TableCell>
-                    <TableCell align="left">{foodGroup.store.name}</TableCell>
+                    <TableCell align="left">{foodGroup.store?.name}</TableCell>
                     <TableCell align="left" className="truncate max-w-[200px] ">
                       {foodGroup.description}
                     </TableCell>
