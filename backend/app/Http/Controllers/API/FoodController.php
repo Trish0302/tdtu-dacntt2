@@ -45,17 +45,12 @@ class FoodController extends Controller
     public function index($store_id, $food_group_id, Request $request)
     {
         try {
-<<<<<<< HEAD
-            $query_params = $request->q;
-            $food = $this->get_food_list()
-=======
             $query = $request->q;
 
             $food = $this->get_food_list($query)
->>>>>>> 825f7725ded5ace515bf6131ac0496fb53ba3c4d
                 ->where('food_group_id', $food_group_id)
-                ->where(function ($q) use ($query_params) {
-                    $q->where('name', 'like', '%' . $query_params . '%')->orWhere('id', $query_params);
+                ->where(function ($q) use ($query) {
+                    $q->where('name', 'like', '%' . $query . '%')->orWhere('id', $query);
                 })
                 ->orderBy('created_at', 'desc')
                 ->paginate($request->page_size ?? 10);
@@ -230,15 +225,6 @@ class FoodController extends Controller
 
     public function getAll(Request $request)
     {
-<<<<<<< HEAD
-        $food = $this->get_food_list();
-
-        if (isset($request->store_id)) {
-            $store_id = $request->store_id;
-            $food = $this->get_food_list()->whereHas('food_group.store', function ($query) use ($store_id) {
-                $query->where('stores.id', $store_id);
-            });
-=======
         $query = $request->q;
 
         if (isset($request->store_id)) {
@@ -246,7 +232,6 @@ class FoodController extends Controller
             $food = $this->getQueryForDefaultSearch($food, $query);
         } else {
             $food = $this->get_food_list($query);
->>>>>>> 825f7725ded5ace515bf6131ac0496fb53ba3c4d
         }
 
         $results = $food->orderBy('food.updated_at', 'desc')->paginate(
