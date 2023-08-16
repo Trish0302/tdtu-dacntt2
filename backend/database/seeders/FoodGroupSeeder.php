@@ -14,6 +14,6 @@ class FoodGroupSeeder extends Seeder
      */
     public function run()
     {
-        FoodGroup::factory(30)->create();
+        FoodGroup::factory(50)->create();
     }
 }

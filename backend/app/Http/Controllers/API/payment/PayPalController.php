@@ -23,7 +23,7 @@ class PayPalController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function processTransaction(Request $request)
+    public function processTransaction($amount = 100)
     {
         $provider = new PayPalClient;
         $provider->setApiCredentials(config('paypal'));
@@ -39,18 +39,18 @@ class PayPalController extends Controller
                 0 => [
                     "amount" => [
                         "currency_code" => "USD",
-                        "value" => "0.1"
+                        "value" => $amount,
                     ]
                 ]
             ]
         ]);
 
         if (isset($response['id']) && $response['id'] != null) {
-
             // redirect to approve href
             foreach ($response['links'] as $links) {
                 if ($links['rel'] == 'approve') {
-                    return redirect()->away($links['href']);
+                    return $links['href'];
+                    // return redirect()->away($links['href']);
                 }
             }
 
@@ -76,25 +76,33 @@ class PayPalController extends Controller
         $provider->getAccessToken();
         $response = $provider->capturePaymentOrder($request['token']);
 
-        if (isset($response['status']) && $response['status'] == 'COMPLETED') {
-            //            return redirect()
-            //                ->route('createTransaction')
-            //                ->with('success', 'Thanh toán bằng Paypal thành công');
-            //            return redirect()->route('createTransaction',
-            //                array('success' => 'Thanh toán bằng Paypal thành công',
-            //                    'status' => '200', "amount"=> "5$",
-            //                    "orderID" => "123456",
-            //                    "orderInfo" => "test..."))->with('success', 'Thanh toán bằng Paypal thành công')->withInput();
-            //            return response()->json([
-            //                'name' => 'Abigail',
-            //                'state' => 'CA',
+        return redirect()->route(
+            'paymentRespond',
+            [
+                'orderId' => $response['id'],
+                'resultCode' => 0,
+            ]
+        );
 
-            echo json_encode(['message' => 'Thanh toán bằng Paypal thành công',  'status' => '200']);
-        } else {
-            return redirect()
-                ->route('createTransaction')
-                ->with('error', $response['message'] ?? 'Đã xảy ra lỗi');
-        }
+        // if (isset($response['status']) && $response['status'] == 'COMPLETED') {
+        //     //            return redirect()
+        //     //                ->route('createTransaction')
+        //     //                ->with('success', 'Thanh toán bằng Paypal thành công');
+        //     //            return redirect()->route('createTransaction',
+        //     //                array('success' => 'Thanh toán bằng Paypal thành công',
+        //     //                    'status' => '200', "amount"=> "5$",
+        //     //                    "orderID" => "123456",
+        //     //                    "orderInfo" => "test..."))->with('success', 'Thanh toán bằng Paypal thành công')->withInput();
+        //     //            return response()->json([
+        //     //                'name' => 'Abigail',
+        //     //                'state' => 'CA',
+
+        //     echo json_encode(['message' => 'Thanh toán bằng Paypal thành công',  'status' => '200']);
+        // } else {
+        //     return redirect()
+        //         ->route('createTransaction')
+        //         ->with('error', $response['message'] ?? 'Đã xảy ra lỗi');
+        // }
     }
 
     /**
@@ -104,6 +112,12 @@ class PayPalController extends Controller
      */
     public function cancelTransaction(Request $request)
     {
-        echo json_encode(['message' => 'Bạn đã hủy giao dịch',  'status' => '400']);
+        return redirect()->route(
+            'paymentRespond',
+            [
+                'orderId' => $request->token,
+                'resultCode' => 400,
+            ]
+        );
     }
 }

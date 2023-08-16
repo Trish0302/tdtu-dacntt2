@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\payment;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\OrdersController;
 use App\Models\Order;
 use Illuminate\Http\Request;
 
@@ -19,6 +20,7 @@ class PaymentController extends Controller
         }
 
         $order = Order::where('transaction_code', $orderId)->firstOrFail();
+        $orderController = new OrdersController;
 
         switch ($resultCode) {
             case 0:
@@ -38,7 +40,7 @@ class PaymentController extends Controller
         return response()->json(
             [
                 'message' => $current_history->message,
-                'data' => $current_history->id,
+                'data' => $orderController->show($order->id)->original['data'],
                 'status' => 200,
             ],
             200
