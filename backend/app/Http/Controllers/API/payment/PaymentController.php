@@ -36,7 +36,7 @@ class PaymentController extends Controller
         $current_history = $order->histories()->latest()->first()->history()->first();
 
         return redirect()->away(
-            "http://localhost:5173/payment-success?transaction_code={$orderId}&status={$current_history->id}"
+            "http://localhost:5173/payment-success?order_id={$order->id}&status={$current_history->id}"
         );
     }
 }
