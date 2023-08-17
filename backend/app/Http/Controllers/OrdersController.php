@@ -164,10 +164,14 @@ class OrdersController extends Controller
             $sub_total += $food['quantity'] * $food['price'];
         }
 
+        $total = $sub_total;
         $voucher_id = $request->voucher_id;
-        $voucher = Voucher::find($voucher_id);
-
-        $total = (100 - $voucher->discount) * $sub_total / 100;
+        if (empty($voucher_id)) {
+            $voucher_id = 0;
+        } else {
+            $voucher = Voucher::find($voucher_id);
+            $total = (100 - $voucher->discount) * $sub_total / 100;
+        }
 
         $payment_type = $request->payment_type;
         $transaction_code = time() . '_dacntt2';
