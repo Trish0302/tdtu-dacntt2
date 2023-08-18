@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\API\payment\MOMOController;
+use App\Http\Controllers\API\payment\PayPalController;
 use App\Http\Controllers\API\payment\VNPAYController;
 use App\Http\Requests\OrdersRequest;
 use App\Models\History;
@@ -26,6 +27,7 @@ class OrdersController extends Controller
             'customer_id',
             'store_id',
             'voucher_id',
+            'payment_type',
             'created_at',
             'updated_at',
         ],
@@ -171,6 +173,19 @@ class OrdersController extends Controller
 
         $payment_type = $request->payment_type;
         $transaction_code = time() . '_dacntt2';
+
+        if ($payment_type == 1) {
+            $momo_payment = new MOMOController;
+            $confirmation_url = $momo_payment->handle($total, $transaction_code);
+        } else if ($payment_type == 2) {
+            $vnp_payment = new VNPAYController;
+            $confirmation_url = $vnp_payment->payment($total * 100, $transaction_code)['data'];
+        } else if ($payment_type == 3) {
+            $payPal_payment = new PayPalController;
+            $confirmation_url = $payPal_payment->processTransaction($total);
+            $transaction_code = explode("=", $confirmation_url)[1];
+        }
+
         $order = Order::create([
             'name' => $request->name,
             'address' => $request->address,
@@ -191,14 +206,6 @@ class OrdersController extends Controller
                 'quantity' => $food['quantity'],
                 'unit_price' => $food['price'],
             ]);
-        }
-
-        if ($payment_type == 1) {
-            $momo_payment = new MOMOController;
-            $confirmation_url = $momo_payment->handle($total, $transaction_code);
-        } else if ($payment_type == 2) {
-            $vnp_payment = new VNPAYController;
-            $confirmation_url = $vnp_payment->payment($total * 100, $transaction_code)['data'];
         }
 
         $order->histories()->create([

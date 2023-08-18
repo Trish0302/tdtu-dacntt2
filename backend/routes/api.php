@@ -28,6 +28,7 @@ Route::middleware('auth:sanctum', 'ability:admin,customer')->group(function () {
     Route::put('/password', [AuthController::class, 'update_password']);
     Route::get('/logout', [AuthController::class, 'logout']);
 
+    Route::get('/orders/{id}', [OrdersController::class, 'show']);
     Route::post('/orders', [OrdersController::class, 'store']);
     Route::put('/customers/{id}', [CustomersController::class, 'update']);
 });
@@ -53,7 +54,7 @@ Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
         [
             'orders' => OrdersController::class
         ],
-        ['except' => ['store']],
+        ['except' => ['store', 'show']],
     );
 
     Route::apiResources(
@@ -86,4 +87,4 @@ Route::get('/food/{id}', [FoodController::class, 'getDetail']);
 Route::post('/register', [CustomersController::class, 'store']);
 
 // Payment response
-Route::get('/payment/respond', [PaymentController::class, 'respond']);
+Route::get('/payment/respond', [PaymentController::class, 'respond'])->name('paymentRespond');;
