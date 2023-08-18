@@ -129,7 +129,7 @@ const EditOrderPage = () => {
               </p>
               <Divider />
               <div className="flex flex-col items-center w-full justify-center">
-                <Card sx={{ py: 2, my: 2 }} className="basis-3/4">
+                <Card sx={{ py: 2, my: 2, width: "70%" }}>
                   <div className="px-4 flex justify-between items-center mb-2">
                     <p className="font-semibold">
                       Order{" "}
@@ -210,42 +210,42 @@ const EditOrderPage = () => {
                         disabled
                       />
                     </Stack>
-
-                    <TableContainer>
-                      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        <TableHead>
-                          <TableRow>
-                            <TableCell>Time</TableCell>
-                            <TableCell align="left">Progress</TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {updateOrder?.history?.progresses.map(
-                            (row, index) => (
-                              <TableRow
-                                key={index}
-                                sx={{
-                                  "&:last-child td, &:last-child th": {
-                                    border: 0,
-                                  },
-                                }}
-                              >
-                                <TableCell component="th" scope="row">
-                                  {row.timestamp}
-                                </TableCell>
-                                <TableCell component="th" scope="row">
-                                  {row.order_progress}
-                                </TableCell>
-                              </TableRow>
-                            )
-                          )}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
                   </div>
                 </Card>
 
-                <Card className="w-[832px]" sx={{ px: 4, py: 2 }}>
+                <Card sx={{ px: 2, py: 2, mb: 2, width: "70%" }}>
+                  <TableContainer>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Time</TableCell>
+                          <TableCell align="left">Progress</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {updateOrder?.history?.progresses.map((row, index) => (
+                          <TableRow
+                            key={index}
+                            sx={{
+                              "&:last-child td, &:last-child th": {
+                                border: 0,
+                              },
+                            }}
+                          >
+                            <TableCell component="th" scope="row">
+                              {row.timestamp}
+                            </TableCell>
+                            <TableCell component="th" scope="row">
+                              {row.order_progress}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Card>
+
+                <Card sx={{ px: 2, py: 2, width: "70%" }}>
                   <span className="font-semibold">Detail Order</span>
                   <TableContainer className="mt-2">
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -292,13 +292,22 @@ const EditOrderPage = () => {
                             },
                           }}
                         >
-                          <TableCell>
-                            Total: {updateOrder.total.toLocaleString()} ₫
+                          <TableCell colSpan="5" align="right">
+                            Total: <b>{updateOrder.total.toLocaleString()} ₫</b>
                           </TableCell>
                         </TableRow>
                       </TableBody>
                     </Table>
                   </TableContainer>
+
+                  <div className="flex flex-col gap-2 mt-2">
+                    <div className="">
+                      Code Voucher: {updateOrder.voucher.code}{" "}
+                    </div>
+                    <div className="">
+                      Discount: {updateOrder.voucher.discount} %
+                    </div>
+                  </div>
                 </Card>
               </div>
               <div className="w-full items-center justify-center flex">

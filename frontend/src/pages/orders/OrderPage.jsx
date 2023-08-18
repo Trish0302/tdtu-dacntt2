@@ -31,12 +31,16 @@ const OrderPage = () => {
   console.log("🚀 ~ file: StoresPage.jsx:25 ~ StoresPage ~ state:", state);
   const [loading, setLoading] = useState(false);
 
-  // funcs
+  //search
+  const [searchQuery, setSearchQuery] = useState("");
+
   // pagination
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
   const [fromPage, setFromPage] = useState(0);
   const [toPage, setToPage] = useState(state.total < 5 ? state.total : 5);
+
+  // funcs
   const handleChangeRowsPerPage = async (event) => {
     setLoading(true);
     setPage(0);
@@ -46,7 +50,7 @@ const OrderPage = () => {
       `api/orders?page=${page + 1}&page_size=${parseInt(
         event.target.value,
         10
-      )}`,
+      )}&q=${searchQuery}`,
       "GET",
       null
     );
@@ -75,7 +79,9 @@ const OrderPage = () => {
       }
     });
     const result = await call(
-      `api/orders?page=${newPage + 1}&page_size=${rowsPerPage}`,
+      `api/orders?page=${
+        newPage + 1
+      }&page_size=${rowsPerPage}&q=${searchQuery}`,
       "GET",
       null
     );
@@ -114,13 +120,25 @@ const OrderPage = () => {
       });
   };
 
+  const handleSearch = async () => {
+    const result = await call(
+      `api/orders?page=1&page_size=5&q=${searchQuery}`,
+      "GET",
+      {}
+    );
+    dispatch({ type: "setList", payload: { list: result.data } });
+    dispatch({ type: "getTotal", payload: { total: result.paging.total } });
+  };
+
   return (
     <div className=" bg-primary-100 px-5 h-full overflow-y-scroll hide-scroll pt-24 pb-5">
       <div className="flex items-center w-full">
-        <Search />
-        <button className="px-6 py-2 text-primary-500 bg-white rounded-lg font-semibold uppercase text-sm ml-3">
-          Find
-        </button>
+        <Search
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          handleSearch={handleSearch}
+        />
+
         {/* <button
       className="px-5 py-2 text-white bg-primary-500 rounded-lg font-semibold uppercase text-sm hover:opacity-75 duration-300"
       onClick={() => navigate("/orders/add")}
@@ -146,6 +164,7 @@ const OrderPage = () => {
                 <TableCell align="left">Customer Name</TableCell>
                 <TableCell align="left">Store Name</TableCell>
                 <TableCell align="left">Total</TableCell>
+                <TableCell align="left">Order Progress</TableCell>
                 <TableCell align="right" />
               </TableRow>
             </TableHead>
@@ -173,6 +192,9 @@ const OrderPage = () => {
                         style: "currency",
                         currency: "VND",
                       }).format(order.total)}
+                    </TableCell>
+                    <TableCell align="left">
+                      {order.lastest_order_progress}
                     </TableCell>
                     <TableCell align="right">
                       <Tooltip title="View Detail" arrow>

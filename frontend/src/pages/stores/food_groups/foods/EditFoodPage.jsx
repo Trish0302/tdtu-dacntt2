@@ -26,6 +26,10 @@ const EditFoodPage = () => {
 
   const [foodGroupArr, setFoodGroupArr] = useState();
   const [storeArr, setStoreArr] = useState();
+  console.log(
+    "🚀 ~ file: EditFoodPage.jsx:29 ~ EditFoodPage ~ storeArr:",
+    storeArr
+  );
 
   const [updateFood, setUpdateFood] = useState({
     name: "",
@@ -34,7 +38,7 @@ const EditFoodPage = () => {
     price: "",
     discount: "",
     food_group_id: foodGroupId,
-    store_id: "",
+    store_id: storeId,
   });
   console.log(
     "🚀 ~ file: EditFoodGroupPage.jsx:33 ~ EditFoodGroupPage ~ updateFood:",
@@ -42,6 +46,10 @@ const EditFoodPage = () => {
   );
 
   const [selectStoreId, setSelectStoreId] = useState();
+  console.log(
+    "🚀 ~ file: EditFoodPage.jsx:49 ~ EditFoodPage ~ selectStoreId:",
+    selectStoreId
+  );
 
   const [previewPic, setPreviewPic] = useState();
   const [loadingCallAPI, setLoadingCallAPI] = useState(false);
@@ -56,6 +64,9 @@ const EditFoodPage = () => {
     initialValues: updateFood,
     validationSchema: FoodValidationSchema,
     enableReinitialize: true,
+    validate: (values) => {
+      console.log("loi", values);
+    },
     onSubmit: (values) => {
       values.price = values.price.replace(/,/g, "");
       console.log(
@@ -121,15 +132,15 @@ const EditFoodPage = () => {
     },
   });
 
-  //func
-
   useEffect(() => {
     setLoading(true);
     const data = call(`api/food/${foodId}`, "GET", null);
     data.then((response) => {
+      console.log(response);
       setUpdateFood({
         ...response.data,
         price: numberWithCommas(response.data.price),
+        store_id: response.data.food_group.store_id,
       });
       setPreviewPic(response.data.avatar);
       // setUpdateFood(response.data);
@@ -141,7 +152,6 @@ const EditFoodPage = () => {
   useEffect(() => {
     const storeArr = [];
     const fetchData = async () => {
-      // const rs = await call("api/food-groups?page_size=1000");
       const rs = await call("api/stores?page_size=1000");
       rs.data.map((item) =>
         storeArr.push({
@@ -157,7 +167,6 @@ const EditFoodPage = () => {
   useEffect(() => {
     const foodGroupArr = [];
     const fetchData = async () => {
-      // const rs = await call("api/food-groups?page_size=1000");
       const rs = await call(
         `api/stores/${selectStoreId}/food_groups?page_size=1000`
       );
@@ -346,12 +355,10 @@ const EditFoodPage = () => {
                         <Autocomplete
                           disablePortal
                           disabled={location.state ? true : false}
-                          id=""
                           options={storeArr}
-                          value={
-                            storeArr.find((item) => item.id == selectStoreId)
-                              ?.label
-                          }
+                          value={storeArr.find(
+                            (item) => item.id == formik.values.store_id
+                          )}
                           onChange={(e, value) => {
                             formik.setFieldValue("store_id", value?.id);
                             setSelectStoreId(value?.id);

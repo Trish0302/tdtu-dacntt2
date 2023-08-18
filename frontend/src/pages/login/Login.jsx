@@ -13,7 +13,8 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   //functions
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
     // handleCheckValid();
     setLoading(true);
     if (handleCheckValid() === true) {
@@ -87,7 +88,10 @@ const Login = () => {
     check();
   }, []);
   return (
-    <div className="flex h-screen flex-col gap-5 px-10 py-8 sm:px-20 sm:py-16 md:px-64 md:py-16 items-center justify-center bg-[#FDFCFF]">
+    <form
+      onSubmit={handleLogin}
+      className="flex h-screen flex-col gap-5 px-10 py-8 sm:px-20 sm:py-16 md:px-64 md:py-16 items-center justify-center bg-[#FDFCFF]"
+    >
       <img
         src="https://wallpapers.com/images/hd/blackpink-cute-lisa-gummy-smile-w1lrgah8y5j0krsv.jpg"
         className="h-[150px] md:h-[200px] w-fit rounded-xl shadow-lg"
@@ -113,6 +117,7 @@ const Login = () => {
         <small className="text-red-600 font-semibold">{message}</small>
       )}
       <button
+        type="submit"
         onClick={handleLogin}
         className={` ${
           loading ? "opacity-75 select-none" : ""
@@ -129,7 +134,7 @@ const Login = () => {
       </small>
       <p>adminminhhieu@gmail.com</p>
       12345678
-    </div>
+    </form>
   );
 };
 

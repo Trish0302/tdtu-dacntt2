@@ -20,7 +20,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ListStoreContext } from "../../stores/ListStoreContext";
 import { useConfirm } from "material-ui-confirm";
 import { toast } from "react-toastify";
@@ -33,12 +33,16 @@ const StoresPage = () => {
 
   console.log("🚀 ~ file: StoresPage.jsx:25 ~ StoresPage ~ state:", state);
 
-  // funcs
+  //search
+  const [searchQuery, setSearchQuery] = useState("");
+
   // pagination
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
   const [fromPage, setFromPage] = useState(0);
   const [toPage, setToPage] = useState(state.total < 5 ? state.total : 5);
+
+  // funcs
   const handleChangeRowsPerPage = async (event) => {
     setLoading(true);
     setPage(0);
@@ -48,7 +52,7 @@ const StoresPage = () => {
       `api/stores?page=${page + 1}&page_size=${parseInt(
         event.target.value,
         10
-      )}`,
+      )}&q=${searchQuery}`,
       "GET",
       null
     );
@@ -77,7 +81,9 @@ const StoresPage = () => {
       }
     });
     const result = await call(
-      `api/stores?page=${newPage + 1}&page_size=${rowsPerPage}`,
+      `api/stores?page=${
+        newPage + 1
+      }&page_size=${rowsPerPage}&q=${searchQuery}`,
       "GET",
       null
     );
@@ -121,13 +127,25 @@ const StoresPage = () => {
       });
   };
 
+  const handleSearch = async () => {
+    const result = await call(
+      `api/stores?page=1&page_size=5&q=${searchQuery}`,
+      "GET",
+      {}
+    );
+    dispatch({ type: "setList", payload: { list: result.data } });
+    dispatch({ type: "getTotal", payload: { total: result.paging.total } });
+  };
+
   return (
     <div className=" bg-primary-100 px-5 h-full overflow-y-scroll hide-scroll pt-24 pb-5">
       <div className="flex items-center">
-        <Search />
-        <button className="px-6 py-2 text-primary-500 bg-white rounded-lg font-semibold uppercase text-sm mr-10 ml-3">
-          Find
-        </button>
+        <Search
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          handleSearch={handleSearch}
+        />
+
         <button
           className="px-5 py-2 text-white bg-primary-500 rounded-lg font-semibold uppercase text-sm hover:opacity-75 duration-300"
           onClick={() => navigate("/stores/add")}
@@ -171,7 +189,11 @@ const StoresPage = () => {
                     <TableCell align="left">{store.name}</TableCell>
                     <TableCell align="left">{store.address}</TableCell>
                     <TableCell align="left">{store.description}</TableCell>
-                    <TableCell align="left">{store?.user?.name}</TableCell>
+                    <TableCell align="left">
+                      <Link to={`/users/detail/${store.user_id}`}>
+                        {store?.user?.name}
+                      </Link>
+                    </TableCell>
                     <TableCell align="right">
                       <Tooltip title="View Detail Food Groups" arrow>
                         <IconButton aria-label="view">

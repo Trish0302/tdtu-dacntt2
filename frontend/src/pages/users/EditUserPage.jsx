@@ -25,9 +25,11 @@ import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import userValidationSchema from "../../validations/UserValidation";
 import userEditValidationSchema from "../../validations/UserEditValidation";
+import { authContext } from "../../utils/auth";
 
 const EditUserPage = () => {
   const { id } = useParams();
+  const userInfo = useContext(authContext);
   const { state, dispatch } = useContext(ListUserContext);
   const [loading, setLoading] = useState(false);
   const [loadingCallAPI, setLoadingCallAPI] = useState(false);
@@ -304,14 +306,20 @@ const EditUserPage = () => {
                       </Box>
                     </div>
                   </div>
-                  <Divider />
-                  <div className="px-4 pt-2">
-                    <Button>
-                      <Link to={`/users/change-password/${id}`}>
-                        Change Password
-                      </Link>
-                    </Button>
-                  </div>
+                  {id == userInfo.id ? (
+                    <>
+                      <Divider />
+                      <div className="px-4 pt-2">
+                        <Button>
+                          <Link to={`/users/change-password/${id}`}>
+                            Change Password
+                          </Link>
+                        </Button>
+                      </div>
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </Card>
               </Stack>
               <div className="w-full items-center justify-center flex">

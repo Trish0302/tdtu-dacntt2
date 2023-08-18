@@ -1,9 +1,10 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 
-const Search = () => {
+const Search = ({ searchQuery, setSearchQuery, handleSearch }) => {
   return (
-    <div className="w-full">
-      <form className="flex items-center">
+    <div className="w-full flex">
+      <div className="flex items-center flex-1">
         <label htmlFor="simple-search" className="sr-only">
           Search
         </label>
@@ -28,10 +29,23 @@ const Search = () => {
             id="simple-search"
             className="bg-white border outline-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Enter the keyword..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                handleSearch();
+              }
+            }}
             required
           />
         </div>
-      </form>
+      </div>
+      <button
+        className="px-6 py-2 text-primary-500 bg-white rounded-lg font-semibold uppercase text-sm mr-10 ml-3"
+        onClick={handleSearch}
+      >
+        Find
+      </button>
     </div>
   );
 };

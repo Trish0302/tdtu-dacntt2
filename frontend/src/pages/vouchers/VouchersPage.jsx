@@ -27,6 +27,9 @@ const VouchersPage = () => {
   const confirm = useConfirm();
   const navigate = useNavigate();
 
+  //search
+  const [searchQuery, setSearchQuery] = useState("");
+
   const { state, dispatch, isLoading } = useContext(ListVoucherContext);
   console.log("🚀 ~ file: UsersPage.jsx:29 ~ UsersPage ~ state:", state);
 
@@ -57,7 +60,7 @@ const VouchersPage = () => {
       `api/vouchers?page=${page + 1}&page_size=${parseInt(
         event.target.value,
         10
-      )}`,
+      )}&q=${searchQuery}`,
       "GET",
       null
     );
@@ -86,7 +89,9 @@ const VouchersPage = () => {
       }
     });
     const result = await call(
-      `api/vouchers?page=${newPage + 1}&page_size=${rowsPerPage}`,
+      `api/vouchers?page=${
+        newPage + 1
+      }&page_size=${rowsPerPage}&q=${searchQuery}`,
       "GET",
       null
     );
@@ -121,19 +126,25 @@ const VouchersPage = () => {
       });
   };
 
-  const paginationLabel =
-    (deleteCount) =>
-    ({ from, to }) => {
-      `${from}–${to} of ${state.total}`;
-    };
+  const handleSearch = async () => {
+    const result = await call(
+      `api/vouchers?page=1&page_size=5&q=${searchQuery}`,
+      "GET",
+      {}
+    );
+    dispatch({ type: "setList", payload: { list: result.data } });
+    dispatch({ type: "getTotal", payload: { total: result.paging.total } });
+  };
 
   return (
     <div className="h-full bg-primary-100 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
       <div className="flex items-center">
-        <Search />
-        <button className="px-6 py-2 text-primary-500 bg-white rounded-lg font-semibold uppercase text-sm mr-10 ml-3">
-          Find
-        </button>
+        <Search
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          handleSearch={handleSearch}
+        />
+
         <button
           className="px-5 py-2 text-white bg-primary-500 rounded-lg font-semibold uppercase text-sm hover:opacity-75 duration-300"
           onClick={() => navigate("/vouchers/add")}

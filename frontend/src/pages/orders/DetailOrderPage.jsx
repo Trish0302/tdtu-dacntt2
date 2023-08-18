@@ -160,39 +160,39 @@ const DetailOrderPage = () => {
                         }}
                       />
                     </Stack>
-
-                    <TableContainer>
-                      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        <TableHead>
-                          <TableRow>
-                            <TableCell>Time</TableCell>
-                            <TableCell align="left">Progress</TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {updateOrder?.history?.progresses.map(
-                            (row, index) => (
-                              <TableRow
-                                key={index}
-                                sx={{
-                                  "&:last-child td, &:last-child th": {
-                                    border: 0,
-                                  },
-                                }}
-                              >
-                                <TableCell component="th" scope="row">
-                                  {row.timestamp}
-                                </TableCell>
-                                <TableCell component="th" scope="row">
-                                  {row.order_progress}
-                                </TableCell>
-                              </TableRow>
-                            )
-                          )}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
                   </div>
+                </Card>
+
+                <Card sx={{ px: 2, py: 2, mb: 2, width: "70%" }}>
+                  <TableContainer>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Time</TableCell>
+                          <TableCell align="left">Progress</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {updateOrder?.history?.progresses.map((row, index) => (
+                          <TableRow
+                            key={index}
+                            sx={{
+                              "&:last-child td, &:last-child th": {
+                                border: 0,
+                              },
+                            }}
+                          >
+                            <TableCell component="th" scope="row">
+                              {row.timestamp}
+                            </TableCell>
+                            <TableCell component="th" scope="row">
+                              {row.order_progress}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
                 </Card>
 
                 <Card sx={{ px: 2, py: 2, width: "70%" }}>
@@ -235,6 +235,17 @@ const DetailOrderPage = () => {
                             </TableCell>
                           </TableRow>
                         ))}
+                        <TableRow
+                          sx={{
+                            "&:last-child td, &:last-child th": {
+                              border: 0,
+                            },
+                          }}
+                        >
+                          <TableCell colSpan="5" align="right">
+                            Total: <b>{updateOrder.total.toLocaleString()} ₫</b>
+                          </TableCell>
+                        </TableRow>
                       </TableBody>
                     </Table>
                   </TableContainer>
@@ -246,9 +257,9 @@ const DetailOrderPage = () => {
                     <div className="">
                       Discount: {updateOrder.voucher.discount} %
                     </div>
-                    <div className="font-semibold">
+                    {/* <div className="font-semibold">
                       Total: {updateOrder.total.toLocaleString()} ₫
-                    </div>
+                    </div> */}
                   </div>
                 </Card>
               </div>

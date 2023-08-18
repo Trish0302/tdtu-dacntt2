@@ -21,7 +21,6 @@ const FoodValidationSchema = yup.object({
   discount: yup
     .number()
     .typeError("Enter discount as a number")
-
     .test(
       "Is positive?",
       "The number must be greater than 0",

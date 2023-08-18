@@ -37,7 +37,7 @@ const AddFoodPage = () => {
     price: "",
     discount: "",
     food_group_id: location.state?.foodGroupId,
-    store_id: "",
+    store_id: location.state?.storeId,
     avatar: "",
   });
   console.log(
@@ -158,6 +158,25 @@ const AddFoodPage = () => {
       setStoreArr(storeArr);
     };
     fetchData();
+  }, []);
+  useEffect(() => {
+    const foodGroupArr = [];
+    const fetchData = async () => {
+      // const rs = await call("api/food-groups?page_size=1000");
+      const rs = await call(
+        `api/stores/${location.state.storeId}/food_groups?page_size=1000`
+      );
+      rs.data.map((item) =>
+        foodGroupArr.push({
+          label: item.name,
+          id: item.id,
+        })
+      );
+      setFoodGroupArr(foodGroupArr);
+    };
+    if (location.state?.storeId) {
+      fetchData();
+    }
   }, []);
 
   useEffect(() => {
@@ -324,7 +343,9 @@ const AddFoodPage = () => {
                       id=""
                       options={storeArr}
                       value={
-                        storeArr.find((item) => item.id == selectStoreId)?.label
+                        storeArr.find(
+                          (item) => item.id == formik.values.store_id
+                        )?.label
                       }
                       onChange={(e, value) => {
                         formik.setFieldValue("store_id", value?.id);

@@ -15,7 +15,7 @@ import {
 import React, { useContext, useState } from "react";
 import Search from "../../../../components/search/Search";
 import { call } from "../../../../utils/api";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useConfirm } from "material-ui-confirm";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -39,12 +39,15 @@ const FoodsPage = () => {
 
   console.log("🚀 ~ file: FoodsPage.jsx:25 ~ FoodsPage ~ state:", state);
 
-  // funcs
   // pagination
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
   const [fromPage, setFromPage] = useState(0);
   const [toPage, setToPage] = useState(state.total < 5 ? state.total : 5);
+  //search
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // funcs
   const handleChangeRowsPerPage = async (event) => {
     setLoading(true);
     setPage(0);
@@ -55,7 +58,7 @@ const FoodsPage = () => {
       result = await call(
         `api/stores/${storeId}/food_groups/${foodGroupId}/food?page=${
           page + 1
-        }&page_size=${parseInt(event.target.value, 10)}`,
+        }&page_size=${parseInt(event.target.value, 10)}&q=${searchQuery}`,
         "GET",
         null
       );
@@ -64,7 +67,7 @@ const FoodsPage = () => {
         `api/food?page=${page + 1}&page_size=${parseInt(
           event.target.value,
           10
-        )}`,
+        )}&q=${searchQuery}`,
         "GET",
         null
       );
@@ -98,13 +101,15 @@ const FoodsPage = () => {
       result = await call(
         `api/stores/${storeId}/food_groups/${foodGroupId}/food?page=${
           newPage + 1
-        }&page_size=${rowsPerPage}`,
+        }&page_size=${rowsPerPage}&q=${searchQuery}`,
         "GET",
         null
       );
     } else {
       result = await call(
-        `api/food?page=${newPage + 1}&page_size=${rowsPerPage}`,
+        `api/food?page=${
+          newPage + 1
+        }&page_size=${rowsPerPage}&q=${searchQuery}`,
         "GET",
         null
       );
@@ -184,13 +189,36 @@ const FoodsPage = () => {
       });
   };
 
+  const handleSearch = async () => {
+    let result;
+
+    if (storeId && foodGroupId) {
+      result = await call(
+        `api/stores/${storeId}/food_groups/${foodGroupId}/food?page=1&page_size=5&q=${searchQuery}`,
+        "GET",
+        null
+      );
+    } else {
+      result = await call(
+        `api/food?page=1&page_size=5&q=${searchQuery}`,
+        "GET",
+        null
+      );
+    }
+
+    dispatch({ type: "setList", payload: { list: result.data } });
+    dispatch({ type: "getTotal", payload: { total: result.paging.total } });
+  };
+
   return (
     <div className="bg-primary-100 px-5 h-full overflow-y-scroll hide-scroll pt-24 pb-5">
       <div className="flex items-center">
-        <Search />
-        <button className="px-6 py-2 text-primary-500 bg-white rounded-lg font-semibold uppercase text-sm mr-10 ml-3">
-          Find
-        </button>
+        <Search
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          handleSearch={handleSearch}
+        />
+
         <button
           className="px-5 py-2 text-white bg-primary-500 rounded-lg font-semibold uppercase text-sm hover:opacity-75 duration-300"
           onClick={() => {
@@ -222,11 +250,13 @@ const FoodsPage = () => {
               <TableRow>
                 <TableCell align="left">ID</TableCell>
                 <TableCell align="left">Avatar</TableCell>
-                <TableCell align="left">Name</TableCell>
+                <TableCell align="left">Food Name</TableCell>
                 <TableCell align="left">Slug</TableCell>
                 <TableCell align="left">Price</TableCell>
                 <TableCell align="left">Discount Rate</TableCell>
                 <TableCell align="left">Discounted Price</TableCell>
+                <TableCell align="left">Food Group Name</TableCell>
+                <TableCell align="left">Store Name</TableCell>
                 <TableCell align="right" />
               </TableRow>
             </TableHead>
@@ -257,6 +287,18 @@ const FoodsPage = () => {
                         style: "currency",
                         currency: "VND",
                       }).format(food.discounted_price)}
+                    </TableCell>
+                    <TableCell align="left">
+                      <Link
+                        to={`/stores/${food.food_group.store_id}/food-group/detail/${food.food_group.id}`}
+                      >
+                        {food.food_group.name}
+                      </Link>
+                    </TableCell>
+                    <TableCell align="left">
+                      <Link to={`/stores/detail/${food.food_group.store_id}`}>
+                        {food.food_group.store.name}
+                      </Link>
                     </TableCell>
                     <TableCell align="right">
                       <Tooltip title="View Detail" arrow>
