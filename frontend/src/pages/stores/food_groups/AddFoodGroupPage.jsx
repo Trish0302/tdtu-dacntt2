@@ -131,7 +131,7 @@ const AddFoodGroupPage = () => {
           <p className="font-semibold mb-2 text-lg">Add Food Group </p>
           <Divider />
           <div className="flex items-center w-full justify-center">
-            <Card sx={{ py: 2, my: 2 }}>
+            <Card sx={{ py: 2, my: 2 }} className="basis-3/4">
               <div className="px-4 flex justify-between items-center mb-2">
                 <p className="font-semibold">Food Group Information</p>
                 <small>
@@ -139,7 +139,13 @@ const AddFoodGroupPage = () => {
                 </small>
               </div>
               <Divider />
-              <Stack direction="column" spacing={2} m={2}>
+              <Stack
+                direction="column"
+                spacing={2}
+                pt={2}
+                px={2}
+                sx={{ width: "100%" }}
+              >
                 <TextField
                   variant="outlined"
                   placeholder="Name of Food group"
@@ -191,26 +197,26 @@ const AddFoodGroupPage = () => {
                     )}
                   />
                 )}
-              </Stack>
 
-              <TextField
-                sx={{ mx: 2, width: "800px" }}
-                placeholder="Description about food group"
-                multiline
-                label="Description about food group"
-                rows={10}
-                name="description"
-                value={formik.values.description}
-                onChange={formik.handleChange}
-                error={
-                  formik.touched.description &&
-                  Boolean(formik.errors.description)
-                }
-                helperText={
-                  formik.touched.description && formik.errors.description
-                }
-                // fullWidth
-              />
+                <TextField
+                  sx={{ width: "100%" }}
+                  placeholder="Description about food group"
+                  multiline
+                  label="Description about food group"
+                  rows={10}
+                  name="description"
+                  value={formik.values.description}
+                  onChange={formik.handleChange}
+                  error={
+                    formik.touched.description &&
+                    Boolean(formik.errors.description)
+                  }
+                  helperText={
+                    formik.touched.description && formik.errors.description
+                  }
+                  // fullWidth
+                />
+              </Stack>
             </Card>
           </div>
           <div className="w-full items-center justify-center flex">

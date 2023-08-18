@@ -3,10 +3,12 @@ const FoodValidationSchema = yup.object({
   name: yup
     .string("Enter your the name of food")
     .required("Name Food is required"),
-
+  store_id: yup
+    .string("Enter your store of this food")
+    .required("Enter the store of this food"),
   food_group_id: yup
     .string("Enter your the name of food group")
-    .required("Which food group of this food belong"),
+    .required("Enter the food group of this food"),
   slug: yup
     .string("Enter the slug of food")
     .required("The slug of food is required"),
@@ -19,11 +21,10 @@ const FoodValidationSchema = yup.object({
   discount: yup
     .number()
     .typeError("Enter discount as a number")
-
     .test(
       "Is positive?",
       "The number must be greater than 0",
-      (value) => value > 0
+      (value) => value >= 0
     )
     .test(
       "no-leading-zero",

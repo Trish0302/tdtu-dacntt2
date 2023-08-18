@@ -83,7 +83,13 @@ const DetailFoodGroupPage = () => {
                 </Button>
               </div>
               <Divider />
-              <Stack direction="column" spacing={2} m={2}>
+              <Stack
+                direction="column"
+                spacing={2}
+                py={2}
+                px={2}
+                sx={{ width: "100%" }}
+              >
                 <TextField
                   variant="outlined"
                   placeholder="Name of Food group"
@@ -123,8 +129,7 @@ const DetailFoodGroupPage = () => {
                     }}
                   />
                 )}
-              </Stack>
-              <Stack spacing={2} direction="column" m={2}>
+
                 <TextField
                   sx={{ width: "800px" }}
                   placeholder="Description about food group"

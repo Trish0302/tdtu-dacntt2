@@ -2,6 +2,7 @@ import { ThemeProvider, createTheme } from "@mui/material";
 import "./App.css";
 import Router from "./routes";
 import { ConfirmProvider } from "material-ui-confirm";
+import { AsyncStorage } from "AsyncStorage";
 
 const App = () => {
   const theme = createTheme({
@@ -18,6 +19,14 @@ const App = () => {
       },
     },
   });
+  // window.onbeforeunload = async function () {
+  //   AsyncStorage.getItem("token-admin").then((rs) => {
+  //     if (rs) {
+  //       AsyncStorage.setItem("token-admin", null);
+  //     }
+  //   });
+  // };
+
   return (
     <ThemeProvider theme={theme}>
       <ConfirmProvider

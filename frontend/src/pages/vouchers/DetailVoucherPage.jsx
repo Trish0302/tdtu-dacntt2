@@ -1,4 +1,11 @@
-import { Card, Divider, InputAdornment, Stack, TextField } from "@mui/material";
+import {
+  Card,
+  CircularProgress,
+  Divider,
+  InputAdornment,
+  Stack,
+  TextField,
+} from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { call } from "../../utils/api";
 import voucherValidationSchema from "../../validations/VoucherValidation";
@@ -6,6 +13,8 @@ import { useFormik } from "formik";
 import { ListVoucherContext } from "../../stores/ListVoucherContext";
 import { useNavigate, useParams } from "react-router-dom";
 import PercentIcon from "@mui/icons-material/Percent";
+import Loader from "../../components/loader/Loader";
+
 const DetailVoucherPage = () => {
   const { id } = useParams();
   const { state, dispatch } = useContext(ListVoucherContext);
@@ -59,7 +68,12 @@ const DetailVoucherPage = () => {
       setLoading(false);
     });
   }, []);
-  return (
+
+  return loading ? (
+    <div className="flex items-center justify-center w-full h-full bg-primary-100">
+      <CircularProgress color="secondary" />
+    </div>
+  ) : (
     <div className="h-full">
       <form className="h-full">
         <div className="h-full bg-primary-100 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll ">

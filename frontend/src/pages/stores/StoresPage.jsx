@@ -20,7 +20,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ListStoreContext } from "../../stores/ListStoreContext";
 import { useConfirm } from "material-ui-confirm";
 import { toast } from "react-toastify";
@@ -33,19 +33,26 @@ const StoresPage = () => {
 
   console.log("🚀 ~ file: StoresPage.jsx:25 ~ StoresPage ~ state:", state);
 
-  // funcs
+  //search
+  const [searchQuery, setSearchQuery] = useState("");
+
   // pagination
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
+  const [fromPage, setFromPage] = useState(0);
+  const [toPage, setToPage] = useState(state.total < 5 ? state.total : 5);
+
+  // funcs
   const handleChangeRowsPerPage = async (event) => {
-    setPage(0);
-    setRowsPerPage(parseInt(event.target.value, 10));
     setLoading(true);
+    setPage(0);
+    setToPage(parseInt(event.target.value, 10));
+    setRowsPerPage(parseInt(event.target.value, 10));
     const result = await call(
       `api/stores?page=${page + 1}&page_size=${parseInt(
         event.target.value,
         10
-      )}`,
+      )}&q=${searchQuery}`,
       "GET",
       null
     );
@@ -53,10 +60,30 @@ const StoresPage = () => {
     setLoading(false);
   };
   const handleChangePage = async (event, newPage) => {
-    setPage(newPage);
     setLoading(true);
+    setPage(newPage);
+    setToPage(() => {
+      if (page < newPage) {
+        return toPage + rowsPerPage > state.total
+          ? state.total
+          : toPage + rowsPerPage;
+      } else {
+        return toPage - rowsPerPage < 0 ? rowsPerPage : toPage - rowsPerPage;
+      }
+    });
+    setFromPage(() => {
+      if (page < newPage) {
+        return fromPage + rowsPerPage > state.total
+          ? state.total
+          : fromPage + rowsPerPage;
+      } else {
+        return fromPage - rowsPerPage < 0 ? 0 : fromPage - rowsPerPage;
+      }
+    });
     const result = await call(
-      `api/stores?page=${newPage + 1}&page_size=${rowsPerPage}`,
+      `api/stores?page=${
+        newPage + 1
+      }&page_size=${rowsPerPage}&q=${searchQuery}`,
       "GET",
       null
     );
@@ -93,19 +120,32 @@ const StoresPage = () => {
           dispatch({ type: "removeStore", sid: dataRow.id });
           toast.success("Delete Successfully!!!", { autoClose: 1000 });
         });
+        setToPage(toPage - 1);
       })
       .catch(() => {
         console.log("Deletion cancelled.");
       });
   };
 
+  const handleSearch = async () => {
+    const result = await call(
+      `api/stores?page=1&page_size=5&q=${searchQuery}`,
+      "GET",
+      {}
+    );
+    dispatch({ type: "setList", payload: { list: result.data } });
+    dispatch({ type: "getTotal", payload: { total: result.paging.total } });
+  };
+
   return (
     <div className=" bg-primary-100 px-5 h-full overflow-y-scroll hide-scroll pt-24 pb-5">
       <div className="flex items-center">
-        <Search />
-        <button className="px-6 py-2 text-primary-500 bg-white rounded-lg font-semibold uppercase text-sm mr-10 ml-3">
-          Find
-        </button>
+        <Search
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          handleSearch={handleSearch}
+        />
+
         <button
           className="px-5 py-2 text-white bg-primary-500 rounded-lg font-semibold uppercase text-sm hover:opacity-75 duration-300"
           onClick={() => navigate("/stores/add")}
@@ -125,6 +165,7 @@ const StoresPage = () => {
             <TableHead>
               <TableRow>
                 <TableCell align="left">ID</TableCell>
+                <TableCell align="left">Avatar</TableCell>
                 <TableCell align="left">Name</TableCell>
                 <TableCell align="left">Address</TableCell>
                 <TableCell align="left">Description</TableCell>
@@ -138,10 +179,21 @@ const StoresPage = () => {
                 state.list.map((store) => (
                   <TableRow key={store.id}>
                     <TableCell align="left">{store.id}</TableCell>
+                    <TableCell align="left">
+                      <img
+                        src={store.avatar}
+                        className="w-10 h-10 rounded-full object-cover"
+                        alt={store.name}
+                      />
+                    </TableCell>
                     <TableCell align="left">{store.name}</TableCell>
                     <TableCell align="left">{store.address}</TableCell>
                     <TableCell align="left">{store.description}</TableCell>
-                    <TableCell align="left">{store?.user?.name}</TableCell>
+                    <TableCell align="left">
+                      <Link to={`/users/detail/${store.user_id}`}>
+                        {store?.user?.name}
+                      </Link>
+                    </TableCell>
                     <TableCell align="right">
                       <Tooltip title="View Detail Food Groups" arrow>
                         <IconButton aria-label="view">

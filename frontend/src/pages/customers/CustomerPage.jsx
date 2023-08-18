@@ -37,17 +37,24 @@ const CustomerPage = () => {
   // pagination
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
+  const [fromPage, setFromPage] = useState(0);
+  const [toPage, setToPage] = useState(state.total < 5 ? state.total : 5);
+
+  //search
+  const [searchQuery, setSearchQuery] = useState("");
+
   // functions
 
   const handleChangeRowsPerPage = async (event) => {
     setLoading(true);
     setPage(0);
+    setToPage(parseInt(event.target.value, 10));
     setRowsPerPage(parseInt(event.target.value, 10));
     const result = await call(
       `api/customers?page=${page + 1}&page_size=${parseInt(
         event.target.value,
         10
-      )}`,
+      )}&q=${searchQuery}`,
       "GET",
       null
     );
@@ -57,8 +64,28 @@ const CustomerPage = () => {
   const handleChangePage = async (event, newPage) => {
     setLoading(true);
     setPage(newPage);
+    setToPage(() => {
+      if (page < newPage) {
+        return toPage + rowsPerPage > state.total
+          ? state.total
+          : toPage + rowsPerPage;
+      } else {
+        return toPage - rowsPerPage < 0 ? rowsPerPage : toPage - rowsPerPage;
+      }
+    });
+    setFromPage(() => {
+      if (page < newPage) {
+        return fromPage + rowsPerPage > state.total
+          ? state.total
+          : fromPage + rowsPerPage;
+      } else {
+        return fromPage - rowsPerPage < 0 ? 0 : fromPage - rowsPerPage;
+      }
+    });
     const result = await call(
-      `api/customers?page=${newPage + 1}&page_size=${rowsPerPage}`,
+      `api/customers?page=${
+        newPage + 1
+      }&page_size=${rowsPerPage}&q=${searchQuery}`,
       "GET",
       null
     );
@@ -85,19 +112,32 @@ const CustomerPage = () => {
           dispatch({ type: "removeCustomer", sid: dataRow.id });
           toast.success("Delete Successfully!!!", { autoClose: 1000 });
         });
+        setToPage(toPage - 1);
       })
       .catch(() => {
         console.log("Deletion cancelled.");
       });
   };
 
+  const handleSearch = async () => {
+    const result = await call(
+      `api/customers?page=1&page_size=5&q=${searchQuery}`,
+      "GET",
+      {}
+    );
+    dispatch({ type: "setList", payload: { list: result.data } });
+    dispatch({ type: "getTotal", payload: { total: result.paging.total } });
+  };
+
   return (
     <div className="h-full bg-primary-100 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
       <div className="flex items-center">
-        <Search />
-        <button className="px-6 py-2 text-primary-500 bg-white rounded-lg font-semibold uppercase text-sm mr-10 ml-3">
-          Find
-        </button>
+        <Search
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          handleSearch={handleSearch}
+        />
+
         <button
           className="px-5 py-2 text-white bg-primary-500 rounded-lg font-semibold uppercase text-sm hover:opacity-75 duration-300"
           onClick={() => navigate("/customers/add")}
@@ -141,7 +181,9 @@ const CustomerPage = () => {
                     <TableCell align="left">{customer.name}</TableCell>
                     <TableCell align="left">{customer.email}</TableCell>
                     <TableCell align="left">{customer.phone}</TableCell>
-                    <TableCell align="left">{customer.address}</TableCell>
+                    <TableCell align="left" className="max-w-[200px] truncate">
+                      {customer.address}
+                    </TableCell>
                     <TableCell align="right">
                       <Tooltip title="View Detail" arrow>
                         <IconButton aria-label="view">

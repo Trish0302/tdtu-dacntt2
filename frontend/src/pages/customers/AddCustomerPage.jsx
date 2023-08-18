@@ -168,6 +168,7 @@ const AddCustomerPage = () => {
                       <input
                         id="dropzone-file"
                         type="file"
+                        accept="image/*"
                         className="hidden"
                         onChange={changeUploadPicHandler}
                       />
