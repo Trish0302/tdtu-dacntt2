@@ -130,8 +130,15 @@ class FoodController extends Controller
             $food = Store::findOrFail($store_id)
                 ->food()
                 ->where('food_group_id', '=', $food_group_id)
+                ->with(['food_group' => function ($query) {
+                    $query->with(['store' => function ($query) {
+                        $query->select($this->fields['store']);
+                    }])->select($this->fields['food_group']);
+                }])
+                ->withAvg('ratings', 'rating')
                 ->findOrFail($food_id, $this->fields['food']);
 
+            $food->setAttribute('ratings_avg_rating', round($food->ratings_avg_rating));
             $food->setAttribute('discounted_price', $food->price * (100 - $food->discount) / 100);
 
             return response()->json([
@@ -268,8 +275,10 @@ class FoodController extends Controller
                         $query->select($this->fields['store']);
                     },
                 ])
+                ->withAvg('ratings', 'rating')
                 ->findOrFail($id);
 
+            $food->setAttribute('ratings_avg_rating', round($food->ratings_avg_rating));
             $food->setAttribute('discounted_price', $food->price * (100 - $food->discount) / 100);
 
             return response()->json([

@@ -255,10 +255,10 @@ const DetailOrderPage = () => {
 
                   <div className="flex flex-col gap-2 mt-2">
                     <div className="">
-                      Code Voucher: {updateOrder.voucher.code}{" "}
+                      Code Voucher: {updateOrder.voucher?.code || "None"}{" "}
                     </div>
                     <div className="">
-                      Discount: {updateOrder.voucher.discount} %
+                      Discount: {updateOrder.voucher?.discount || 0} %
                     </div>
                     {/* <div className="font-semibold">
                       Total: {updateOrder.total.toLocaleString()} ₫
