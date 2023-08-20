@@ -293,7 +293,10 @@ const EditOrderPage = () => {
                           }}
                         >
                           <TableCell colSpan="5" align="right">
-                            Total: <b>{updateOrder.total.toLocaleString()} ₫</b>
+                            Total:{" "}
+                            <b>
+                              {parseFloat(updateOrder.total).toLocaleString()} ₫
+                            </b>
                           </TableCell>
                         </TableRow>
                       </TableBody>
@@ -302,10 +305,10 @@ const EditOrderPage = () => {
 
                   <div className="flex flex-col gap-2 mt-2">
                     <div className="">
-                      Code Voucher: {updateOrder.voucher.code}{" "}
+                      Code Voucher: {updateOrder.voucher?.code || "None"}{" "}
                     </div>
                     <div className="">
-                      Discount: {updateOrder.voucher.discount} %
+                      Discount: {updateOrder.voucher?.discount || 0} %
                     </div>
                   </div>
                 </Card>

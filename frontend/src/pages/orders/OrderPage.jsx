@@ -178,12 +178,18 @@ const OrderPage = () => {
                     <TableCell align="left">{order.address}</TableCell>
                     <TableCell align="left">{order.phone}</TableCell>
                     <TableCell align="left">
-                      <Link to={`/customers/detail/${order.customer.id}`}>
+                      <Link
+                        to={`/customers/detail/${order.customer.id}`}
+                        className="underline hover:text-primary-500"
+                      >
                         {order.customer.name}
                       </Link>
                     </TableCell>
                     <TableCell align="left">
-                      <Link to={`/stores/detail/${order.store.id}`}>
+                      <Link
+                        to={`/stores/detail/${order.store.id}`}
+                        className="underline hover:text-primary-500"
+                      >
                         {order.store.name}
                       </Link>
                     </TableCell>

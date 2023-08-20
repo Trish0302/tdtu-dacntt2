@@ -291,12 +291,16 @@ const FoodsPage = () => {
                     <TableCell align="left">
                       <Link
                         to={`/stores/${food.food_group.store_id}/food-group/detail/${food.food_group.id}`}
+                        className="underline hover:text-primary-500"
                       >
                         {food.food_group.name}
                       </Link>
                     </TableCell>
                     <TableCell align="left">
-                      <Link to={`/stores/detail/${food.food_group.store_id}`}>
+                      <Link
+                        to={`/stores/detail/${food.food_group.store_id}`}
+                        className="underline hover:text-primary-500"
+                      >
                         {food.food_group.store.name}
                       </Link>
                     </TableCell>
