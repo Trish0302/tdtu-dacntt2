@@ -58,8 +58,27 @@ const DetailStorePage = () => {
             Detail Information of Store
           </p>
           <Divider />
-          <div className="flex items-center w-full justify-center">
-            <Card sx={{ py: 2, my: 2 }}>
+          <Stack
+            direction="row"
+            spacing={5}
+            mt={2}
+            px={4}
+            sx={{ display: "flex" }}
+          >
+            <Card
+              sx={{ p: 2, flex: 1, flexBasis: "30%" }}
+              className="basis-1/4"
+            >
+              <div className="w-full flex flex-col gap-4 justify-center items-center h-full">
+                <p className="font-semibold text-lg">Store Image</p>
+                <img
+                  src={updateStore.avatar}
+                  className="h-[300px] w-full object-cover rounded-lg shadow-md block flex-1"
+                  alt={updateStore.name}
+                />
+              </div>
+            </Card>
+            <Card sx={{ py: 2, my: 2 }} className="basis-3/4">
               <div className="px-4 flex justify-between items-center mb-2">
                 <p className="font-semibold">
                   Store{" "}
@@ -124,7 +143,7 @@ const DetailStorePage = () => {
                     />
                   )}
                   <TextField
-                    sx={{ mx: 2, width: "800px" }}
+                    sx={{ width: "100%" }}
                     placeholder="Description about store"
                     multiline
                     label="Description about store"
@@ -139,7 +158,7 @@ const DetailStorePage = () => {
                 </Stack>
               </div>
             </Card>
-          </div>
+          </Stack>
         </div>
       ) : (
         <div className="w-full h-full flex items-center justify-center bg-primary-100">

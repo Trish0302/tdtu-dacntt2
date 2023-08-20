@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import React, { useContext, useState } from "react";
 import { call } from "../../../utils/api";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useConfirm } from "material-ui-confirm";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -34,13 +34,20 @@ const FoodGroupsPage = () => {
   console.log("🚀 ~ file: StoresPage.jsx:25 ~ FoodGroupsPage ~ state:", state);
   const [loading, setLoading] = useState(false);
 
-  // funcs
   // pagination
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
+  const [fromPage, setFromPage] = useState(0);
+  const [toPage, setToPage] = useState(state.total < 5 ? state.total : 5);
+
+  //search
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // funcs
   const handleChangeRowsPerPage = async (event) => {
     setLoading(true);
     setPage(0);
+    setToPage(parseInt(event.target.value, 10));
     setRowsPerPage(parseInt(event.target.value, 10));
     let result;
 
@@ -48,7 +55,7 @@ const FoodGroupsPage = () => {
       result = await call(
         `api/stores/${location.state.storeId}/food_groups?page=${
           page + 1
-        }&page_size=${parseInt(event.target.value, 10)}`,
+        }&page_size=${parseInt(event.target.value, 10)}&q=${searchQuery}`,
         "GET",
         null
       );
@@ -57,7 +64,7 @@ const FoodGroupsPage = () => {
         `api/food-groups?page=${page + 1}&page_size=${parseInt(
           event.target.value,
           10
-        )}`,
+        )}&q=${searchQuery}`,
         "GET",
         null
       );
@@ -69,18 +76,38 @@ const FoodGroupsPage = () => {
   const handleChangePage = async (event, newPage) => {
     setLoading(true);
     setPage(newPage);
+    setToPage(() => {
+      if (page < newPage) {
+        return toPage + rowsPerPage > state.total
+          ? state.total
+          : toPage + rowsPerPage;
+      } else {
+        return toPage - rowsPerPage < 0 ? rowsPerPage : toPage - rowsPerPage;
+      }
+    });
+    setFromPage(() => {
+      if (page < newPage) {
+        return fromPage + rowsPerPage > state.total
+          ? state.total
+          : fromPage + rowsPerPage;
+      } else {
+        return fromPage - rowsPerPage < 0 ? 0 : fromPage - rowsPerPage;
+      }
+    });
     let result;
     if (location.state) {
       result = await call(
         `api/stores/${location.state.storeId}/food_groups?page=${
           newPage + 1
-        }&page_size=${rowsPerPage}`,
+        }&page_size=${rowsPerPage}&q=${searchQuery}`,
         "GET",
         null
       );
     } else {
       result = await call(
-        `api/food-groups?page=${newPage + 1}&page_size=${rowsPerPage}`,
+        `api/food-groups?page=${
+          newPage + 1
+        }&page_size=${rowsPerPage}&q=${searchQuery}`,
         "GET",
         null
       );
@@ -158,19 +185,42 @@ const FoodGroupsPage = () => {
             toast.success("Delete Successfully!!!", { autoClose: 1000 });
           });
         }
+        setToPage(toPage - 1);
       })
       .catch(() => {
         console.log("Deletion cancelled.");
       });
   };
 
+  const handleSearch = async () => {
+    let result;
+    if (location.state) {
+      result = await call(
+        `api/stores/${location.state.storeId}/food_groups?page=1&page_size=5&q=${searchQuery}`,
+        "GET",
+        null
+      );
+    } else {
+      result = await call(
+        `api/food-groups?page=1&page_size=5&q=${searchQuery}`,
+        "GET",
+        null
+      );
+    }
+
+    dispatch({ type: "setList", payload: { list: result.data } });
+    dispatch({ type: "getTotal", payload: { total: result.paging.total } });
+  };
+
   return (
     <div className="bg-primary-100 px-5 h-full overflow-y-scroll hide-scroll pt-24 pb-5">
       <div className="flex items-center">
-        <Search />
-        <button className="px-6 py-2 text-primary-500 bg-white rounded-lg font-semibold uppercase text-sm mr-10 ml-3">
-          Find
-        </button>
+        <Search
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          handleSearch={handleSearch}
+        />
+
         <button
           className="px-5 py-2 text-white bg-primary-500 rounded-lg font-semibold uppercase text-sm hover:opacity-75 duration-300"
           onClick={() => {
@@ -200,6 +250,12 @@ const FoodGroupsPage = () => {
                 <TableCell align="left">ID</TableCell>
                 <TableCell align="left">Name</TableCell>
                 <TableCell align="left">Slug</TableCell>
+                {location.state ? (
+                  <></>
+                ) : (
+                  <TableCell align="left">Store Name</TableCell>
+                )}
+                <TableCell align="left">Description</TableCell>
                 <TableCell align="right" />
               </TableRow>
             </TableHead>
@@ -211,6 +267,18 @@ const FoodGroupsPage = () => {
                     <TableCell align="left">{foodGroup.id}</TableCell>
                     <TableCell align="left">{foodGroup.name}</TableCell>
                     <TableCell align="left">{foodGroup.slug}</TableCell>
+                    {location.state ? (
+                      <></>
+                    ) : (
+                      <TableCell align="left">
+                        <Link to={`/stores/detail/${foodGroup.store_id}`}>
+                          {foodGroup.store?.name}
+                        </Link>
+                      </TableCell>
+                    )}
+                    <TableCell align="left" className="truncate max-w-[200px] ">
+                      {foodGroup.description}
+                    </TableCell>
                     <TableCell align="right">
                       {location.state && (
                         <Tooltip title="View Detail Food" arrow>

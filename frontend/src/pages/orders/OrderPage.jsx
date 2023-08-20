@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import React, { useContext, useState } from "react";
 import Search from "../../components/search/Search";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useConfirm } from "material-ui-confirm";
 import { ListOrderContext } from "../../stores/ListOrderContext";
 import { call } from "../../utils/api";
@@ -31,19 +31,26 @@ const OrderPage = () => {
   console.log("🚀 ~ file: StoresPage.jsx:25 ~ StoresPage ~ state:", state);
   const [loading, setLoading] = useState(false);
 
-  // funcs
+  //search
+  const [searchQuery, setSearchQuery] = useState("");
+
   // pagination
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
+  const [fromPage, setFromPage] = useState(0);
+  const [toPage, setToPage] = useState(state.total < 5 ? state.total : 5);
+
+  // funcs
   const handleChangeRowsPerPage = async (event) => {
     setLoading(true);
     setPage(0);
+    setToPage(parseInt(event.target.value, 10));
     setRowsPerPage(parseInt(event.target.value, 10));
     const result = await call(
       `api/orders?page=${page + 1}&page_size=${parseInt(
         event.target.value,
         10
-      )}`,
+      )}&q=${searchQuery}`,
       "GET",
       null
     );
@@ -53,8 +60,28 @@ const OrderPage = () => {
   const handleChangePage = async (event, newPage) => {
     setLoading(true);
     setPage(newPage);
+    setToPage(() => {
+      if (page < newPage) {
+        return toPage + rowsPerPage > state.total
+          ? state.total
+          : toPage + rowsPerPage;
+      } else {
+        return toPage - rowsPerPage < 0 ? rowsPerPage : toPage - rowsPerPage;
+      }
+    });
+    setFromPage(() => {
+      if (page < newPage) {
+        return fromPage + rowsPerPage > state.total
+          ? state.total
+          : fromPage + rowsPerPage;
+      } else {
+        return fromPage - rowsPerPage < 0 ? 0 : fromPage - rowsPerPage;
+      }
+    });
     const result = await call(
-      `api/orders?page=${newPage + 1}&page_size=${rowsPerPage}`,
+      `api/orders?page=${
+        newPage + 1
+      }&page_size=${rowsPerPage}&q=${searchQuery}`,
       "GET",
       null
     );
@@ -86,19 +113,32 @@ const OrderPage = () => {
           dispatch({ type: "removeOrder", sid: dataRow.id });
           toast.success("Delete Successfully!!!", { autoClose: 1000 });
         });
+        setToPage(toPage - 1);
       })
       .catch(() => {
         console.log("Deletion cancelled.");
       });
   };
 
+  const handleSearch = async () => {
+    const result = await call(
+      `api/orders?page=1&page_size=5&q=${searchQuery}`,
+      "GET",
+      {}
+    );
+    dispatch({ type: "setList", payload: { list: result.data } });
+    dispatch({ type: "getTotal", payload: { total: result.paging.total } });
+  };
+
   return (
     <div className=" bg-primary-100 px-5 h-full overflow-y-scroll hide-scroll pt-24 pb-5">
       <div className="flex items-center w-full">
-        <Search />
-        <button className="px-6 py-2 text-primary-500 bg-white rounded-lg font-semibold uppercase text-sm ml-3">
-          Find
-        </button>
+        <Search
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          handleSearch={handleSearch}
+        />
+
         {/* <button
       className="px-5 py-2 text-white bg-primary-500 rounded-lg font-semibold uppercase text-sm hover:opacity-75 duration-300"
       onClick={() => navigate("/orders/add")}
@@ -118,10 +158,13 @@ const OrderPage = () => {
             <TableHead>
               <TableRow>
                 <TableCell align="left">ID</TableCell>
-                <TableCell align="left">Name</TableCell>
+                <TableCell align="left">Recipient</TableCell>
                 <TableCell align="left">Address</TableCell>
                 <TableCell align="left">Phone</TableCell>
+                <TableCell align="left">Customer Name</TableCell>
+                <TableCell align="left">Store Name</TableCell>
                 <TableCell align="left">Total</TableCell>
+                <TableCell align="left">Order Progress</TableCell>
                 <TableCell align="right" />
               </TableRow>
             </TableHead>
@@ -135,10 +178,23 @@ const OrderPage = () => {
                     <TableCell align="left">{order.address}</TableCell>
                     <TableCell align="left">{order.phone}</TableCell>
                     <TableCell align="left">
+                      <Link to={`/customers/detail/${order.customer.id}`}>
+                        {order.customer.name}
+                      </Link>
+                    </TableCell>
+                    <TableCell align="left">
+                      <Link to={`/stores/detail/${order.store.id}`}>
+                        {order.store.name}
+                      </Link>
+                    </TableCell>
+                    <TableCell align="left">
                       {new Intl.NumberFormat("vi-VN", {
                         style: "currency",
                         currency: "VND",
                       }).format(order.total)}
+                    </TableCell>
+                    <TableCell align="left">
+                      {order.lastest_order_progress}
                     </TableCell>
                     <TableCell align="right">
                       <Tooltip title="View Detail" arrow>
