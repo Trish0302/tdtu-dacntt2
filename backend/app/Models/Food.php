@@ -23,4 +23,9 @@ class Food extends Model
     {
         return $this->belongsTo(FoodGroup::class);
     }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
 }
