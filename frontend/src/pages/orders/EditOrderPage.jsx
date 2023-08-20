@@ -293,7 +293,10 @@ const EditOrderPage = () => {
                           }}
                         >
                           <TableCell colSpan="5" align="right">
-                            Total: <b>{updateOrder.total.toLocaleString()} ₫</b>
+                            Total:{" "}
+                            <b>
+                              {parseFloat(updateOrder.total).toLocaleString()} ₫
+                            </b>
                           </TableCell>
                         </TableRow>
                       </TableBody>

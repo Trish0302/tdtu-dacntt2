@@ -271,7 +271,10 @@ const FoodGroupsPage = () => {
                       <></>
                     ) : (
                       <TableCell align="left">
-                        <Link to={`/stores/detail/${foodGroup.store_id}`}>
+                        <Link
+                          to={`/stores/detail/${foodGroup.store_id}`}
+                          className="underline hover:text-primary-500"
+                        >
                           {foodGroup.store?.name}
                         </Link>
                       </TableCell>

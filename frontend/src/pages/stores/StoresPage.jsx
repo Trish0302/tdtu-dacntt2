@@ -186,11 +186,16 @@ const StoresPage = () => {
                         alt={store.name}
                       />
                     </TableCell>
-                    <TableCell align="left">{store.name}</TableCell>
+                    <TableCell align="left" className="max-w-[250px] truncate">
+                      {store.name}
+                    </TableCell>
                     <TableCell align="left">{store.address}</TableCell>
                     <TableCell align="left">{store.description}</TableCell>
                     <TableCell align="left">
-                      <Link to={`/users/detail/${store.user_id}`}>
+                      <Link
+                        to={`/users/detail/${store.user_id}`}
+                        className="underline hover:text-primary-500"
+                      >
                         {store?.user?.name}
                       </Link>
                     </TableCell>
