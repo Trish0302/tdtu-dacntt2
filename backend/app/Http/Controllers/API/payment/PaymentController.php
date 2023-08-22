@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\payment;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class PaymentController extends Controller
 {
@@ -25,6 +26,13 @@ class PaymentController extends Controller
                 $order->histories()->create([
                     'history_id' => 2,
                 ]);
+
+                Mail::send('emails.makeOrderSuccessfully', [
+                    'order' => $order,
+                ], function ($email) use ($order) {
+                    $email->to($order->customer->email)->subject('Create new order successfully!');
+                });
+
                 break;
             default:
                 $order->histories()->create([

@@ -2,6 +2,8 @@
 
 <p>You have just successfully created a new account for our system.</p>
 
-<img src={{ $avatar }} alt="" height="200px">
+<div>
+    <img src={{ $avatar }} alt="" height="200px" style="border-radius: 50%">
+</div>
 
 <p>Best Regards!</p>
