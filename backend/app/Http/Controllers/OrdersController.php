@@ -108,6 +108,8 @@ class OrdersController extends Controller
      */
     public function index(Request $request)
     {
+        // $this->authorize('viewAny', new Order);
+
         $query = $request->q;
 
         if ($request->exists('customer_id')) {
@@ -159,6 +161,8 @@ class OrdersController extends Controller
      */
     public function store(OrdersRequest $request)
     {
+        // $this->authorize('create', new Order);
+
         $sub_total = 0;
         foreach ($request->items as $food) {
             $sub_total += $food['quantity'] * $food['price'];
@@ -221,6 +225,8 @@ class OrdersController extends Controller
      */
     public function show($id)
     {
+        // $this->authorize('view', Order::find($id));
+
         try {
             $order = Order::select($this->fields['order'])
                 ->with($this->multiple_eager_load([
@@ -252,8 +258,10 @@ class OrdersController extends Controller
      */
     public function update(OrdersRequest $request, $id)
     {
+        $order = Order::findOrFail($id);
+        // $this->authorize('update', $order);
+
         try {
-            $order = Order::findOrFail($id);
             $order_detail = $order->detail;
             $sub_total = 0;
 
@@ -310,8 +318,10 @@ class OrdersController extends Controller
      */
     public function destroy($id)
     {
+        $order = Order::findOrFail($id);
+        // $this->authorize('delete', $order);
+
         try {
-            $order = Order::findOrFail($id);
             $order->detail()->delete();
             $order->histories()->delete();
             $order->delete();

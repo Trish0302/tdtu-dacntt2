@@ -28,6 +28,8 @@ class UsersController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', new User);
+
         $query = $request->q;
         $users = new User;
 
@@ -70,7 +72,7 @@ class UsersController extends Controller
             ], 400);
         }
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
@@ -164,6 +166,27 @@ class UsersController extends Controller
             return response()->json([
                 'message' => 'Delete user successfully!',
                 'data' => User::findOrFail($id)->delete(),
+                'status' => 200,
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Invalid user. Please try again!',
+                'status' => 400,
+            ], 400);
+        }
+    }
+
+    public function approve($id)
+    {
+        $this->authorize('create', new User);
+
+        try {
+            $user = User::findOrFail($id, $this->fields);
+            $user->markEmailAsVerified();
+
+            return response()->json([
+                'message' => 'Approve store manager account successfully!',
+                'data' => $user,
                 'status' => 200,
             ], 200);
         } catch (Exception $e) {

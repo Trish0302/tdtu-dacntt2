@@ -34,6 +34,7 @@ Route::middleware('auth:sanctum', 'ability:admin,customer')->group(function () {
 
 Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
     Route::get('/orders/history', [OrdersController::class, 'viewHistory']);
+    Route::post('/users/approve/{id}', [UsersController::class, 'approve']);
 
     Route::apiResources([
         'users' => UsersController::class,
