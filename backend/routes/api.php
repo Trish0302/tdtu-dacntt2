@@ -37,7 +37,6 @@ Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
     Route::post('/users/approve/{id}', [UsersController::class, 'approve']);
 
     Route::apiResources([
-        'users' => UsersController::class,
         'vouchers' => VouchersController::class,
     ]);
 
@@ -52,6 +51,7 @@ Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
 
     Route::apiResources(
         [
+            'users' => UsersController::class,
             'orders' => OrdersController::class
         ],
         ['except' => ['store']],
@@ -85,6 +85,7 @@ Route::get('/stores/{store_id}/food_groups/{food_group_id}/food/{food_id}', [Foo
 Route::get('/food/{id}', [FoodController::class, 'getDetail']);
 
 Route::post('/register', [CustomersController::class, 'store']);
+Route::post('/users', [UsersController::class, 'store']);
 
 // Payment response
 Route::get('/payment/respond', [PaymentController::class, 'respond']);
