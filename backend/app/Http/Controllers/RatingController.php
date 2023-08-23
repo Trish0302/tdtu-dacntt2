@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RatingRequest;
 use App\Models\Rating;
 use Exception;
 
@@ -18,6 +19,20 @@ class RatingController extends Controller
             'name',
         ],
     ];
+
+    public function addRatingForCustomer(RatingRequest $request)
+    {
+        if (isset($request->validator) && $request->validator->fails()) {
+            return response()->json([
+                'message' => $request->validator->messages(),
+                'status' => 400,
+            ], 400);
+        }
+
+        $ratings = Rating::create($request->all());
+
+        return $ratings;
+    }
 
     public function getRatingsForCustomer($customer_id)
     {
