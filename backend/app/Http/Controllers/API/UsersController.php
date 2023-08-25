@@ -8,6 +8,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class UsersController extends Controller
 {
@@ -70,13 +71,20 @@ class UsersController extends Controller
             ], 400);
         }
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
             'avatar' => $avatar,
             'password' => Hash::make($request->password),
         ]);
+
+        Mail::send('emails.registerUserSuccessfully', [
+            'name' => $user->name,
+            'avatar' => $user->avatar,
+        ], function ($email) use ($user) {
+            $email->to($user->email)->subject('Register new user successfully!');
+        });
 
         return response()->json([
             'message' => 'Create new user successfully!',
