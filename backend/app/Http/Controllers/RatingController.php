@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RatingRequest;
+use App\Models\Order;
 use App\Models\Rating;
 use Exception;
+use stdClass;
 
 class RatingController extends Controller
 {
@@ -29,9 +31,29 @@ class RatingController extends Controller
             ], 400);
         }
 
-        $ratings = Rating::create($request->all());
+        $orders = Order::where('customer_id', $request->customer_id)->with('detail.food')->get()->pluck('detail')->flatten();
 
-        return $ratings;
+        $food_list = [];
+        foreach ($orders as $orders) {
+            $food_list[] = $orders->food->id;
+        }
+
+        $object = new stdClass;
+        $object->food_id = ['User did not make any order with this order!'];
+        if (in_array($request->food_id, $food_list) == false) {
+            return response()->json([
+                'message' => $object,
+                'status' => 400,
+            ], 400);
+        }
+
+        $rating = Rating::create($request->all());
+
+        return response()->json([
+            'message' => 'Add new rating for customer successfully!',
+            'data' => $rating,
+            'status' => 200,
+        ], 200);
     }
 
     public function getRatingsForCustomer($customer_id)
