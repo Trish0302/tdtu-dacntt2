@@ -120,16 +120,21 @@ class OrdersController extends Controller
             $orders = Order::select($this->fields['order']);
         }
 
-        $orders = $orders->with($this->multiple_eager_load(['customer', 'store']))
-            ->where('name', 'like', '%' . $query . '%')
-            ->orWhere('address', 'like', '%' . $query . '%')
-            ->orWhereHas('customer', function ($q) use ($query) {
-                return $q->where('customers.name', 'like', '%' . $query . '%');
-            })
-            ->orWhereHas('store', function ($q) use ($query) {
-                return $q->where('stores.name', 'like', '%' . $query . '%');
-            })
-            ->orderBy('updated_at', 'desc')
+        $orders = $orders->with($this->multiple_eager_load(['customer', 'store']));
+
+        if ($query) {
+            $orders = $orders->where(function ($q) use ($query) {
+                $q->where('name', 'like', '%' . $query . '%')
+                    ->orWhere('address', 'like', '%' . $query . '%')
+                    ->orWhereHas('customer', function ($sub_query) use ($query) {
+                        return $sub_query->where('name', 'like', '%' . $query . '%');
+                    })->orWhereHas('store', function ($sub_query) use ($query) {
+                        return $sub_query->where('name', 'like', '%' . $query . '%');
+                    });
+            });
+        }
+
+        $orders = $orders->orderBy('updated_at', 'desc')
             ->paginate($request->page_size ?? 10, $this->fields['order']);
 
         $orders->map(function ($order) {

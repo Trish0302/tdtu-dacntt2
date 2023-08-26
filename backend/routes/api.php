@@ -28,8 +28,13 @@ Route::middleware('auth:sanctum', 'ability:admin,customer')->group(function () {
     Route::put('/password', [AuthController::class, 'update_password']);
     Route::get('/logout', [AuthController::class, 'logout']);
 
-    Route::get('/orders/{id}', [OrdersController::class, 'show']);
-    Route::post('/orders', [OrdersController::class, 'store']);
+    Route::apiResources(
+        [
+            'orders' => OrdersController::class
+        ],
+        ['except' => ['update', 'destroy']],
+    );
+
     Route::put('/customers/{id}', [CustomersController::class, 'update']);
 });
 
@@ -54,7 +59,7 @@ Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
         [
             'orders' => OrdersController::class
         ],
-        ['except' => ['store', 'show']],
+        ['except' => ['index', 'store', 'show']],
     );
 
     Route::apiResources(
@@ -68,6 +73,7 @@ Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
 Route::middleware('auth:sanctum', 'ability:customer')->group(function () {
     Route::get('/get-voucher-by-code/{voucher_code}', [VouchersController::class, 'getVoucherByCode']);
     Route::get('/get-ratings-for-customer/{customer_id}', [RatingController::class, 'getRatingsForCustomer']);
+    Route::post('/ratings', [RatingController::class, 'addRatingForCustomer']);
 });
 
 Route::post('/login', [AuthController::class, 'login']);
