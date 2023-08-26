@@ -14,7 +14,7 @@ const navConfig = [
     icon: <DashboardIcon className="text-primary-500" />,
   },
   {
-    title: "users",
+    title: "Staff",
     path: "/users",
     icon: <PersonIcon className="text-primary-500" />,
   },

@@ -14,6 +14,7 @@ import { ListFoodGroupContext } from "../../../stores/ListFoodGroupContext";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import FoodGroupValidationSchema from "../../../validations/FoodGroupValidation";
+import { convertToSlug } from "../../../utils/func";
 
 const EditFoodGroupPage = () => {
   const { storeId, id } = useParams();
@@ -37,7 +38,7 @@ const EditFoodGroupPage = () => {
     validationSchema: FoodGroupValidationSchema,
     enableReinitialize: true,
     onSubmit: (values) => {
-      // console.log(values);
+      console.log(values);
       try {
         call(`api/stores/${storeId}/food_groups/${id}`, "PUT", values)
           .then((res) => {
@@ -122,7 +123,13 @@ const EditFoodGroupPage = () => {
                       label="Name of Food group"
                       name="name"
                       value={formik.values.name}
-                      onChange={formik.handleChange}
+                      onChange={(e) => {
+                        formik.setFieldValue(
+                          "slug",
+                          convertToSlug(e.target.value)
+                        );
+                        formik.setFieldValue("name", e.target.value);
+                      }}
                       error={formik.touched.name && Boolean(formik.errors.name)}
                       helperText={formik.touched.name && formik.errors.name}
                       fullWidth
@@ -132,6 +139,7 @@ const EditFoodGroupPage = () => {
                       placeholder="Slug"
                       label="Slug"
                       name="slug"
+                      disabled={true}
                       value={formik.values.slug}
                       onChange={formik.handleChange}
                       error={formik.touched.slug && Boolean(formik.errors.slug)}
