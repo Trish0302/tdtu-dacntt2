@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import FoodValidationSchema from "../../../../validations/FoodValidation";
 import PercentIcon from "@mui/icons-material/Percent";
+import { convertToSlug } from "../../../../utils/func";
 
 const AddFoodPage = () => {
   const location = useLocation();
@@ -302,7 +303,11 @@ const AddFoodPage = () => {
                   label="Name of food"
                   name="name"
                   value={formik.values.name}
-                  onChange={formik.handleChange}
+                  disabled={true}
+                  onChange={(e) => {
+                    formik.setFieldValue("slug", convertToSlug(e.target.value));
+                    formik.setFieldValue("name", e.target.value);
+                  }}
                   error={formik.touched.name && Boolean(formik.errors.name)}
                   helperText={formik.touched.name && formik.errors.name}
                 />

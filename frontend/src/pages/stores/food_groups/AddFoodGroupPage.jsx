@@ -13,6 +13,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ListFoodGroupContext } from "../../../stores/ListFoodGroupContext";
 import { useFormik } from "formik";
 import FoodGroupValidationSchema from "../../../validations/FoodGroupValidation";
+import { convertToSlug } from "../../../utils/func";
 
 const AddFoodGroupPage = () => {
   const location = useLocation();
@@ -39,7 +40,7 @@ const AddFoodGroupPage = () => {
     initialValues: addFoodGroup,
     validationSchema: FoodGroupValidationSchema,
     onSubmit: (values) => {
-      // console.log(values);
+      console.log(values);
       try {
         if (location.state) {
           call(
@@ -87,32 +88,6 @@ const AddFoodGroupPage = () => {
       }
     },
   });
-  const changeHandler = (e) => {
-    setAddFoodGroup({ ...addFoodGroup, [e.target.name]: e.target.value });
-  };
-
-  const addHandler = async () => {
-    try {
-      call(
-        `api/stores/${location.state.storeId}/food_groups`,
-        "POST",
-        addFoodGroup
-      )
-        .then((res) => {
-          dispatch({ type: "addFoodGroup", item: addFoodGroup });
-          toast.success("Add Successfully", { autoClose: 1000 });
-          setTimeout(() => {
-            navigate(`/stores/${location.state.storeId}/food-group`, {
-              state: { storeId: location.state.storeId },
-            });
-          }, 1500);
-        })
-        .catch((err) => console.log("add-error", err));
-    } catch (error) {
-      console.log(error);
-      // toast.error('Something went wrong');
-    }
-  };
 
   useEffect(() => {
     const storeArr = [];
@@ -152,7 +127,10 @@ const AddFoodGroupPage = () => {
                   label="Name of Food group"
                   name="name"
                   value={formik.values.name}
-                  onChange={formik.handleChange}
+                  onChange={(e) => {
+                    formik.setFieldValue("slug", convertToSlug(e.target.value));
+                    formik.setFieldValue("name", e.target.value);
+                  }}
                   error={formik.touched.name && Boolean(formik.errors.name)}
                   helperText={formik.touched.name && formik.errors.name}
                   fullWidth
@@ -161,6 +139,7 @@ const AddFoodGroupPage = () => {
                   variant="outlined"
                   placeholder="Slug"
                   label="Slug"
+                  disabled={true}
                   name="slug"
                   value={formik.values.slug}
                   onChange={formik.handleChange}

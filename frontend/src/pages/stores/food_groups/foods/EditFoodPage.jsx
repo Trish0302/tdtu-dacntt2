@@ -13,7 +13,7 @@ import { call, callUpload } from "../../../../utils/api";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import { ListFoodContext } from "../../../../stores/ListFoodContext";
-import { numberWithCommas } from "../../../../utils/func";
+import { convertToSlug, numberWithCommas } from "../../../../utils/func";
 import { useFormik } from "formik";
 import FoodValidationSchema from "../../../../validations/FoodValidation";
 import PercentIcon from "@mui/icons-material/Percent";
@@ -313,7 +313,13 @@ const EditFoodPage = () => {
                       label="Name of food"
                       name="name"
                       value={formik.values.name}
-                      onChange={formik.handleChange}
+                      onChange={(e) => {
+                        formik.setFieldValue(
+                          "slug",
+                          convertToSlug(e.target.value)
+                        );
+                        formik.setFieldValue("name", e.target.value);
+                      }}
                       error={formik.touched.name && Boolean(formik.errors.name)}
                       helperText={formik.touched.name && formik.errors.name}
                     />
