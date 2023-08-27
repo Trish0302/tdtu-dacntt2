@@ -303,7 +303,6 @@ const AddFoodPage = () => {
                   label="Name of food"
                   name="name"
                   value={formik.values.name}
-                  disabled={true}
                   onChange={(e) => {
                     formik.setFieldValue("slug", convertToSlug(e.target.value));
                     formik.setFieldValue("name", e.target.value);
@@ -316,6 +315,7 @@ const AddFoodPage = () => {
                   placeholder="Slug"
                   label="Slug"
                   name="slug"
+                  disabled={true}
                   value={formik.values.slug}
                   onChange={formik.handleChange}
                   error={formik.touched.slug && Boolean(formik.errors.slug)}
