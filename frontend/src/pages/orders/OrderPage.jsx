@@ -130,6 +130,21 @@ const OrderPage = () => {
     dispatch({ type: "getTotal", payload: { total: result.paging.total } });
   };
 
+  //
+  function convertISODateToTimeFormat(ISODate) {
+    const newDateObj = new Date(ISODate);
+    const toMonth = newDateObj.getMonth() + 1;
+    const toYear = newDateObj.getFullYear();
+    const toDate = newDateObj.getDate();
+    const toHours = newDateObj.getHours();
+    const toHoursProcessed = (toHours < 10 ? "0" : "") + toHours;
+    const toMin = newDateObj.getMinutes();
+    const toMinProcessed = (toMin < 10 ? "0" : "") + toMin;
+    const dateTemplate = `${toDate}.${toMonth}.${toYear} ${toHoursProcessed}:${toMinProcessed}`;
+    // console.log(dateTemplate)
+    return dateTemplate;
+  }
+
   return (
     <div className=" bg-primary-100 px-5 h-full overflow-y-scroll hide-scroll pt-24 pb-5">
       <div className="flex items-center w-full">
@@ -164,6 +179,7 @@ const OrderPage = () => {
                 <TableCell align="left">Customer Name</TableCell>
                 <TableCell align="left">Store Name</TableCell>
                 <TableCell align="left">Total</TableCell>
+                <TableCell align="left">Create Time</TableCell>
                 <TableCell align="left">Order Progress</TableCell>
                 <TableCell align="right" />
               </TableRow>
@@ -198,6 +214,9 @@ const OrderPage = () => {
                         style: "currency",
                         currency: "VND",
                       }).format(order.total)}
+                    </TableCell>
+                    <TableCell align="left">
+                      {convertISODateToTimeFormat(order.created_at)}
                     </TableCell>
                     <TableCell align="left">
                       {order.lastest_order_progress}

@@ -243,7 +243,6 @@ const EditUserPage = () => {
                         id="email"
                         name="email"
                         label="Email"
-                        disabled={true}
                         value={formik.values.email}
                         onChange={formik.handleChange}
                         error={
