@@ -11,6 +11,7 @@ use App\Http\Controllers\API\UsersController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\StatisticController;
 
 /*
 |--------------------------------------------------------------------------
@@ -68,6 +69,9 @@ Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
         ],
         ['except' => ['update']],
     );
+
+    Route::get('/statistics/get-total/{type}', [StatisticController::class, 'getTotal']);
+    Route::get('/statistics/get-recent-order-progresses', [StatisticController::class, 'getRecentOrderProgresses']);
 });
 
 Route::middleware('auth:sanctum', 'ability:customer')->group(function () {
