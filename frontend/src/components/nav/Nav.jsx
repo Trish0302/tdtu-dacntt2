@@ -171,16 +171,21 @@ const Logo = () => {
 };
 
 const ImageProfile = ({ information }) => {
+  const navigate = useNavigate();
+  const userInfo = useContext(authContext);
   return (
     <div className="py-5  w-full  flex-col justify-center items-center text-center">
-      <div className="w-full flex justify-center mb-2">
+      <button
+        className="w-full flex justify-center mb-2"
+        onClick={() => navigate(`users/detail/${userInfo.id}`)}
+      >
         <Avatar
           sx={{ width: 80, height: 80 }}
           alt="avatar"
           className="shadow-lg"
           src={information.avatar}
         />
-      </div>
+      </button>
       <div className="font-semibold">{information.name}</div>
       <small className="">{information.email}</small>
       <div className="text-gray-500">

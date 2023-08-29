@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AsyncStorage } from "AsyncStorage";
 import { Divider, IconButton, Tooltip } from "@mui/material";
@@ -6,9 +6,14 @@ import MenuIcon from "@mui/icons-material/Menu";
 import useReactRouterBreadcrumbs from "use-react-router-breadcrumbs";
 import useScrollPosition from "../../hooks/useScrollPosition";
 import Breadcrumb from "../breadcrumbs/Breadcrumb";
+import { MdLockReset } from "react-icons/md";
+import { authContext } from "../../utils/auth";
+
 // eslint-disable-next-line react/prop-types
 const Header = ({ setOpenSidebar }) => {
   const navigate = useNavigate();
+  const userInfo = useContext(authContext);
+  console.log("🚀 ~ file: UsersPage.jsx:34 ~ UsersPage ~ userInfo:", userInfo);
 
   const handleLogout = () => {
     AsyncStorage.setItem("token-admin", null);
@@ -101,26 +106,36 @@ const Header = ({ setOpenSidebar }) => {
         <div className="flex-1">
           <Breadcrumb />
         </div>
+
+        <Tooltip title="Change Password">
+          <IconButton
+            onClick={() => navigate(`users/change-password/${userInfo.id}`)}
+          >
+            <MdLockReset color="#ef6351" />
+          </IconButton>
+        </Tooltip>
         <Tooltip title="Logout">
-          <button onClick={handleLogout} className="text-primary-500">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="icon icon-tabler icon-tabler-logout"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              strokeWidth="2"
-              stroke="currentColor"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-              <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"></path>
-              <path d="M9 12h12l-3 -3"></path>
-              <path d="M18 15l3 -3"></path>
-            </svg>
-          </button>
+          <IconButton onClick={handleLogout}>
+            <button className="text-primary-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="icon icon-tabler icon-tabler-logout"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                stroke="currentColor"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"></path>
+                <path d="M9 12h12l-3 -3"></path>
+                <path d="M18 15l3 -3"></path>
+              </svg>
+            </button>
+          </IconButton>
         </Tooltip>
       </div>
     </>
