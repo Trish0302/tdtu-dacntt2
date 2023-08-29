@@ -55,20 +55,35 @@ class StatisticController extends Controller
 
         switch ($type) {
             case 'user':
-                return User::count();
+                $result = User::count();
+                break;
             case 'store':
-                return Store::count();
+                $result = Store::count();
+                break;
             case 'order':
-                return Order::count();
+                $result = Order::count();
+                break;
             case 'profit':
-                return Order::sum('total');
+                $result = Order::sum('total');
+                break;
             case 'momo':
-                return Order::where('payment_type', 1)->count();
+                $result = Order::where('payment_type', 1)->count();
+                break;
             case 'vnpay':
-                return Order::where('payment_type', 2)->count();
+                $result = Order::where('payment_type', 2)->count();
+                break;
             case 'paypal':
-                return Order::where('payment_type', 3)->count();
+                $result = Order::where('payment_type', 3)->count();
+                break;
+            default:
+                $result = null;
         }
+
+        return response()->json([
+            'message' => "Get total {$type} successfully!",
+            'data' => $result,
+            'status' => 200,
+        ], 200);
     }
 
     public function getTotalOrders(Request $request)
@@ -79,18 +94,24 @@ class StatisticController extends Controller
         $startDate = Carbon::createFromFormat('Y-m-d', $from)->startOfDay();
         $endDate = Carbon::createFromFormat('Y-m-d', $to)->endOfDay();
 
-        return Order::select(
+        $orders = Order::select(
             DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') as date"),
             DB::raw('count(id) as total_orders'),
         )
             ->whereBetween('created_at', [$startDate, $endDate])
             ->groupBy('date')
             ->get();
+
+        return response()->json([
+            'message' => "Get total orders successfully!",
+            'data' => $orders,
+            'status' => 200,
+        ], 200);
     }
 
     public function getTopProducts()
     {
-        return OrderDetail::select(
+        $products = OrderDetail::select(
             'food_id',
             DB::raw('count(id) as total_food_item'),
             DB::raw('sum(quantity) as count_food'),
@@ -100,11 +121,17 @@ class StatisticController extends Controller
             ->orderBy('total_food_item', 'desc')
             ->limit(5)
             ->get();
+
+        return response()->json([
+            'message' => "Get top products successfully!",
+            'data' => $products,
+            'status' => 200,
+        ], 200);
     }
 
     public function getTopStores()
     {
-        return Order::select(
+        $stores = Order::select(
             'store_id',
             DB::raw('count(id) as total_orders'),
             DB::raw('count(DISTINCT customer_id) as total_customers'),
@@ -115,6 +142,12 @@ class StatisticController extends Controller
             ->orderBy('total_profits', 'desc')
             ->limit(5)
             ->get();
+
+        return response()->json([
+            'message' => "Get top stores successfully!",
+            'data' => $stores,
+            'status' => 200,
+        ], 200);
     }
 
     public function getRecentOrders()
@@ -124,10 +157,14 @@ class StatisticController extends Controller
             ->limit(5)
             ->get($this->fields['order_history']);
 
-        return $order_histories;
+        return response()->json([
+            'message' => "Get top stores successfully!",
+            'data' => $order_histories,
+            'status' => 200,
+        ], 200);
     }
 
-    public function multiple_eager_load($association_list, $result = [])
+    private function multiple_eager_load($association_list, $result = [])
     {
         foreach ($association_list as $association_name) {
             $result[] = $association_name . ':' . join(',', $this->fields[$association_name]);
