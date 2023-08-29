@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Models\OrderHistory;
 use App\Models\Store;
 use App\Models\User;
@@ -12,6 +13,42 @@ use Illuminate\Support\Facades\DB;
 
 class StatisticController extends Controller
 {
+    private $fields = [
+        'order' => [
+            'id',
+            'name',
+            'address',
+            'phone',
+            'total',
+            'customer_id',
+            'store_id',
+            'voucher_id',
+            'payment_type',
+        ],
+        'food' => [
+            'id',
+            'name',
+            'avatar',
+        ],
+        'history' => [
+            'id',
+            'message',
+        ],
+        'store' => [
+            'id',
+            'name',
+            'avatar',
+            'address',
+            'description',
+        ],
+        'order_history' => [
+            'id',
+            'order_id',
+            'history_id',
+            'updated_at',
+        ]
+    ];
+
     public function getTotal(Request $request)
     {
         $type = $request->type;
@@ -53,21 +90,48 @@ class StatisticController extends Controller
 
     public function getTopProducts()
     {
+        return OrderDetail::select(
+            'food_id',
+            DB::raw('count(id) as total_food_item'),
+            DB::raw('sum(quantity) as count_food'),
+        )
+            ->with($this->multiple_eager_load(['food']))
+            ->groupBy('food_id')
+            ->orderBy('total_food_item', 'desc')
+            ->limit(5)
+            ->get();
     }
 
     public function getTopStores()
     {
+        return Order::select(
+            'store_id',
+            DB::raw('count(id) as total_orders'),
+            DB::raw('count(DISTINCT customer_id) as total_customers'),
+            DB::raw('sum(total) as total_profits'),
+        )
+            ->with($this->multiple_eager_load(['store']))
+            ->groupBy('store_id')
+            ->orderBy('total_profits', 'desc')
+            ->limit(5)
+            ->get();
     }
 
     public function getRecentOrders()
     {
-        $order_histories = OrderHistory::latest()->with([
-            'order:id,name,address,total',
-            'history:id,message',
-        ])->limit(5)->get([
-            'id', 'order_id', 'history_id', 'updated_at'
-        ]);
+        $order_histories = OrderHistory::latest()
+            ->with($this->multiple_eager_load(['order', 'history']))
+            ->limit(5)
+            ->get($this->fields['order_history']);
 
         return $order_histories;
+    }
+
+    public function multiple_eager_load($association_list, $result = [])
+    {
+        foreach ($association_list as $association_name) {
+            $result[] = $association_name . ':' . join(',', $this->fields[$association_name]);
+        }
+        return $result;
     }
 }

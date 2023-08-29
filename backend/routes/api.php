@@ -73,6 +73,8 @@ Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
     Route::get('/statistics/get-total', [StatisticController::class, 'getTotal']);
     Route::get('/statistics/get-recent-orders', [StatisticController::class, 'getRecentOrders']);
     Route::get('/statistics/get-total-orders', [StatisticController::class, 'getTotalOrders']);
+    Route::get('/statistics/get-top-stores', [StatisticController::class, 'getTopStores']);
+    Route::get('/statistics/get-top-products', [StatisticController::class, 'getTopProducts']);
 });
 
 Route::middleware('auth:sanctum', 'ability:customer')->group(function () {
