@@ -70,8 +70,9 @@ Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
         ['except' => ['update']],
     );
 
-    Route::get('/statistics/get-total/{type}', [StatisticController::class, 'getTotal']);
-    Route::get('/statistics/get-recent-order-progresses', [StatisticController::class, 'getRecentOrderProgresses']);
+    Route::get('/statistics/get-total', [StatisticController::class, 'getTotal']);
+    Route::get('/statistics/get-recent-orders', [StatisticController::class, 'getRecentOrders']);
+    Route::get('/statistics/get-total-orders', [StatisticController::class, 'getTotalOrders']);
 });
 
 Route::middleware('auth:sanctum', 'ability:customer')->group(function () {
