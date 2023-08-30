@@ -17,6 +17,7 @@ class UsersController extends Controller
         'email',
         'phone',
         'avatar',
+        'role_id',
         'email_verified_at',
         'created_at',
         'updated_at',
