@@ -24,6 +24,8 @@ class RatingController extends Controller
 
     public function addRatingForCustomer(RatingRequest $request)
     {
+        $this->authorize('create', [Rating::class, $request->customer_id]);
+
         if (isset($request->validator) && $request->validator->fails()) {
             return response()->json([
                 'message' => $request->validator->messages(),
