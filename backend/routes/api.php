@@ -58,6 +58,12 @@ Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
     Route::apiResources(
         [
             'users' => UsersController::class,
+        ],
+        ['except' => ['store']],
+    );
+
+    Route::apiResources(
+        [
             'orders' => OrdersController::class
         ],
         ['except' => ['index', 'store', 'show']],

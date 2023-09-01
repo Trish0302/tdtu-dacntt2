@@ -36,7 +36,7 @@ class AuthController extends Controller
             ], 401);
         }
 
-        if (!$user->email_verified_at) {
+        if (!$user->email_verified_at && $abilities == ['admin']) {
             return response()->json([
                 'message' => 'Your account has not been approved by administrator!',
                 'data' => false,
