@@ -18,11 +18,35 @@
     </ul>
 </div>
 <p>Payment type: {{ $order_detail->payment_type }}</p>
-{{-- {{ $order_detail->detail }} --}}
-@foreach ($order_detail->detail() as $order_detail_items)
-    <tr>
-        {{-- <td>{{ $order_detail_items->food->name }}</td> --}}
-        {{-- <td>{{ $order_detail_items->quantity }}</td> --}}
-        {{-- <td>{{ $order_detail_items->unit_price * $order_detail_items->quantity }}</td> --}}
-    </tr>
-@endforeach
+<div>
+    <table border="1">
+        <tr>
+            <td>Ten mon an</td>
+            <td>So luong</td>
+            <td>Tong tien</td>
+        </tr>
+        @foreach ($order_detail->detail as $order_detail_items)
+            {{-- {{ $order_detail_items->food->name }} --}}
+            <tr>
+                <td>{{ $order_detail_items->food->name }}</td>
+                <td>{{ $order_detail_items->quantity }}</td>
+                <td>{{ $order_detail_items->unit_price * $order_detail_items->quantity }}</td>
+            </tr>
+        @endforeach
+    </table>
+</div>
+<br>
+<div>
+    <table border="1">
+        <tr>
+            <td>order_progress</td>
+            <td>timestamp</td>
+        </tr>
+        @foreach ($order_detail->history->progresses as $order_history)
+            <tr>
+                <td>{{ $order_history->order_progress }}</td>
+                <td>{{ $order_history->timestamp }}</td>
+            </tr>
+        @endforeach
+    </table>
+</div>

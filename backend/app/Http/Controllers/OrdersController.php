@@ -353,7 +353,6 @@ class OrdersController extends Controller
 
         if ($order_detail_object->status == 200) {
             $order_detail = $order_detail_object->data;
-            // return $order_detail->detail;
 
             $file_name = 'order' . $order_detail->id . '_' . time() . '.pdf';
 
