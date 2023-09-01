@@ -80,10 +80,9 @@ class UsersController extends Controller
         ]);
 
         Mail::send('emails.registerUserSuccessfully', [
-            'name' => $user->name,
-            'avatar' => $user->avatar,
+            'user' => $user,
         ], function ($email) use ($user) {
-            $email->to($user->email)->subject('Register new user successfully!');
+            $email->to($user->email)->subject('Xác nhận Đăng ký Tài khoản Thành công');
         });
 
         return response()->json([
