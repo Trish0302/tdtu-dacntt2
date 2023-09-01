@@ -40,6 +40,7 @@ Route::middleware('auth:sanctum', 'ability:admin,customer')->group(function () {
 
 Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
     Route::get('/orders/history', [OrdersController::class, 'viewHistory']);
+    Route::get('/orders/print/PDF/{id}', [OrdersController::class, 'printPDF']);
 
     Route::apiResources([
         'users' => UsersController::class,

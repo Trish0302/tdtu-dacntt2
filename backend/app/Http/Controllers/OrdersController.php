@@ -14,6 +14,7 @@ use App\Models\Voucher;
 use Exception;
 use Illuminate\Http\Request;
 use stdClass;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrdersController extends Controller
 {
@@ -343,6 +344,28 @@ class OrdersController extends Controller
                 'data' => $id,
                 'status' => 400,
             ], 400);
+        }
+    }
+
+    public function printPDF($id)
+    {
+        $order_detail_object = $this->show($id)->getData();
+
+        if ($order_detail_object->status == 200) {
+            $order_detail = $order_detail_object->data;
+            // return $order_detail->detail;
+
+            $file_name = 'order' . $order_detail->id . '_' . time() . '.pdf';
+
+            $pdf = PDF::loadView('pdfs.printOrder', [
+                'order_detail' => $order_detail,
+            ])
+                ->setPaper('a4', 'portrait')
+                ->save('storage/' . $file_name);
+
+            return asset('storage/' . $file_name);
+        } else {
+            return $order_detail_object;
         }
     }
 }
