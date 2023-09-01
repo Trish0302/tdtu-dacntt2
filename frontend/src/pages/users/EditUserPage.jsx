@@ -80,7 +80,9 @@ const EditUserPage = () => {
             if (res.status == 200) {
               toast.success("Update Successfully", { autoClose: 1000 });
               setTimeout(() => {
-                navigate("/users");
+                userInfo.role_id == 0
+                  ? navigate("/users")
+                  : navigate(`/users/detail/${id}`);
               }, 1500);
             } else {
               let entries = Object.entries(res.data.message);
@@ -211,7 +213,14 @@ const EditUserPage = () => {
                     </div>
                   )}
                 </Card>
-                <Card sx={{ py: 2, flexBasis: "60%" }}>
+                <Card
+                  sx={{
+                    py: 2,
+                    flexBasis: "60%",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
                   <div className="px-4 flex justify-between items-center mb-2">
                     <p className="font-semibold">Personal Information</p>
                     <small>
@@ -219,11 +228,20 @@ const EditUserPage = () => {
                     </small>
                   </div>
                   <Divider />
-                  <Stack direction="row" p={2} spacing={2}>
+                  <Stack
+                    direction="row"
+                    px={2}
+                    py={3}
+                    spacing={2}
+                    sx={{ flex: 1 }}
+                  >
                     <Stack
-                      direction="column"
-                      spacing={2}
-                      sx={{ width: "100%" }}
+                      sx={{
+                        width: "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                      }}
                     >
                       <TextField
                         fullWidth
@@ -265,7 +283,7 @@ const EditUserPage = () => {
                       />
                     </Stack>
                   </Stack>
-                  <Divider />
+                  {/* <Divider />
                   <div className="my-2 px-4">
                     <p className="font-semibold mb-2">Position Information</p>
                     <div className="flex justify-between pb-1 w-full gap-7">
@@ -304,7 +322,7 @@ const EditUserPage = () => {
                         </FormControl>
                       </Box>
                     </div>
-                  </div>
+                  </div> */}
                   {id == userInfo.id ? (
                     <>
                       <Divider />

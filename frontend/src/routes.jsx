@@ -1,7 +1,7 @@
 import { Navigate, useRoutes } from "react-router-dom";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Login from "./pages/login/Login";
-import Auth from "./utils/auth";
+import Auth, { authContext } from "./utils/auth";
 import DashboardLayout from "./layouts/dashboard/DashboardLayout";
 import CustomerPage from "./pages/customers/CustomerPage";
 import StoresPage from "./pages/stores/StoresPage";
@@ -38,8 +38,12 @@ import EditCustomerPage from "./pages/customers/EditCustomerPage";
 import DetailCustomerPage from "./pages/customers/DetailCustomerPage";
 import { ListCustomerProvider } from "./stores/ListCustomerContext";
 import ChangePasswordUserPage from "./pages/users/ChangePasswordUserPage";
+import Register from "./pages/register/Register";
+import { useContext } from "react";
 
 const Router = () => {
+  const userInfo = useContext(authContext);
+  console.log("🚀 ~ file: routes.jsx:46 ~ Router ~ userInfo:", userInfo);
   const routes = useRoutes([
     {
       path: "/",
@@ -360,6 +364,10 @@ const Router = () => {
     {
       path: "login",
       element: <Login />,
+    },
+    {
+      path: "register",
+      element: <Register />,
     },
   ]);
   return routes;
