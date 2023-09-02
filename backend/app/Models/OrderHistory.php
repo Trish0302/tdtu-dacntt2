@@ -16,7 +16,7 @@ class OrderHistory extends Model
     ];
 
 
-    public function _order()
+    public function order()
     {
         return $this->belongsTo(Order::class);
     }

@@ -11,6 +11,7 @@ use App\Http\Controllers\API\UsersController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\StatisticController;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,6 +76,12 @@ Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
         ],
         ['except' => ['update']],
     );
+
+    Route::get('/statistics/get-total', [StatisticController::class, 'getTotal']);
+    Route::get('/statistics/get-recent-orders', [StatisticController::class, 'getRecentOrders']);
+    Route::get('/statistics/get-total-orders', [StatisticController::class, 'getTotalOrders']);
+    Route::get('/statistics/get-top-stores', [StatisticController::class, 'getTopStores']);
+    Route::get('/statistics/get-top-products', [StatisticController::class, 'getTopProducts']);
 });
 
 Route::middleware('auth:sanctum', 'ability:customer')->group(function () {
