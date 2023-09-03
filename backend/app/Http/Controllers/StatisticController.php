@@ -53,35 +53,19 @@ class StatisticController extends Controller
     {
         $type = $request->type;
 
-        switch ($type) {
-            case 'user':
-                $result = User::count();
-                break;
-            case 'store':
-                $result = Store::count();
-                break;
-            case 'order':
-                $result = Order::count();
-                break;
-            case 'profit':
-                $result = Order::sum('total');
-                break;
-            case 'momo':
-                $result = Order::where('payment_type', 1)->count();
-                break;
-            case 'vnpay':
-                $result = Order::where('payment_type', 2)->count();
-                break;
-            case 'paypal':
-                $result = Order::where('payment_type', 3)->count();
-                break;
-            default:
-                $result = null;
-        }
+        $result = (object) [
+            'user' => User::count(),
+            'store' => Store::count(),
+            'order' => Order::count(),
+            'profit' => Order::sum('total'),
+            'momo' => Order::where('payment_type', 1)->count(),
+            'vnpay' => Order::where('payment_type', 2)->count(),
+            'paypal' => Order::where('payment_type', 3)->count(),
+        ];
 
         return response()->json([
             'message' => "Get total {$type} successfully!",
-            'data' => $result,
+            'data' => $type != 'init' ? $result->$type : $result,
             'status' => 200,
         ], 200);
     }
