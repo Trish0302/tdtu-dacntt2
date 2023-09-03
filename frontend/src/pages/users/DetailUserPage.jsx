@@ -143,7 +143,7 @@ const DetailUserPage = () => {
                   <TextField
                     variant="outlined"
                     label="Role"
-                    value={userInfo.role_id == 0 ? "Admin" : "Owner Store"}
+                    value={updateUser.role_id == 0 ? "Admin" : "Owner Store"}
                     fullWidth
                     InputProps={{
                       readOnly: true,

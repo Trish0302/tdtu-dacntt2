@@ -240,7 +240,7 @@ const EditUserPage = () => {
                         width: "100%",
                         display: "flex",
                         flexDirection: "column",
-                        justifyContent: "space-between",
+                        gap: "30px",
                       }}
                     >
                       <TextField
