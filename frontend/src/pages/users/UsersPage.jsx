@@ -26,6 +26,7 @@ import {
 import { ListUserContext } from "../../stores/ListUserContext";
 import { useConfirm } from "material-ui-confirm";
 import { toast } from "react-toastify";
+import { FcApprove, FcDisapprove } from "react-icons/fc";
 
 const UsersPage = () => {
   const confirm = useConfirm();
@@ -132,6 +133,39 @@ const UsersPage = () => {
     dispatch({ type: "getTotal", payload: { total: result.total } });
   };
 
+  const handleApprove = (event) => {
+    const dataRow = JSON.parse(event.currentTarget.dataset.currentuser);
+    confirm({
+      confirmationButtonProps: { color: "error" },
+      description: `This will Approve Account of ${dataRow.name} user.`,
+    })
+      .then(() => {
+        call(`api/users/approve/${dataRow.id}`, "POST").then((rs) => {
+          console.log(rs);
+
+          toast.success("Approve Successfully!!!", { autoClose: 1000 });
+          // window.location.reload();
+          // dispatch({
+          //   type: "getListUser",
+          //   item: {
+          //     page: page,
+          //     page_size: rowsPerPage,
+          //   },
+          // });
+
+          call(`api/users?page=${page + 1}&page_size=${rowsPerPage}`).then(
+            (rs) => {
+              console.log(rs);
+              dispatch({ type: "setList", payload: { list: rs.data } });
+            }
+          );
+        });
+      })
+      .catch(() => {
+        console.log("Something went wrong.");
+      });
+  };
+
   return (
     <div className="h-full bg-primary-100 px-5 pt-24 pb-5 overflow-y-scroll hide-scroll">
       <div className="flex items-center">
@@ -164,6 +198,7 @@ const UsersPage = () => {
                 <TableCell align="left">Name</TableCell>
                 <TableCell align="left">Email</TableCell>
                 <TableCell align="left">Phone</TableCell>
+                <TableCell align="left">Role</TableCell>
                 <TableCell align="right" />
               </TableRow>
             </TableHead>
@@ -183,7 +218,28 @@ const UsersPage = () => {
                     <TableCell align="left">{user.name}</TableCell>
                     <TableCell align="left">{user.email}</TableCell>
                     <TableCell align="left">{user.phone}</TableCell>
+                    <TableCell align="left">
+                      {user.role_id == 0 ? "Admin" : "Owner Store"}
+                    </TableCell>
+
                     <TableCell align="right">
+                      {user.email_verified_at != null ? (
+                        <Tooltip title="Approved Account" arrow>
+                          <IconButton aria-label="view" disabled={true}>
+                            <FcApprove />
+                          </IconButton>
+                        </Tooltip>
+                      ) : (
+                        <Tooltip title="Click To Approve Account" arrow>
+                          <IconButton aria-label="view">
+                            <FcDisapprove
+                              data-currentuser={JSON.stringify(user)}
+                              onClick={handleApprove}
+                            />
+                          </IconButton>
+                        </Tooltip>
+                      )}
+
                       <Tooltip title="View Detail" arrow>
                         <IconButton aria-label="view">
                           <VisibilityIcon

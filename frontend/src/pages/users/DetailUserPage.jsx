@@ -20,6 +20,8 @@ import { useContext, useState } from "react";
 import { call } from "../../utils/api";
 import { ListUserContext } from "../../stores/ListUserContext";
 import { useNavigate, useParams } from "react-router-dom";
+import { authContext } from "../../utils/auth";
+import { convertISODateToTimeFormat } from "../../utils/func";
 
 const DetailUserPage = () => {
   const { id } = useParams();
@@ -28,6 +30,11 @@ const DetailUserPage = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = React.useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = React.useState(false);
+  const userInfo = useContext(authContext);
+  console.log(
+    "🚀 ~ file: DetailUserPage.jsx:34 ~ DetailUserPage ~ userInfo:",
+    userInfo
+  );
 
   const [updateUser, setUpdateUser] = useState({
     name: "",
@@ -43,12 +50,6 @@ const DetailUserPage = () => {
   );
 
   //func
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const handleClickShowPasswordConfirm = () =>
-    setShowPasswordConfirm((show) => !show);
-  const changeHandler = (e) => {
-    setUpdateUser({ ...updateUser, [e.target.name]: e.target.value });
-  };
 
   useEffect(() => {
     setLoading(true);
@@ -71,6 +72,7 @@ const DetailUserPage = () => {
             mt={2}
             px={4}
             sx={{ display: "flex" }}
+            height="450px"
           >
             <Card
               sx={{ p: 2, flex: 1, flexBasis: "30%" }}
@@ -86,8 +88,17 @@ const DetailUserPage = () => {
               </div>
             </Card>
             <Card sx={{ py: 2, flexBasis: "60%" }}>
-              <div className="px-4 flex justify-between items-center mb-2">
-                <p className="font-semibold">Profile Information</p>
+              <div className="flex items-center justify-between mb-2">
+                <div className="px-4 flex justify-between items-center mb-2">
+                  <p className="font-semibold">Profile Information</p>
+                </div>
+
+                <button
+                  onClick={() => navigate(`/users/edit/${userInfo.id}`)}
+                  className="mr-4 py-2 px-4 rounded-xl font-semibold hover:opacity-75 duration-200 bg-primary-500 text-white"
+                >
+                  Edit Profile
+                </button>
               </div>
               <Divider />
               <Stack direction="row" p={2} spacing={2}>
@@ -96,7 +107,6 @@ const DetailUserPage = () => {
                     variant="outlined"
                     placeholder="Full Name"
                     name="name"
-                    onChange={changeHandler}
                     defaultValue={updateUser.name}
                     label="Full Name"
                     InputProps={{
@@ -107,7 +117,6 @@ const DetailUserPage = () => {
                     variant="outlined"
                     placeholder="Phone"
                     name="phone"
-                    onChange={changeHandler}
                     defaultValue={updateUser.phone}
                     label="Phone"
                     InputProps={{
@@ -118,7 +127,6 @@ const DetailUserPage = () => {
                     variant="outlined"
                     placeholder="Email"
                     name="email"
-                    onChange={changeHandler}
                     defaultValue={updateUser.email}
                     label="Email"
                     InputProps={{
@@ -131,47 +139,25 @@ const DetailUserPage = () => {
               <Divider />
               <div className="my-2 px-4">
                 <p className="font-semibold pb-1">Position Information</p>
-                <div className="flex justify-between pb-1 w-full gap-7">
-                  <Box sx={{ width: "100%" }}>
-                    <InputLabel className="mb-2">Role</InputLabel>
-                    <FormControl fullWidth>
-                      <InputLabel id="role">Role</InputLabel>
-                      <Select
-                        labelId="role"
-                        id="demo-simple-select"
-                        value={null}
-                        label="Role"
-                        disabled
-                        InputProps={{
-                          readOnly: true,
-                        }}
-                      >
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Box>
-                  <Box sx={{ width: "100%" }}>
-                    <InputLabel className="mb-2">Belong to store</InputLabel>
-                    <FormControl fullWidth>
-                      <InputLabel id="role">Belong to store</InputLabel>
-                      <Select
-                        labelId="role"
-                        id="demo-simple-select"
-                        value={null}
-                        label="Belong to store"
-                        disabled
-                        InputProps={{
-                          readOnly: true,
-                        }}
-                      >
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Box>
+                <div className="flex items-center justify-between pb-1 w-full gap-7 mt-3">
+                  <TextField
+                    variant="outlined"
+                    label="Role"
+                    value={updateUser.role_id == 0 ? "Admin" : "Owner Store"}
+                    fullWidth
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                  />
+                  <TextField
+                    variant="outlined"
+                    label="Created At"
+                    fullWidth
+                    value={convertISODateToTimeFormat(updateUser.created_at)}
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                  />
                 </div>
               </div>
             </Card>
