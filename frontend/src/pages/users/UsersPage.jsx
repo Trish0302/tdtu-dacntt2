@@ -198,6 +198,7 @@ const UsersPage = () => {
                 <TableCell align="left">Name</TableCell>
                 <TableCell align="left">Email</TableCell>
                 <TableCell align="left">Phone</TableCell>
+                <TableCell align="left">Role</TableCell>
                 <TableCell align="right" />
               </TableRow>
             </TableHead>
@@ -217,6 +218,9 @@ const UsersPage = () => {
                     <TableCell align="left">{user.name}</TableCell>
                     <TableCell align="left">{user.email}</TableCell>
                     <TableCell align="left">{user.phone}</TableCell>
+                    <TableCell align="left">
+                      {user.role_id == 0 ? "Admin" : "Owner Store"}
+                    </TableCell>
 
                     <TableCell align="right">
                       {user.email_verified_at != null ? (
