@@ -219,7 +219,7 @@ const DetailOrderPage = () => {
                             }}
                           >
                             <TableCell component="th" scope="row">
-                              {row.id}
+                              {row.food_id}
                             </TableCell>
                             <TableCell component="th" scope="row">
                               {row.food.name}

@@ -12,6 +12,7 @@ import { Bar, Pie } from "react-chartjs-2";
 import CardDashboard from "../../components/card/CardDashboard";
 import {
   Card,
+  CircularProgress,
   Table,
   TableBody,
   TableCell,
@@ -85,13 +86,14 @@ const Dashboard = () => {
   const [orderRecent, setOrderRecent] = useState();
   const [foodPurchase, setFoodPurchase] = useState();
   const [totalData, setTotalData] = useState();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    call(`api/statistics/get-total?type=init`).then((rs) => {
+    const call1 = call(`api/statistics/get-total?type=init`).then((rs) => {
       setTotalData(rs.data);
     });
 
-    call(`api/statistics/get-top-stores`).then((rs) => {
+    const call2 = call(`api/statistics/get-top-stores`).then((rs) => {
       setStoreStatistics({
         labels: rs.data.map((item) => item.store.name),
         datasets: [
@@ -138,10 +140,10 @@ const Dashboard = () => {
       });
     });
 
-    call(`api/statistics/get-recent-orders`).then((rs) => {
+    const call3 = call(`api/statistics/get-recent-orders`).then((rs) => {
       setOrderRecent(rs.data);
     });
-    call(`api/statistics/get-top-products`).then((rs) => {
+    const call4 = call(`api/statistics/get-top-products`).then((rs) => {
       setFoodPurchase({
         labels: rs.data.map((item) => item.food.name),
         datasets: [
@@ -167,9 +169,17 @@ const Dashboard = () => {
         ],
       });
     });
+
+    Promise.all([call1, call2, call3, call4]).then((responses) => {
+      setLoading(false);
+    });
   }, []);
 
-  return (
+  return loading ? (
+    <div className="w-full h-full flex items-center justify-center bg-primary-100">
+      <CircularProgress color="secondary" />
+    </div>
+  ) : (
     <div className="bg-primary-100 px-5 h-full overflow-y-scroll hide-scroll pt-24 pb-5">
       <div className="flex gap-4">
         <div className="basis-1/4">

@@ -369,6 +369,10 @@ const Router = () => {
       path: "register",
       element: <Register />,
     },
+    {
+      path: "*",
+      element: <Navigate to="/" />,
+    },
   ]);
   return routes;
 };
