@@ -1,6 +1,8 @@
 import React, { useReducer, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { call } from "../utils/api";
+import { toast } from "react-toastify";
+import { useLocation } from "react-router-dom";
 
 const initialState = {
   list: [],
@@ -28,6 +30,17 @@ const getUser = (item, state) => {
   const index = temp.findIndex((obj) => obj.id === item.id);
   return index;
 };
+const getListUser = (item, state) => {
+  console.log(item);
+  let temp = [...state.list];
+  call(`api/users?page=${item.page + 1}&page_size=${item.page_size}`).then(
+    (rs) => {
+      console.log(rs);
+      temp = rs.data;
+    }
+  );
+  return { ...state, list: temp };
+};
 const reducer = (state, action) => {
   switch (action.type) {
     case "setList":
@@ -42,6 +55,8 @@ const reducer = (state, action) => {
       return addUser(action.item, state);
     case "updateUser":
       return updateUser(action.item, state);
+    case "getListUser":
+      return getListUser(action.item, state);
     default:
       return { ...state };
   }
@@ -50,6 +65,11 @@ const ListUserContext = React.createContext(initialState);
 function ListUserProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
+  console.log(
+    "🚀 ~ file: ListUserContext.jsx:69 ~ ListUserProvider ~ location:",
+    location
+  );
 
   useEffect(() => {
     getListUser();
@@ -61,8 +81,16 @@ function ListUserProvider({ children }) {
       result
     );
 
-    dispatch({ type: "setList", payload: { list: result.data } });
-    dispatch({ type: "getTotal", payload: { total: result.total } });
+    if (result?.status == 400) {
+      dispatch({ type: "setList", payload: { list: [] } });
+      dispatch({ type: "getTotal", payload: { total: 0 } });
+      if (location.pathname == "/users") {
+        toast.error("User don't have permission!!!", { autoClose: 5000 });
+      }
+    } else {
+      dispatch({ type: "setList", payload: { list: result.data } });
+      dispatch({ type: "getTotal", payload: { total: result.total } });
+    }
     setIsLoading(false);
   }
   return (

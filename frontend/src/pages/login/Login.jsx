@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AsyncStorage } from "AsyncStorage";
 import { callNon } from "../../utils/api";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, CircularProgress, TextField, Typography } from "@mui/material";
 
 const Login = () => {
@@ -130,7 +130,7 @@ const Login = () => {
         )}
       </button>
       <small className="underline">
-        <a href="#">Forgot Password?</a>
+        <Link to="/register">Want to be our partner? Sign Up</Link>
       </small>
       <p>adminminhhieu@gmail.com</p>
       12345678

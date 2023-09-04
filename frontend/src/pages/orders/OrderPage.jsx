@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import { convertISODateToTimeFormat } from "../../utils/func";
 
 const OrderPage = () => {
   const navigate = useNavigate();
@@ -131,19 +132,6 @@ const OrderPage = () => {
   };
 
   //
-  function convertISODateToTimeFormat(ISODate) {
-    const newDateObj = new Date(ISODate);
-    const toMonth = newDateObj.getMonth() + 1;
-    const toYear = newDateObj.getFullYear();
-    const toDate = newDateObj.getDate();
-    const toHours = newDateObj.getHours();
-    const toHoursProcessed = (toHours < 10 ? "0" : "") + toHours;
-    const toMin = newDateObj.getMinutes();
-    const toMinProcessed = (toMin < 10 ? "0" : "") + toMin;
-    const dateTemplate = `${toDate}.${toMonth}.${toYear} ${toHoursProcessed}:${toMinProcessed}`;
-    // console.log(dateTemplate)
-    return dateTemplate;
-  }
 
   return (
     <div className=" bg-primary-100 px-5 h-full overflow-y-scroll hide-scroll pt-24 pb-5">

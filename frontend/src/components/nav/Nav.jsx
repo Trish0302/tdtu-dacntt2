@@ -40,6 +40,7 @@ const Nav = ({ openSidebar, setOpenSidebar }) => {
   });
   const responsive = useResponsive();
   const userInfo = useContext(authContext);
+  console.log("🚀 ~ file: Nav.jsx:43 ~ Nav ~ userInfo:", userInfo);
   // const [information, setInformation] = useState();
 
   // useEffect(() => {
@@ -69,36 +70,79 @@ const Nav = ({ openSidebar, setOpenSidebar }) => {
         onClick={() => setOpenSidebar(false)}
       >
         <List sx={{ paddingTop: 0 }}>
-          {navConfig.map((text, index) => (
-            <ListItem key={index} disablePadding>
-              <ListItemButton
-                onClick={() => {
-                  navigate(`${text.path}`);
-                }}
-                sx={{
-                  "&.Mui-selected": {
-                    backgroundColor: "#ffe3e0",
-                  },
+          {navConfig.map((text, index) =>
+            userInfo.role_id == 0 ? (
+              text.title != "profile" && (
+                <ListItem key={index} disablePadding>
+                  <ListItemButton
+                    // disabled={true}
+                    onClick={() => {
+                      navigate(`${text.path}`);
+                    }}
+                    sx={{
+                      "&.Mui-selected": {
+                        backgroundColor: "#ffe3e0",
+                      },
 
-                  ":hover": {
-                    backgroundColor: "#ffe3e0",
-                  },
-                }}
-                selected={
-                  pathname.split("/").includes(text.title.replace(" ", "-"))
-                    ? true
-                    : false
-                }
-              >
-                <ListItemIcon>{text.icon}</ListItemIcon>
-                <ListItemText
-                  primary={
-                    text.title.charAt(0).toUpperCase() + text.title.slice(1)
+                      ":hover": {
+                        backgroundColor: "#ffe3e0",
+                      },
+                    }}
+                    selected={
+                      pathname.split("/").includes(text.title.replace(" ", "-"))
+                        ? true
+                        : false
+                    }
+                  >
+                    <ListItemIcon>{text.icon}</ListItemIcon>
+                    <ListItemText
+                      primary={
+                        text.title.charAt(0).toUpperCase() + text.title.slice(1)
+                      }
+                    />
+                  </ListItemButton>
+                </ListItem>
+              )
+            ) : text.title == "dashboard" || text.title == "profile" ? (
+              <ListItem key={index} disablePadding>
+                <ListItemButton
+                  // disabled={true}
+                  onClick={() => {
+                    navigate(
+                      `${
+                        text.title == "profile"
+                          ? text.path + `${userInfo.id}`
+                          : text.path
+                      }`
+                    );
+                  }}
+                  sx={{
+                    "&.Mui-selected": {
+                      backgroundColor: "#ffe3e0",
+                    },
+
+                    ":hover": {
+                      backgroundColor: "#ffe3e0",
+                    },
+                  }}
+                  selected={
+                    pathname.split("/").includes(text.title.replace(" ", "-"))
+                      ? true
+                      : false
                   }
-                />
-              </ListItemButton>
-            </ListItem>
-          ))}
+                >
+                  <ListItemIcon>{text.icon}</ListItemIcon>
+                  <ListItemText
+                    primary={
+                      text.title.charAt(0).toUpperCase() + text.title.slice(1)
+                    }
+                  />
+                </ListItemButton>
+              </ListItem>
+            ) : (
+              <></>
+            )
+          )}
         </List>
       </Box>
     </div>
@@ -171,20 +215,25 @@ const Logo = () => {
 };
 
 const ImageProfile = ({ information }) => {
+  const navigate = useNavigate();
+  const userInfo = useContext(authContext);
   return (
     <div className="py-5  w-full  flex-col justify-center items-center text-center">
-      <div className="w-full flex justify-center mb-2">
+      <button
+        className="w-full flex justify-center mb-2"
+        onClick={() => navigate(`users/detail/${userInfo.id}`)}
+      >
         <Avatar
           sx={{ width: 80, height: 80 }}
           alt="avatar"
           className="shadow-lg"
           src={information.avatar}
         />
-      </div>
+      </button>
       <div className="font-semibold">{information.name}</div>
       <small className="">{information.email}</small>
       <div className="text-gray-500">
-        <small>Admin</small>
+        <small>{userInfo.role_id == 0 ? "Admin" : "Owner Store"}</small>
       </div>
     </div>
   );

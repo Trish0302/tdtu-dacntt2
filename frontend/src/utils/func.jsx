@@ -8,6 +8,19 @@ export function getSlugId(slug) {
     return 0;
   }
 }
+export function convertISODateToTimeFormat(ISODate) {
+  const newDateObj = new Date(ISODate);
+  const toMonth = newDateObj.getMonth() + 1;
+  const toYear = newDateObj.getFullYear();
+  const toDate = newDateObj.getDate();
+  const toHours = newDateObj.getHours();
+  const toHoursProcessed = (toHours < 10 ? "0" : "") + toHours;
+  const toMin = newDateObj.getMinutes();
+  const toMinProcessed = (toMin < 10 ? "0" : "") + toMin;
+  const dateTemplate = `${toDate}.${toMonth}.${toYear} ${toHoursProcessed}:${toMinProcessed}`;
+  // console.log(dateTemplate)
+  return dateTemplate;
+}
 export function convertToSlug(str) {
   str = str.replace(/^\s+|\s+$/g, ""); // trim
   str = str.toLowerCase();
