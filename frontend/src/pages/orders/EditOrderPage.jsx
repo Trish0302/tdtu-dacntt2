@@ -44,6 +44,10 @@ const EditOrderPage = () => {
 
     onSubmit: (values) => {
       let valuesUpdate = { ...values };
+      console.log(
+        "🚀 ~ file: EditOrderPage.jsx:47 ~ EditOrderPage ~ valuesUpdate:",
+        valuesUpdate
+      );
 
       Object.assign(valuesUpdate, { items: valuesUpdate["detail"] });
       valuesUpdate.items.map((item) => {
@@ -61,8 +65,8 @@ const EditOrderPage = () => {
       delete valuesUpdate["total"];
       valuesUpdate = {
         ...valuesUpdate,
-        voucher_id: 1,
-        payment_type: 1,
+        voucher_id: valuesUpdate.voucher_id == 0 ? 36 : valuesUpdate.voucher_id,
+        // payment_type: 1,
       };
 
       console.log(valuesUpdate);
@@ -269,7 +273,7 @@ const EditOrderPage = () => {
                             }}
                           >
                             <TableCell component="th" scope="row">
-                              {row.id}
+                              {row.food_id}
                             </TableCell>
                             <TableCell component="th" scope="row">
                               {row.food.name}
