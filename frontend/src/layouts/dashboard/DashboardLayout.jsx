@@ -43,19 +43,6 @@ const DashboardLayout = ({ children }) => {
         <Outlet />
         {children}
       </Main>
-      <ToastContainer
-        position="top-right"
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
-      {/* Same as */}
-      <ToastContainer />
     </StyledRoot>
   );
 };

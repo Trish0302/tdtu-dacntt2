@@ -11,6 +11,7 @@ use App\Http\Controllers\API\UsersController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\StatisticController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,9 +41,9 @@ Route::middleware('auth:sanctum', 'ability:admin,customer')->group(function () {
 
 Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
     Route::get('/orders/history', [OrdersController::class, 'viewHistory']);
+    Route::post('/users/approve/{id}', [UsersController::class, 'approve']);
 
     Route::apiResources([
-        'users' => UsersController::class,
         'vouchers' => VouchersController::class,
     ]);
 
@@ -53,6 +54,13 @@ Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
             'stores.food_groups' => FoodGroupsController::class,
         ],
         ['except' => ['index', 'show']],
+    );
+
+    Route::apiResources(
+        [
+            'users' => UsersController::class,
+        ],
+        ['except' => ['store']],
     );
 
     Route::apiResources(
@@ -68,6 +76,12 @@ Route::middleware('auth:sanctum', 'ability:admin')->group(function () {
         ],
         ['except' => ['update']],
     );
+
+    Route::get('/statistics/get-total', [StatisticController::class, 'getTotal']);
+    Route::get('/statistics/get-recent-orders', [StatisticController::class, 'getRecentOrders']);
+    Route::get('/statistics/get-total-orders', [StatisticController::class, 'getTotalOrders']);
+    Route::get('/statistics/get-top-stores', [StatisticController::class, 'getTopStores']);
+    Route::get('/statistics/get-top-products', [StatisticController::class, 'getTopProducts']);
 });
 
 Route::middleware('auth:sanctum', 'ability:customer')->group(function () {
@@ -91,6 +105,7 @@ Route::get('/stores/{store_id}/food_groups/{food_group_id}/food/{food_id}', [Foo
 Route::get('/food/{id}', [FoodController::class, 'getDetail']);
 
 Route::post('/register', [CustomersController::class, 'store']);
+Route::post('/users', [UsersController::class, 'store']);
 
 // Payment response
 Route::get('/payment/respond', [PaymentController::class, 'respond'])->name('paymentRespond');;

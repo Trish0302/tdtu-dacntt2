@@ -18,6 +18,8 @@ class UsersController extends Controller
         'email',
         'phone',
         'avatar',
+        'role_id',
+        'email_verified_at',
         'created_at',
         'updated_at',
     ];
@@ -29,6 +31,8 @@ class UsersController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', new User);
+
         $query = $request->q;
         $users = new User;
 
@@ -86,7 +90,7 @@ class UsersController extends Controller
         });
 
         return response()->json([
-            'message' => 'Create new user successfully!',
+            'message' => 'Request new account successfully. Please await administrator to approve!',
             'status' => 200,
         ], 200);
     }
@@ -100,14 +104,18 @@ class UsersController extends Controller
     public function show($id)
     {
         try {
+            $user = User::findOrFail($id, $this->fields);
+
+            $this->authorize('view', $user);
+
             return response()->json([
                 'message' => 'Get user data successfully!',
-                'data' => User::findOrFail($id, $this->fields),
+                'data' => $user,
                 'status' => 200,
             ], 200);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Invalid user. Please try again!',
+                'message' => $e->getMessage(),
                 'status' => 400,
             ], 400);
         }
@@ -122,15 +130,16 @@ class UsersController extends Controller
      */
     public function update(RegisterUserRequest $request)
     {
-        if (isset($request->validator) && $request->validator->fails()) {
-            return response()->json([
-                'message' => $request->validator->messages(),
-                'status' => 400,
-            ], 400);
-        }
-
         try {
             $user = User::findOrFail($request->id, $this->fields);
+            $this->authorize('update', $user);
+
+            if (isset($request->validator) && $request->validator->fails()) {
+                return response()->json([
+                    'message' => $request->validator->messages(),
+                    'status' => 400,
+                ], 400);
+            }
 
             $user->name = $request->name;
             $user->email = $request->email;
@@ -153,7 +162,7 @@ class UsersController extends Controller
             ], 200);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Invalid user. Please try again!',
+                'message' => $e->getMessage(),
                 'status' => 400,
             ], 400);
         }
@@ -168,9 +177,42 @@ class UsersController extends Controller
     public function destroy($id)
     {
         try {
+            $user = User::findOrFail($id);
+            $this->authorize('delete', $user);
+
             return response()->json([
                 'message' => 'Delete user successfully!',
-                'data' => User::findOrFail($id)->delete(),
+                'data' => $user->delete(),
+                'status' => 200,
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => 400,
+            ], 400);
+        }
+    }
+
+    public function approve($id)
+    {
+        $this->authorize('create', new User);
+
+        try {
+            $user = User::findOrFail($id, $this->fields);
+
+            if ($user->email_verified_at) {
+                return response()->json([
+                    'message' => 'This account was approved already!',
+                    'data' => false,
+                    'status' => 401,
+                ], 401);
+            }
+
+            $user->markEmailAsVerified();
+
+            return response()->json([
+                'message' => 'Approve store manager account successfully!',
+                'data' => $user,
                 'status' => 200,
             ], 200);
         } catch (Exception $e) {

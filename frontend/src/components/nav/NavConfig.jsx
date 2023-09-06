@@ -14,7 +14,7 @@ const navConfig = [
     icon: <DashboardIcon className="text-primary-500" />,
   },
   {
-    title: "Staff",
+    title: "staff",
     path: "/users",
     icon: <PersonIcon className="text-primary-500" />,
   },
@@ -49,6 +49,11 @@ const navConfig = [
   {
     title: "customers",
     path: "/customers",
+    icon: <ContactsIcon className="text-primary-500" />,
+  },
+  {
+    title: "profile",
+    path: "/users/detail/",
     icon: <ContactsIcon className="text-primary-500" />,
   },
 ];

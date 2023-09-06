@@ -36,6 +36,14 @@ class AuthController extends Controller
             ], 401);
         }
 
+        if (!$user->email_verified_at && $abilities == ['admin']) {
+            return response()->json([
+                'message' => 'Your account has not been approved by administrator!',
+                'data' => false,
+                'status' => 401,
+            ], 401);
+        }
+
         $token = $user->createToken('auth_token', $abilities)->plainTextToken;
 
         return response()->json([
