@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+
+use App\Models\Rating;
+use App\Policies\RatingPolicy;
 use App\Models\Order;
 use App\Models\User;
 use App\Policies\OrderPolicy;
@@ -16,6 +19,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
+        Rating::class => RatingPolicy::class,
         Order::class => OrderPolicy::class,
         User::class => UserPolicy::class,
     ];

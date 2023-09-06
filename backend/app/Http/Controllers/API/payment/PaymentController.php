@@ -30,7 +30,7 @@ class PaymentController extends Controller
                 Mail::send('emails.makeOrderSuccessfully', [
                     'order' => $order,
                 ], function ($email) use ($order) {
-                    $email->to($order->customer->email)->subject('Create new order successfully!');
+                    $email->to($order->customer->email)->subject('Xác nhận Đặt Đơn Hàng Thành công!');
                 });
 
                 break;
