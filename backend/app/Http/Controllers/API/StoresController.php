@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ImportFileRequest;
 use App\Http\Requests\StoreRequest;
 use App\Models\Store;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class StoresController extends Controller
 {
@@ -195,5 +198,59 @@ class StoresController extends Controller
                 'status' => 400,
             ], 400);
         }
+    }
+
+    public function import(ImportFileRequest $request)
+    {
+        $reader =  new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+        $spreadsheet = $reader->load($request->file);
+        $worksheet = $spreadsheet->getActiveSheet()->toArray();
+
+        $header = array_shift($worksheet);
+        $content['row'] = $this->toKeyedRows($worksheet, $header);
+
+        $request = new Request($content);
+        $validator = Validator::make(
+            $request->all(),
+            array_fill_keys(array_map(function ($value) {
+                return 'row.*.' . $value;
+            }, ['name', 'address', 'description']), 'required')
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'The given data was invalid.',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $stores = array_map(function ($row) {
+            $row += [
+                'user_id' => Auth::user()->id,
+                'avatar' => "https://res.cloudinary.com/ddusqwv7k/image/upload/v1688648527/users/default-avatar_1688648526.png",
+            ];
+            return $row;
+        }, $request->row);
+
+        $result = Store::insert($stores);
+
+        return response()->json([
+            'message' => 'Import Excel data successfully!',
+            'data' => $result,
+            'status' => 200,
+        ], 200);
+    }
+
+    private function toKeyedRows(array $rows, array $header): array
+    {
+        array_walk($header, function ($value, $key) {
+            $value = $value ?: $key;
+        });
+
+        array_walk($rows, function (&$row) use ($header) {
+            $row = array_combine($header, $row);
+        });
+
+        return $rows;
     }
 }
