@@ -10,6 +10,9 @@ import {
 } from "chart.js";
 import { Bar, Pie } from "react-chartjs-2";
 import CardDashboard from "../../components/card/CardDashboard";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import {
   Card,
   CircularProgress,
@@ -22,6 +25,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { call } from "../../utils/api";
+import { toast } from "react-toastify";
 
 ChartJS.register(
   ArcElement,
@@ -80,13 +84,57 @@ export const optionPieFood = {
   },
 };
 
+export const optionOrderByDay = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: "bottom",
+    },
+    title: {
+      display: true,
+      text: "",
+      font: {
+        size: 24,
+      },
+    },
+  },
+};
+
 const Dashboard = () => {
   const [storeStatistics, setStoreStatistics] = useState();
   const [storeProfit, setStoreProfit] = useState();
   const [orderRecent, setOrderRecent] = useState();
   const [foodPurchase, setFoodPurchase] = useState();
+  const [filteredOrder, setFilteredOrder] = useState();
   const [totalData, setTotalData] = useState();
+  const [fromDate, setFromDate] = useState();
+  const [toDate, setToDate] = useState();
   const [loading, setLoading] = useState(true);
+  const [loadingFilter, setLoadingFilter] = useState(false);
+
+  const handleFilterOrder = () => {
+    setLoadingFilter(true);
+    if (!fromDate || !toDate) {
+      toast.error("Please choose all field", { autoClose: 2000 });
+    } else {
+      call(
+        `api/statistics/get-total-orders?from=${fromDate}&to=${toDate}`
+      ).then((rs) => {
+        console.log(">>> order ", rs);
+        setFilteredOrder({
+          labels: rs.data.map((item) => item.date),
+          datasets: [
+            {
+              label: "Quantity Order",
+              data: rs.data.map((item) => item.total_orders),
+              backgroundColor: "rgba(255, 99, 132, 0.5)",
+            },
+          ],
+        });
+        setLoadingFilter(false);
+      });
+    }
+  };
 
   useEffect(() => {
     const call1 = call(`api/statistics/get-total?type=init`).then((rs) => {
@@ -304,6 +352,48 @@ const Dashboard = () => {
             )}
           </Card>
         </div>
+      </div>
+
+      <div className="">
+        <Card sx={{ p: 3, mt: 3 }}>
+          <div className="text-center font-semibold text-xl ">
+            Filter Order By Days
+          </div>
+          <div className="flex gap-5 mt-4">
+            <div className="flex items-center">
+              <label className="mr-2">From: </label>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  onChange={(val) => setFromDate(val.format("YYYY-MM-DD"))}
+                />
+              </LocalizationProvider>
+            </div>
+            <div className="flex items-center">
+              <label className="mr-2">To: </label>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  onChange={(val) => setToDate(val.format("YYYY-MM-DD"))}
+                />
+              </LocalizationProvider>
+            </div>
+
+            <button
+              className="px-4 rounded-lg bg-primary-500 text-white hover:opacity-80 duration-200"
+              onClick={handleFilterOrder}
+            >
+              {loadingFilter ? (
+                <CircularProgress size="1.5rem" color="secondary" />
+              ) : (
+                "Apply"
+              )}
+            </button>
+          </div>
+
+          {/* chart */}
+          {filteredOrder && (
+            <Bar options={optionOrderByDay} data={filteredOrder} />
+          )}
+        </Card>
       </div>
     </div>
   );

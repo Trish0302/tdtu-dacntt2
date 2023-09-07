@@ -19,6 +19,10 @@ const DetailStorePage = () => {
   const navigate = useNavigate();
 
   const [userArr, setUserArr] = useState();
+  console.log(
+    "🚀 ~ file: DetailStorePage.jsx:22 ~ DetailStorePage ~ userArr:",
+    userArr
+  );
   const [updateStore, setUpdateStore] = useState({
     name: "",
     address: "",
@@ -44,7 +48,7 @@ const DetailStorePage = () => {
   useEffect(() => {
     const userArr = [];
     const fetchUser = async () => {
-      const rs = await call("api/users");
+      const rs = await call("api/users?page_size=100");
       rs.data.map((item) => userArr.push({ label: item.name, id: item.id }));
       setUserArr(userArr);
     };

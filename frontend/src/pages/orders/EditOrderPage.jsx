@@ -65,7 +65,7 @@ const EditOrderPage = () => {
       delete valuesUpdate["total"];
       valuesUpdate = {
         ...valuesUpdate,
-        voucher_id: valuesUpdate.voucher_id == 0 ? 36 : valuesUpdate.voucher_id,
+        voucher_id: valuesUpdate.voucher_id == 0,
         // payment_type: 1,
       };
 

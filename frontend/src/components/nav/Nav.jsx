@@ -103,7 +103,7 @@ const Nav = ({ openSidebar, setOpenSidebar }) => {
                   </ListItemButton>
                 </ListItem>
               )
-            ) : text.title == "dashboard" || text.title == "profile" ? (
+            ) : text.title != "staff" ? (
               <ListItem key={index} disablePadding>
                 <ListItemButton
                   // disabled={true}

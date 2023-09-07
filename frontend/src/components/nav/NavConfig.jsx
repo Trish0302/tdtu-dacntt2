@@ -6,6 +6,7 @@ import FastfoodIcon from "@mui/icons-material/Fastfood";
 import PercentIcon from "@mui/icons-material/Percent";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import ContactsIcon from "@mui/icons-material/Contacts";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const navConfig = [
   {
@@ -54,7 +55,7 @@ const navConfig = [
   {
     title: "profile",
     path: "/users/detail/",
-    icon: <ContactsIcon className="text-primary-500" />,
+    icon: <AccountCircleIcon className="text-primary-500" />,
   },
 ];
 
