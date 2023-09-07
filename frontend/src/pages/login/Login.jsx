@@ -3,6 +3,7 @@ import { AsyncStorage } from "AsyncStorage";
 import { callNon } from "../../utils/api";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, CircularProgress, TextField, Typography } from "@mui/material";
+import Logo from "../../../public/logo.jpg";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -93,10 +94,10 @@ const Login = () => {
       className="flex h-screen flex-col gap-5 px-10 py-8 sm:px-20 sm:py-16 md:px-64 md:py-16 items-center justify-center bg-[#FDFCFF]"
     >
       <img
-        src="https://wallpapers.com/images/hd/blackpink-cute-lisa-gummy-smile-w1lrgah8y5j0krsv.jpg"
+        src={Logo}
         className="h-[150px] md:h-[200px] w-fit rounded-xl shadow-lg"
       />
-      <h1 className="text-center font-extrabold text-transparent text-3xl md:text-5xl bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 p-5 w-full">
+      <h1 className="text-center font-extrabold text-transparent text-3xl md:text-5xl bg-clip-text bg-gradient-to-r from-[#6dd5ed] to-[#2193b0] p-5 w-full">
         Login to Dashboard
       </h1>
       <TextField
@@ -121,7 +122,7 @@ const Login = () => {
         onClick={handleLogin}
         className={` ${
           loading ? "opacity-75 select-none" : ""
-        } w-1/2 bg-violet-500 p-2 uppercase  text-white rounded shadow-md hover:opacity-80 duration-200 transition-all`}
+        } w-1/2 bg-[#6dd5ed] p-2 uppercase  text-white rounded shadow-md hover:opacity-80 duration-200 transition-all`}
       >
         {loading ? (
           <CircularProgress className="text-sm" size="2rem" color="secondary" />
@@ -129,11 +130,9 @@ const Login = () => {
           "Login"
         )}
       </button>
-      <small className="underline">
+      <small className="underline hover:text-[#2193b0]">
         <Link to="/register">Want to be our partner? Sign Up</Link>
       </small>
-      <p>adminminhhieu@gmail.com</p>
-      12345678
     </form>
   );
 };

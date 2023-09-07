@@ -15,11 +15,13 @@ import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import { useFormik } from "formik";
 import storeValidationSchema from "../../validations/StoreValidation";
+import { AiOutlineCloudUpload } from "react-icons/ai";
 
 const AddStorePage = () => {
   const { state, dispatch } = useContext(ListStoreContext);
   const navigate = useNavigate();
   const [loadingCallAPI, setLoadingCallAPI] = useState(false);
+  const [loadingUpload, setLoadingUpload] = useState(false);
   const [userArr, setUserArr] = useState();
   const [addStore, setAddStore] = useState({
     name: "",
@@ -28,11 +30,43 @@ const AddStorePage = () => {
     user_id: "",
   });
   const [previewPic, setPreviewPic] = useState();
+  const [uploadFile, setUploadFile] = useState();
+  console.log(
+    "🚀 ~ file: AddStorePage.jsx:33 ~ AddStorePage ~ uploadFile:",
+    uploadFile
+  );
 
   const changeUploadPicHandler = (e) => {
     // console.log(e.target.files[0]);
     setPreviewPic(URL.createObjectURL(e.target.files[0]));
     formik.setFieldValue("avatar", e.target.files[0]);
+  };
+
+  const changeUploadFileExcel = (e) => {
+    setUploadFile(e.target.files[0]);
+    console.log(e);
+  };
+
+  const handleUploadExcel = () => {
+    setLoadingUpload(true);
+    const formData = new FormData();
+    formData.append("file", uploadFile);
+
+    callUpload(`api/stores/import`, "POST", formData).then((res) => {
+      console.log("🚀 ~ file: AddStorePage.jsx:57 ~ call ~ res:", res);
+      if (res) {
+        setLoadingUpload(false);
+      }
+
+      if (res.status == 200) {
+        toast.success("Import Excel data successfully!", { autoClose: 1000 });
+        setTimeout(() => {
+          navigate("/stores");
+        }, 1500);
+      } else {
+        toast.error(res.data.message);
+      }
+    });
   };
 
   const formik = useFormik({
@@ -90,7 +124,7 @@ const AddStorePage = () => {
   useEffect(() => {
     const userArr = [];
     const fetchUser = async () => {
-      const rs = await call("api/users");
+      const rs = await call("api/users?page_size=100");
       rs.data.map((item) => userArr.push({ label: item.name, id: item.id }));
       setUserArr(userArr);
     };
@@ -183,6 +217,47 @@ const AddStorePage = () => {
                 <small>
                   Please confirm the information carefully before saving
                 </small>
+
+                <div className="flex gap-3">
+                  <label
+                    htmlFor="doc"
+                    className="flex items-center p-2 gap-2 rounded-3xl border border-gray-300 border-dashed bg-gray-50 cursor-pointer"
+                  >
+                    <AiOutlineCloudUpload />
+
+                    <div className="space-y-2">
+                      <div className="text-xs font-semibold text-gray-700">
+                        Upload file Excel
+                      </div>
+                    </div>
+                    <input
+                      type="file"
+                      id="doc"
+                      name="doc"
+                      accept=".xlsx, .xls, .csv"
+                      onChange={changeUploadFileExcel}
+                      hidden
+                    />
+                  </label>
+
+                  {uploadFile && (
+                    <div className="flex items-center gap-3">
+                      <small>
+                        <i>{uploadFile.name}</i>
+                      </small>
+                      <button
+                        onClick={handleUploadExcel}
+                        className="flex items-center p-2 gap-2 rounded-3xl border border-gray-300 border-dashed bg-gray-50 text-xs hover:border-primary-500 hover:bg-primary-500 hover:text-white"
+                      >
+                        {loadingUpload ? (
+                          <CircularProgress size="0.75rem"></CircularProgress>
+                        ) : (
+                          "Confirm"
+                        )}
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
               <Divider />
               <div className="px-4">

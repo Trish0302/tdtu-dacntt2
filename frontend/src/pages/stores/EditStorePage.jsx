@@ -24,12 +24,20 @@ const EditStorePage = () => {
   const [previewPic, setPreviewPic] = useState();
 
   const [userArr, setUserArr] = useState();
+  console.log(
+    "🚀 ~ file: EditStorePage.jsx:27 ~ EditStorePage ~ userArr:",
+    userArr
+  );
   const [updateStore, setUpdateStore] = useState({
     name: "",
     address: "",
     description: "",
     user_id: "",
   });
+  console.log(
+    "🚀 ~ file: EditStorePage.jsx:33 ~ EditStorePage ~ updateStore:",
+    updateStore
+  );
 
   const formik = useFormik({
     initialValues: updateStore,
@@ -103,7 +111,7 @@ const EditStorePage = () => {
   useEffect(() => {
     const userArr = [];
     const fetchUser = async () => {
-      const rs = await call("api/users");
+      const rs = await call("api/users?page_size=100");
       rs.data.map((item) => userArr.push({ label: item.name, id: item.id }));
       setUserArr(userArr);
     };
@@ -255,6 +263,7 @@ const EditStorePage = () => {
                           value={userArr.find(
                             (item) => item.id === formik.values.user_id
                           )}
+                          disabled={true}
                           onChange={(e, value) =>
                             formik.setFieldValue("user_id", value?.id)
                           }
